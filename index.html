@@ -1,0 +1,5947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title id="docTitle">Stay Script — VN Farewell Scene Builder</title>
+<meta name="description"
+content="Stay Script — an interactive VN-style farewell scene builder.">
+
+<link rel="canonical" href="https://mewgami.github.io/stayscript/">
+
+<meta property="og:title" content="Stay Script — VN Farewell Scene Builder">
+<meta property="og:description" content="Stay Script — an interactive VN-style farewell scene builder.">
+<meta property="og:image" content="https://mewgami.github.io/stayscript/assets/og-image.jpg">
+<meta property="og:url" content="https://mewgami.github.io/stayscript/">
+<meta property="og:site_name" content="Stay Script">
+<meta property="og:type" content="website">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Stay Script — VN Farewell Scene Builder">
+<meta name="twitter:description" content="Stay Script — an interactive VN-style farewell scene builder.">
+<meta name="twitter:image" content="https://mewgami.github.io/stayscript/assets/og-image.jpg">
+
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+--bg: #FAFAFA;
+--panel: #FFFFFF;
+--panel-line: #000000;
+--panel-hover: #F0F0F0;
+--text: #000000;
+--text-dim: #555555;
+
+--space-xs: 4px;
+--space-sm: 8px;
+--space-md: 16px;
+--space-lg: 24px;
+--space-xl: 32px;
+}
+
+html[data-theme="dark"] {
+--bg: #0D0D0D;
+--panel: #161616;
+--panel-line: #EDEDED;
+--panel-hover: #232323;
+--text: #F2F2F2;
+--text-dim: #999999;
+}
+
+.sprite-hint-svg {
+position: fixed;
+inset: 0;
+width: 100vw;
+height: 100vh;
+z-index: 900;
+pointer-events: none;
+opacity: 0;
+transition: opacity 0.35s ease;
+}
+.sprite-hint-svg.active {
+opacity: 1;
+}
+.sprite-hint-ring {
+fill: none;
+stroke: var(--panel-line);
+stroke-opacity: 0.35;
+stroke-width: 1.5;
+}
+@keyframes vnfsRingPulse {
+0%, 100% { stroke-width: 1.5; stroke-opacity: 0.35; }
+50%      { stroke-width: 3.5; stroke-opacity: 0.95; }
+}
+.sprite-hint-ring.pulse-ring {
+animation: vnfsRingPulse 0.85s ease-in-out 4;
+}
+
+@keyframes vnfsPulseAttention {
+0%, 100% { opacity: 1;    text-shadow: 0 0 0 rgba(0, 0, 0, 0); }
+50%      { opacity: 0.35; text-shadow: 0 0 14px var(--panel-line), 0 0 28px var(--panel-line); }
+}
+.pulse-attention {
+animation: vnfsPulseAttention 0.85s ease-in-out 4;
+}
+
+button {
+position: relative;
+}
+
+button.is-loading {
+pointer-events: none !important;
+opacity: 0.6;
+padding-right: 32px !important;
+}
+
+button.is-loading::after {
+content: "";
+position: absolute;
+width: 16px;
+height: 16px;
+border: 2px solid rgba(128, 128, 128, 0.3);
+border-top-color: currentColor;
+border-radius: 50%;
+animation: spin 0.8s linear infinite;
+right: 10px;
+top: calc(50% - 8px);
+}
+
+@keyframes spin {
+to { transform: rotate(360deg); }
+}
+
+* { box-sizing: border-box; border-radius: 0 !important; }
+
+::-webkit-scrollbar {
+width: 8px;
+height: 8px;
+}
+::-webkit-scrollbar-track {
+background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+background: var(--text);
+}
+::-webkit-scrollbar-thumb:hover {
+background: var(--text-dim);
+}
+
+body {
+margin: 0;
+min-height: 100vh;
+background: var(--bg);
+color: var(--text);
+font-family: 'Noto Sans JP', 'Segoe UI', system-ui, sans-serif;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: var(--space-lg);
+padding: var(--space-xl) var(--space-md) 60px;
+-webkit-font-smoothing: antialiased;
+transition: background 0.2s ease, color 0.2s ease;
+}
+
+h1 {
+font-size: 18px;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+color: var(--text);
+margin: 0;
+font-weight: 400;
+text-align: center;
+}
+
+.sub {
+color: var(--text-dim);
+font-size: 13px;
+margin-top: -8px;
+text-align: center;
+max-width: 620px;
+line-height: 1.5;
+font-weight: 400;
+}
+
+.mobile-swipe-hint {
+display: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+.mobile-swipe-hint {
+display: inline-block;
+margin-top: 2px;
+color: var(--accent);
+font-size: 12px;
+text-align: center;
+max-width: 620px;
+line-height: 1.4;
+font-weight: 500;
+}
+}
+
+.studio-container {
+width: 100%;
+max-width: 960px;
+display: flex;
+flex-direction: column;
+gap: var(--space-lg);
+}
+
+.theater-card {
+width: 100%;
+background: var(--panel);
+border: 1px solid var(--panel-line);
+overflow: hidden;
+transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+#stageWrap {
+position: relative;
+width: 100%;
+aspect-ratio: 16 / 9;
+background: #000;
+overflow: hidden;
+}
+
+canvas { width: 100%; height: 100%; display: block; }
+
+.playback-bar {
+display: flex;
+align-items: stretch;
+justify-content: space-between;
+gap: var(--space-md);
+padding: 0;
+background: var(--panel);
+border-top: 1px solid var(--panel-line);
+}
+
+.playback-bar button {
+min-height: 44px;
+}
+
+@media (max-width: 640px) {
+.playback-bar {
+flex-wrap: wrap;
+justify-content: center;
+row-gap: var(--space-sm);
+}
+
+.playback-bar .bar-group,
+.playback-bar .bar-group:last-child {
+flex: 1 1 100%;
+flex-wrap: wrap;
+justify-content: center !important;
+}
+
+.playback-bar .status {
+order: 2;
+flex: 1 1 100%;
+min-width: 0;
+padding: 0;
+}
+
+.playback-bar .status:empty {
+display: none;
+}
+
+.playback-bar .bar-group:last-child {
+order: 3;
+}
+
+.playback-bar button span {
+display: none;
+}
+.playback-bar button {
+width: 44px;
+min-width: 44px;
+padding: var(--space-sm);
+}
+.playback-bar .btn-icon {
+width: 16px;
+height: 16px;
+}
+}
+
+.bar-group {
+display: flex;
+align-items: stretch;
+gap: var(--space-sm);
+flex-shrink: 0;
+}
+
+.playback-bar .bar-group:last-child {
+justify-content: flex-end;
+}
+
+.console-grid {
+display: grid;
+grid-template-columns: 1fr;
+gap: var(--space-lg);
+}
+@media (min-width: 768px) {
+.console-grid {
+grid-template-columns: 1fr 1fr;
+}
+}
+
+.preset-section {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: var(--space-sm);
+}
+
+.preset-hint {
+color: var(--text-dim);
+font-size: 12px;
+text-align: center;
+margin: 0;
+}
+
+.preset-picker-grid {
+display: grid;
+grid-template-columns: 1fr;
+gap: var(--space-md);
+width: 100%;
+}
+@media (min-width: 768px) {
+.preset-picker-grid {
+grid-template-columns: 1fr 1fr;
+}
+}
+
+.preset-picker-col {
+display: flex;
+flex-direction: column;
+gap: var(--space-sm);
+min-width: 0;
+}
+
+.preset-picker-row {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: var(--space-sm);
+}
+
+.volume-row {
+display: flex;
+align-items: center;
+gap: var(--space-sm);
+padding: var(--space-xs) 2px;
+}
+
+.volume-icon {
+color: var(--text-dim);
+}
+
+.volume-slider {
+flex: 1 1 auto;
+min-width: 0;
+height: 3px;
+accent-color: var(--text);
+background: var(--text);
+outline: none;
+}
+
+.volume-value {
+flex: 0 0 auto;
+min-width: 36px;
+text-align: right;
+font-size: 12px;
+font-weight: 700;
+color: var(--text-dim);
+font-variant-numeric: tabular-nums;
+}
+
+.preset-capsule {
+flex: 1 1 auto;
+min-width: 0;
+background: var(--panel);
+border: 1px solid var(--panel-line);
+border-radius: 10px !important;
+padding: 10px var(--space-lg);
+font-size: 18px;
+font-weight: 700;
+color: var(--text);
+text-align: center;
+-webkit-user-select: none;
+user-select: none;
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+}
+
+button.preset-chevron {
+flex: 0 0 auto;
+display: flex;
+align-items: center;
+justify-content: center;
+width: 40px;
+height: 40px;
+padding: 0;
+border-radius: 10px !important;
+background: var(--panel);
+color: var(--text);
+border: 1px solid var(--panel-line);
+font-size: 18px;
+font-weight: 700;
+line-height: 1;
+}
+button.preset-chevron {
+transition: background 0.18s ease-out, color 0.18s ease-out, border-color 0.18s ease-out, transform 0.12s ease-out;
+}
+button.preset-chevron:hover:not(:disabled) {
+background: var(--text);
+color: var(--bg);
+border-color: var(--text);
+}
+button.preset-chevron:active:not(:disabled) {
+transform: scale(0.92);
+}
+
+.console-card {
+background: var(--panel);
+border: 1px solid var(--panel-line);
+padding: var(--space-lg);
+display: flex;
+flex-direction: column;
+gap: var(--space-md);
+min-width: 0;
+transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.console-card h2 {
+margin: 0;
+font-size: 12px;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+color: var(--text);
+border-bottom: 1px solid var(--panel-line);
+padding-bottom: var(--space-sm);
+font-weight: 700;
+}
+
+.form-group {
+display: flex;
+flex-direction: column;
+gap: var(--space-xs);
+}
+
+label {
+font-size: 11px;
+color: var(--text-dim);
+text-transform: uppercase;
+letter-spacing: 0.05em;
+font-weight: 400;
+}
+
+input[type=text] {
+background: var(--panel);
+border: 1px solid var(--panel-line);
+color: var(--text);
+padding: var(--space-sm) var(--space-sm);
+font-size: 13px;
+font-family: inherit;
+transition: all 0.2s ease;
+}
+input[type=text]:focus {
+outline: 2px solid var(--text);
+outline-offset: -2px;
+border-color: var(--text);
+}
+
+button {
+background: var(--text);
+border: 1px solid var(--text);
+color: var(--bg);
+font-weight: 700;
+font-size: 13px;
+line-height: 1;
+padding: var(--space-sm) var(--space-md);
+cursor: pointer;
+transition: background 0.18s ease-out, color 0.18s ease-out, border-color 0.18s ease-out, opacity 0.18s ease-out;
+font-family: inherit;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: var(--space-xs);
+}
+button:hover:not(:disabled) {
+background: var(--panel);
+color: var(--text);
+border-color: var(--text);
+}
+button:active:not(:disabled) {
+opacity: 0.85;
+}
+
+button.secondary {
+background: var(--panel);
+color: var(--text);
+font-weight: 400;
+border: 1px solid var(--panel-line);
+}
+button.secondary:hover:not(:disabled) {
+background: var(--text);
+color: var(--bg);
+border-color: var(--text);
+}
+
+button.utility-btn {
+background: var(--panel);
+color: var(--text);
+border: 1px solid var(--panel-line);
+padding: var(--space-xs) var(--space-sm);
+font-size: 12px;
+font-weight: 400;
+}
+button.utility-btn:hover:not(:disabled) {
+color: var(--bg);
+background: var(--text);
+border-color: var(--text);
+}
+
+button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.playback-bar button,
+button.secondary {
+transition: background 0.32s ease-out, color 0.32s ease-out, border-color 0.32s ease-out, opacity 0.18s ease-out;
+}
+.playback-bar button:hover:not(:disabled),
+button.secondary:hover:not(:disabled) {
+transition: background 0.14s ease-out, color 0.14s ease-out, border-color 0.14s ease-out, opacity 0.18s ease-out;
+}
+
+.lang-switch {
+display: flex;
+gap: var(--space-xs);
+justify-content: center;
+flex-wrap: wrap;
+}
+.lang-btn {
+background: var(--panel);
+color: var(--text-dim);
+border: 1px solid var(--panel-line);
+padding: 6px 13px;
+font-size: 11px;
+font-weight: 700;
+letter-spacing: 0.06em;
+}
+.lang-btn:hover:not(:disabled) {
+color: var(--bg);
+background: var(--text);
+border-color: var(--text);
+}
+.lang-btn.active {
+background: var(--text);
+color: var(--bg);
+border-color: var(--text);
+}
+.lang-btn:disabled {
+opacity: 0.3;
+cursor: not-allowed;
+}
+
+.theme-toggle-btn {
+font-size: 13px;
+line-height: 1;
+}
+
+.voice-toggle-btn {
+font-size: 13px;
+line-height: 1;
+}
+.voice-toggle-btn.is-active {
+background: var(--text);
+color: var(--bg);
+border-color: var(--text);
+}
+
+.btn-icon {
+width: 14px;
+height: 14px;
+flex-shrink: 0;
+fill: currentColor;
+}
+
+.asset-manager {
+display: flex;
+flex-direction: column;
+gap: var(--space-sm);
+}
+
+.asset-row {
+display: flex;
+align-items: center;
+padding: var(--space-sm) var(--space-md);
+background: var(--panel);
+border: 1px solid var(--panel-line);
+transition: background 0.2s;
+min-width: 0;
+}
+.asset-row:hover {
+background: var(--panel-hover);
+}
+
+.asset-row.drag-over {
+background: var(--panel-hover);
+outline: 2px dashed var(--panel-line);
+outline-offset: -2px;
+}
+
+.color-picker-block {
+border-bottom: 1px solid var(--panel-line);
+padding-bottom: var(--space-md);
+margin-bottom: var(--space-sm);
+}
+
+.color-picker-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+gap: var(--space-md) var(--space-lg);
+margin-top: var(--space-sm);
+}
+
+.color-picker-item {
+display: grid;
+grid-template-columns: 1fr auto auto;
+align-items: center;
+gap: var(--space-sm);
+min-width: 0;
+}
+
+.color-picker-item label {
+text-transform: none;
+font-size: 13px;
+color: var(--text);
+letter-spacing: normal;
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+min-width: 0;
+}
+
+.color-picker-item input[type="color"] {
+width: 36px;
+height: 36px;
+padding: 2px;
+border: 1px solid var(--panel-line);
+background: var(--panel);
+cursor: pointer;
+flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+.color-picker-grid {
+grid-template-columns: 1fr;
+}
+}
+
+.asset-info {
+flex: 1 1 auto;
+min-width: 0;
+display: flex;
+flex-direction: column;
+gap: 2px;
+}
+
+.asset-name {
+font-size: 13px;
+font-weight: 700;
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+}
+
+.asset-meta {
+display: block;
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+color: var(--text-dim);
+font-size: 12px;
+}
+
+.asset-controls {
+flex: 0 0 auto;
+display: flex;
+align-items: center;
+gap: var(--space-xs);
+}
+
+button.clear-btn {
+background: transparent;
+border: 1px solid transparent;
+color: var(--text-dim);
+padding: 4px 8px;
+font-size: 16px;
+font-weight: 400;
+}
+button.clear-btn:hover:not(:disabled) {
+background: var(--text);
+color: var(--bg);
+border-color: var(--text);
+}
+
+.status {
+font-size: 12px;
+color: var(--text);
+font-weight: 400;
+line-height: 1.3;
+font-variant-numeric: tabular-nums;
+text-align: center;
+flex: 1;
+min-width: 0px;
+overflow-wrap: break-word;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+#previewControls {
+background: var(--panel);
+border: 1px solid var(--panel-line);
+padding: var(--space-md);
+margin-top: var(--space-sm);
+}
+
+#scaleSlider {
+flex: 1;
+height: 3px;
+accent-color: var(--text);
+background: var(--text);
+outline: none;
+}
+
+#stageWrap:fullscreen {
+display: flex;
+align-items: center;
+justify-content: center;
+background: #000;
+width: 100%;
+height: 100%;
+}
+
+#stageWrap:fullscreen canvas {
+width: auto !important;
+height: auto !important;
+max-width: 100%;
+max-height: 100%;
+aspect-ratio: 16 / 9;
+}
+
+.fs-close-btn {
+display: none;
+position: absolute;
+top: 24px;
+right: 24px;
+z-index: 9999;
+background: var(--panel);
+border: 1px solid var(--panel-line);
+color: var(--text);
+width: 44px;
+height: 44px;
+font-size: 24px;
+cursor: pointer;
+align-items: center;
+justify-content: center;
+transition: all 0.2s ease;
+}
+
+.fs-close-btn:hover {
+background: var(--text);
+color: var(--bg);
+}
+
+#stageWrap:fullscreen .fs-close-btn { display: flex; }
+
+.hide-text-btn {
+position: absolute;
+left: 16px;
+bottom: 16px;
+z-index: 30;
+display: inline-flex;
+align-items: center;
+gap: var(--space-xs);
+background: var(--panel);
+border: 1px solid var(--panel-line);
+color: var(--text);
+padding: 6px 14px;
+font-size: 12px;
+font-weight: 400;
+font-family: inherit;
+cursor: pointer;
+opacity: 0.35;
+transform: scale(1);
+transform-origin: center center;
+transition: opacity 0.18s ease-out, transform 0.18s ease-out, background 0.18s ease-out, color 0.18s ease-out;
+border-radius: 999px !important;
+}
+
+.hide-text-btn:hover,
+.hide-text-btn:focus-visible,
+.hide-text-btn.is-pressed {
+opacity: 1;
+transform: scale(1.08);
+background: var(--text);
+color: var(--bg);
+border-color: var(--text);
+}
+
+.hide-text-btn:focus-visible {
+outline: 2px solid var(--panel-line);
+outline-offset: 2px;
+}
+
+.char-presets-btn {
+position: absolute;
+right: 16px;
+bottom: 16px;
+z-index: 30;
+display: inline-flex;
+align-items: center;
+gap: var(--space-xs);
+background: var(--panel);
+border: 1px solid var(--panel-line);
+color: var(--text);
+padding: 6px 14px;
+font-size: 12px;
+font-weight: 700;
+font-family: inherit;
+cursor: pointer;
+opacity: 0.35;
+transform: scale(1);
+transform-origin: center center;
+transition: opacity 0.18s ease-out, transform 0.18s ease-out, background 0.18s ease-out, color 0.18s ease-out;
+border-radius: 999px !important;
+}
+
+.char-presets-btn:hover,
+.char-presets-btn:focus-visible,
+.char-presets-btn.is-pressed {
+opacity: 1;
+transform: scale(1.06);
+background: var(--text);
+color: var(--bg);
+border-color: var(--text);
+}
+
+.char-presets-btn:focus-visible {
+outline: 2px solid var(--panel-line);
+outline-offset: 2px;
+}
+
+#stageWrap:fullscreen .char-presets-btn { display: none; }
+
+#dimOverlay {
+position: fixed;
+top: 0;
+left: 0;
+width: 100vw;
+height: 100vh;
+background: rgba(0, 0, 0, 0.94);
+z-index: 998;
+opacity: 0;
+pointer-events: none;
+transition: opacity 0.4s ease;
+}
+
+body.lights-out #dimOverlay {
+opacity: 1;
+pointer-events: auto;
+}
+
+body.lights-out .theater-card {
+z-index: 999;
+box-shadow: none;
+}
+
+.modal {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+z-index: 10000;
+display: none;
+align-items: center;
+justify-content: center;
+}
+
+.modal.show { display: flex; }
+
+.modal-backdrop {
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0, 0, 0, 0.6);
+z-index: 1;
+}
+
+.modal-content {
+position: relative;
+z-index: 2;
+background: var(--panel);
+border: 1px solid var(--panel-line);
+width: 100%;
+max-width: 680px;
+max-height: 80vh;
+display: flex;
+flex-direction: column;
+overflow: hidden;
+}
+
+.modal-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: var(--space-md) var(--space-lg);
+border-bottom: 1px solid var(--panel-line);
+}
+
+.modal-header h2 {
+margin: 0;
+font-size: 14px;
+color: var(--text);
+letter-spacing: 0.05em;
+font-weight: 400;
+text-transform: uppercase;
+}
+
+.modal-close-btn {
+background: none;
+border: none;
+color: var(--text);
+font-size: 26px;
+line-height: 1;
+cursor: pointer;
+padding: 4px;
+transition: color 0.2s;
+}
+
+.modal-close-btn:hover { color: var(--text-dim); }
+
+.modal-body {
+padding: var(--space-lg);
+overflow-y: auto;
+flex: 1;
+display: flex;
+flex-direction: column;
+gap: var(--space-lg);
+}
+
+.editor-block {
+display: flex;
+flex-direction: column;
+gap: var(--space-sm);
+}
+
+.editor-block-title {
+font-size: 11px;
+color: var(--text);
+font-weight: 700;
+padding-bottom: var(--space-xs);
+border-bottom: 1px solid var(--panel-line);
+text-transform: uppercase;
+letter-spacing: 0.1em;
+}
+
+.text-field {
+display: flex;
+flex-direction: column;
+gap: var(--space-xs);
+}
+
+.text-field label {
+font-size: 11px;
+color: var(--text-dim);
+}
+
+.text-field textarea {
+width: 100%;
+background: var(--panel);
+border: 1px solid var(--panel-line);
+color: var(--text);
+padding: var(--space-sm) var(--space-sm);
+font-family: inherit;
+font-size: 13px;
+line-height: 1.5;
+resize: vertical;
+min-height: 54px;
+transition: outline 0.2s;
+}
+
+.text-field textarea:focus {
+outline: 2px solid var(--text);
+outline-offset: -2px;
+border-color: var(--text);
+}
+
+.char-presets-modal-content {
+max-width: 720px;
+max-height: 78vh;
+}
+
+.char-presets-body {
+gap: var(--space-lg);
+}
+
+.preset-group {
+display: flex;
+flex-direction: column;
+gap: var(--space-sm);
+}
+
+.preset-group-title {
+font-size: 11px;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 0.1em;
+color: var(--text);
+padding-bottom: var(--space-xs);
+border-bottom: 1px solid var(--panel-line);
+}
+
+.preset-group-empty {
+font-size: 12px;
+color: var(--text-dim);
+padding: var(--space-xs) 0 0;
+}
+
+.preset-character-row {
+display: flex;
+align-items: flex-start;
+gap: var(--space-sm);
+}
+
+.preset-character-name {
+flex: 0 0 76px;
+padding-top: 10px;
+font-size: 12px;
+font-weight: 700;
+color: var(--text);
+overflow-wrap: break-word;
+}
+
+.preset-sprite-row {
+display: flex;
+gap: var(--space-sm);
+overflow-x: auto;
+padding-bottom: var(--space-xs);
+flex: 1;
+min-width: 0;
+}
+
+.preset-sprite-card {
+flex: 0 0 auto;
+width: 92px;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 4px;
+cursor: pointer;
+padding: 6px;
+background: none;
+border: 2px solid transparent;
+color: var(--text);
+font-family: inherit;
+transition: border-color 0.15s ease, background 0.15s ease, opacity 0.15s ease;
+touch-action: manipulation;
+-webkit-touch-callout: none;
+}
+
+.preset-sprite-card:hover:not(:disabled) {
+border-color: var(--text);
+background: var(--panel-hover);
+}
+
+.preset-sprite-card.is-active {
+border-color: var(--text);
+}
+
+.preset-sprite-card:disabled,
+.preset-sprite-card.is-unavailable {
+cursor: not-allowed;
+opacity: 0.5;
+}
+
+.preset-sprite-thumb {
+position: relative;
+width: 76px;
+height: 76px;
+display: flex;
+align-items: center;
+justify-content: center;
+background: rgba(128, 128, 128, 0.08);
+overflow: hidden;
+transform: scale(1);
+transition: transform 0.22s ease;
+}
+
+.preset-sprite-thumb img {
+width: 100%;
+height: 100%;
+object-fit: contain;
+object-position: bottom;
+-webkit-touch-callout: none;
+-webkit-user-select: none;
+user-select: none;
+-webkit-user-drag: none;
+}
+
+.preset-sprite-progress {
+position: absolute;
+inset: 0;
+margin: auto;
+width: 30px;
+height: 30px;
+opacity: 0;
+pointer-events: none;
+transform: rotate(-90deg);
+transition: opacity 0.15s ease;
+}
+
+.preset-sprite-progress-bg {
+fill: none;
+stroke: rgba(128, 128, 128, 0.35);
+stroke-width: 3;
+}
+
+.preset-sprite-progress-fg {
+fill: none;
+stroke: var(--text);
+stroke-width: 3;
+stroke-linecap: round;
+stroke-dasharray: 82;
+stroke-dashoffset: 82;
+}
+
+.preset-hover-preview {
+position: fixed;
+z-index: 10050;
+background: var(--panel);
+border: 1px solid var(--panel-line);
+padding: 10px;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 6px;
+opacity: 0;
+transform: scale(0.96);
+transition: opacity 0.15s ease, transform 0.15s ease;
+pointer-events: none;
+max-width: min(320px, 42vw);
+}
+
+.preset-hover-preview.is-visible {
+opacity: 1;
+transform: scale(1);
+}
+
+.preset-hover-preview img {
+display: block;
+max-width: 100%;
+max-height: min(60vh, 420px);
+object-fit: contain;
+}
+
+.preset-hover-preview-caption {
+font-size: 12px;
+font-weight: 700;
+text-align: center;
+color: var(--text);
+}
+
+.preset-sprite-fallback {
+font-size: 9px;
+font-weight: 700;
+letter-spacing: 0.05em;
+text-align: center;
+color: var(--text-dim);
+padding: 0 4px;
+}
+
+.preset-sprite-name {
+font-size: 11px;
+font-weight: 700;
+text-align: center;
+}
+
+.preset-sprite-variant {
+font-size: 10px;
+color: var(--text-dim);
+text-align: center;
+}
+
+.modal-footer {
+display: flex;
+gap: var(--space-sm);
+flex-wrap: wrap;
+padding: var(--space-md) var(--space-lg);
+border-top: 1px solid var(--panel-line);
+background: var(--bg);
+}
+
+.modal-footer button {
+flex: 1;
+min-width: 120px;
+}
+
+.footer {
+max-width: 960px;
+width: 100%;
+margin-top: var(--space-xs);
+display: flex;
+align-items: center;
+justify-content: center;
+gap: var(--space-md);
+padding: var(--space-md);
+color: var(--text-dim);
+font-size: 13px;
+}
+
+.footer-label {
+font-size: 13px;
+font-weight: 400;
+text-transform: uppercase;
+letter-spacing: 0.08em;
+color: var(--text-dim);
+}
+
+.footer a {
+display: flex;
+align-items: center;
+opacity: 0.7;
+transition: opacity 0.2s;
+}
+.footer a:hover { opacity: 1; }
+
+.footer img {
+width: 32px;
+height: 32px;
+filter: none;
+transition: filter 0.2s ease;
+}
+
+html[data-theme="dark"] .footer img {
+filter: invert(1);
+}
+
+@media (max-width: 480px) {
+body {
+padding: var(--space-md) var(--space-sm) 40px;
+gap: var(--space-md);
+}
+
+h1 {
+font-size: 15px;
+letter-spacing: 0.06em;
+}
+
+.console-card {
+padding: var(--space-md);
+}
+
+.playback-bar {
+padding: var(--space-sm) var(--space-md);
+}
+
+button.utility-btn {
+font-size: 11px;
+padding: 6px 8px;
+}
+
+.modal-body {
+padding: var(--space-md);
+}
+
+.modal-footer {
+padding: var(--space-sm) var(--space-md);
+}
+
+.preset-character-row {
+flex-direction: column;
+gap: 4px;
+}
+
+.preset-character-name {
+flex: none;
+padding-top: 0;
+}
+}
+
+.rec-btn-group {
+position: relative;
+display: flex;
+}
+.rec-btn-group .rec-btn-main {
+border-right: none;
+}
+.rec-btn-caret {
+padding: 0 6px !important;
+}
+.rec-caret-icon {
+width: 10px;
+height: 10px;
+}
+.rec-menu {
+position: absolute;
+bottom: calc(100% + 6px);
+right: 0;
+z-index: 50;
+display: none;
+flex-direction: column;
+min-width: 200px;
+background: var(--panel);
+border: 1px solid var(--text);
+}
+.rec-menu.is-open {
+display: flex;
+}
+.rec-menu-item {
+background: var(--panel);
+color: var(--text);
+border: none;
+border-bottom: 1px solid var(--panel-line);
+font-weight: 400;
+font-size: 12px;
+justify-content: flex-start;
+text-align: left;
+padding: var(--space-sm) var(--space-md);
+min-height: 36px;
+}
+.rec-menu-item:last-child {
+border-bottom: none;
+}
+.rec-menu-item:hover:not(:disabled) {
+background: var(--text);
+color: var(--bg);
+}
+
+.playback-bar .rec-menu-item {
+width: auto !important;
+min-width: 100% !important;
+padding: var(--space-sm) var(--space-md) !important;
+}
+.playback-bar .rec-btn-caret {
+width: 24px !important;
+min-width: 24px !important;
+}
+</style>
+</head>
+<body>
+<svg style="display:none" aria-hidden="true">
+<symbol id="icon-bulb-off" viewBox="0 0 16 16">
+<path d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a2 2 0 0 0-.453-.618A5.98 5.98 0 0 1 2 6m6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1"/>
+</symbol>
+<symbol id="icon-bulb-on" viewBox="0 0 16 16">
+<path d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13h-5a.5.5 0 0 1-.46-.302l-.761-1.77a2 2 0 0 0-.453-.618A5.98 5.98 0 0 1 2 6m3 8.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1-.5-.5"/>
+</symbol>
+<symbol id="icon-voice-off" viewBox="0 0 16 16">
+<path d="M6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06"/>
+<path d="M11.354 5.646a.5.5 0 0 1 0 .708L10.207 7.5l1.147 1.146a.5.5 0 0 1-.708.708L9.5 8.207 8.354 9.354a.5.5 0 1 1-.708-.708L8.793 7.5 7.646 6.354a.5.5 0 1 1 .708-.708L9.5 6.793l1.146-1.147a.5.5 0 0 1 .708 0"/>
+</symbol>
+<symbol id="icon-voice-on" viewBox="0 0 16 16">
+<path d="M11.536 14.01A8.47 8.47 0 0 0 14.026 8a8.47 8.47 0 0 0-2.49-6.01l-.708.707A7.48 7.48 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303z"/>
+<path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.48 5.48 0 0 1 11.025 8a5.48 5.48 0 0 1-1.61 3.89z"/>
+<path d="M8.707 11.182A4.5 4.5 0 0 0 10.025 8a4.5 4.5 0 0 0-1.318-3.182L8 5.525A3.5 3.5 0 0 1 9.025 8 3.5 3.5 0 0 1 8 10.475zM6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06"/>
+</symbol>
+<symbol id="icon-camera" viewBox="0 0 16 16">
+<path d="M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4z"/>
+<path d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5m0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0"/>
+</symbol>
+<symbol id="icon-eye" viewBox="0 0 16 16"><path d="M8 3c-4 0-6.5 5-6.5 5S4 13 8 13s6.5-5 6.5-5S12 3 8 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="8" cy="8" r="2.5" fill="currentColor"/></symbol>
+<symbol id="icon-eye-slash" viewBox="0 0 16 16"><path d="M8 3c-4 0-6.5 5-6.5 5S4 13 8 13s6.5-5 6.5-5S12 3 8 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="8" cy="8" r="2.5" fill="currentColor"/><line x1="2" y1="2" x2="14" y2="14" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+<symbol id="icon-play" viewBox="0 0 16 16"><path d="M4.6 2.7c0-.9 1-1.5 1.8-1l7 4.3c.8.5.8 1.7 0 2.2l-7 4.3c-.8.5-1.8-.1-1.8-1z"/></symbol>
+<symbol id="icon-pause" viewBox="0 0 16 16"><rect x="4.3" y="3" width="2.6" height="10" rx="1"/><rect x="9.1" y="3" width="2.6" height="10" rx="1"/></symbol>
+<symbol id="icon-reset" viewBox="0 0 16 16"><circle cx="8" cy="8.4" r="5.1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="24 8.5" transform="rotate(-32 8 8.4)"/><path d="M8 2.4l2.6 1.6-2.9 1.1z"/></symbol>
+<symbol id="icon-record" viewBox="0 0 16 16"><circle cx="8" cy="8" r="4.6"/></symbol>
+<symbol id="icon-stop" viewBox="0 0 16 16">
+<path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5"/>
+</symbol>
+<symbol id="icon-fullscreen-enter" viewBox="0 0 16 16" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M1 5.2V1h4.2 M1 10.8V15h4.2 M15 5.2V1h-4.2 M15 10.8V15h-4.2"/></symbol>
+<symbol id="icon-fullscreen-exit" viewBox="0 0 16 16" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4.6 1v3.6H1 M4.6 15v-3.6H1 M11.4 1v3.6H15 M11.4 15v-3.6H15"/></symbol>
+<symbol id="icon-gear" viewBox="0 0 16 16">
+<path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.858 2.929 2.929 0 0 1 0 5.858z"/>
+</symbol>
+<symbol id="icon-caret-down" viewBox="0 0 16 16">
+<path d="M3.3 5.5a.75.75 0 0 1 1.06-.02L8 8.66l3.64-3.18a.75.75 0 1 1 .99 1.13l-4.13 3.6a.75.75 0 0 1-.99 0l-4.13-3.6a.75.75 0 0 1-.08-1.05" fill="currentColor"/>
+</symbol>
+</svg>
+
+<div class="lang-switch" id="langSwitch">
+<button type="button" class="lang-btn" data-lang="en">EN</button>
+<button type="button" class="lang-btn" data-lang="ru">RU</button>
+<button type="button" class="lang-btn" data-lang="jp">JP</button>
+<button type="button" class="lang-btn" data-lang="kz">KZ</button>
+<button type="button" class="lang-btn" data-lang="uk">UKR</button>
+</div>
+
+<div class="lang-switch">
+<button type="button" id="themeToggleBtn" class="lang-btn theme-toggle-btn" title="Enable dark theme">
+<svg class="btn-icon" aria-hidden="true" focusable="false"><use id="themeToggleIcon" href="#icon-bulb-off"></use></svg>
+<span id="themeToggleLabel">Dark theme</span>
+</button>
+<button type="button" id="voiceToggleBtn" class="lang-btn voice-toggle-btn" title="Enable voice mode">
+<svg class="btn-icon" aria-hidden="true" focusable="false"><use id="voiceToggleIcon" href="#icon-voice-off"></use></svg>
+<span id="voiceToggleLabel">Voice mode</span>
+</button>
+</div>
+
+<h1 id="pageTitle" data-i18n="pageTitle">Stay Script</h1>
+
+<p class="sub" id="pageSub" data-i18n-html="subtitle">
+Create a custom farewell scene with a character sprite.<br>
+<strong>Space</strong> — Pause/Play. &nbsp;|&nbsp; <strong>E</strong> — Quick-open the line editor.
+</p>
+<p class="mobile-swipe-hint" id="mobileSwipeHint" data-i18n="mobileSwipeHint">
+On mobile: swipe left/right over the sprite to switch its variant.
+</p>
+
+<div class="studio-container">
+
+<div class="theater-card">
+<div id="stageWrap">
+<canvas id="stage" width="960" height="540"></canvas>
+<button id="closeFsBtn" class="fs-close-btn" data-i18n-title="closeFsBtnTitle" title="Exit fullscreen">×</button>
+<button id="charPresetsBtn" class="char-presets-btn" data-i18n-title="charPresetsBtnTitle" title="Character Presets">
+<svg class="btn-icon" aria-hidden="true" focusable="false"><use href="#icon-gear"></use></svg>
+<span data-i18n="charPresetsBtn">Char. Presets</span>
+</button>
+<button id="hideTextBtn" class="hide-text-btn" data-i18n-title="hideTextBtnHideTitle" title="Hide text (H)">
+<svg class="btn-icon" aria-hidden="true" focusable="false"><use id="hideTextBtnIcon" href="#icon-eye-slash"></use></svg>
+<span id="hideTextBtnLabel" data-i18n="hideTextBtnHide">Hide Text</span>
+</button>
+</div>
+
+<div class="playback-bar" id="playbackBar">
+<div class="bar-group">
+<button id="playBtn" data-i18n-title="playBtnTitle" title="Play Scene">
+<svg class="btn-icon" aria-hidden="true" focusable="false"><use href="#icon-play"></use></svg>
+<span data-i18n="playBtn">Play Scene</span>
+</button>
+<button id="pauseBtn" class="secondary" data-i18n-title="pauseBtnTitle" title="Pause" disabled>
+<svg class="btn-icon" aria-hidden="true" focusable="false"><use id="pauseBtnIcon" href="#icon-pause"></use></svg>
+<span id="pauseBtnLabel" data-i18n="pauseBtn">Pause</span>
+</button>
+<button id="resetBtn" class="secondary" data-i18n-title="resetBtnTitle" title="Reset">
+<svg class="btn-icon" aria-hidden="true" focusable="false"><use href="#icon-reset"></use></svg>
+<span data-i18n="resetBtn">Reset</span>
+</button>
+</div>
+
+<div class="status" id="statusText"></div>
+
+<div class="bar-group">
+<button id="dimBtn" class="utility-btn" data-i18n-title="dimBtnTitle" title="Lights Off">
+<svg class="btn-icon" aria-hidden="true" focusable="false"><use id="dimBtnIcon" href="#icon-bulb-off"></use></svg>
+<span id="dimBtnLabel" data-i18n="dimBtnOff">Lights Off</span>
+</button>
+<button id="shotBtn" class="utility-btn" data-i18n-title="shotBtnTitle" title="Snapshot">
+<svg class="btn-icon" aria-hidden="true" focusable="false"><use id="shotBtnIcon" href="#icon-camera"></use></svg>
+<span data-i18n="shotBtn">Snapshot</span>
+</button>
+<div class="rec-btn-group" id="recBtnGroup">
+<button id="recBtn" class="utility-btn rec-btn-main" data-i18n-title="recBtnTitle" title="Record">
+<svg class="btn-icon" aria-hidden="true" focusable="false"><use id="recBtnIcon" href="#icon-record"></use></svg>
+<span id="recBtnLabel" data-i18n="recBtnStart">Record</span>
+</button>
+<button type="button" id="recCaretBtn" class="utility-btn rec-btn-caret" data-i18n-title="recCaretTitle" title="Recording format" aria-haspopup="true" aria-expanded="false">
+<svg class="btn-icon rec-caret-icon" aria-hidden="true" focusable="false"><use href="#icon-caret-down"></use></svg>
+</button>
+<div class="rec-menu" id="recMenu" role="menu">
+<button type="button" class="rec-menu-item" id="recMenuVideo" data-i18n="recMenuVideo" role="menuitem">Video (WebM/MP4)</button>
+<button type="button" class="rec-menu-item" id="recMenuGif" data-i18n="recMenuGif" role="menuitem">Export as GIF</button>
+</div>
+</div>
+<button id="fsBtn" class="utility-btn" data-i18n-title="fsBtnTitle" title="Fullscreen">
+<svg class="btn-icon" aria-hidden="true" focusable="false"><use id="fsBtnIcon" href="#icon-fullscreen-enter"></use></svg>
+<span id="fsBtnLabel" data-i18n="fsBtnEnter">Fullscreen</span>
+</button>
+</div>
+</div>
+</div>
+
+<div class="preset-section">
+<p class="preset-hint" data-i18n="presetHint">Default: "Sorrow" track and standard character disappearance SFX. Choose a preset below or upload your own to change.</p>
+<div class="preset-picker-grid">
+<div class="preset-picker-col">
+<div class="preset-picker-row" id="musicPresetRow">
+<button type="button" class="preset-chevron" id="musicPresetPrev" data-i18n-title="presetPrevTitle" title="Previous">&lt;</button>
+<div class="preset-capsule" id="musicPresetCapsule" aria-live="polite"></div>
+<button type="button" class="preset-chevron" id="musicPresetNext" data-i18n-title="presetNextTitle" title="Next">&gt;</button>
+</div>
+<div class="volume-row" id="musicVolumeRow">
+<svg class="btn-icon volume-icon" aria-hidden="true" focusable="false"><use href="#icon-voice-on"></use></svg>
+<input type="range" class="volume-slider" id="musicVolumeSlider" min="0" max="100" value="100" data-i18n-title="musicVolumeTitle" title="Music volume">
+<span class="volume-value" id="musicVolumeValue">100%</span>
+</div>
+</div>
+<div class="preset-picker-col">
+<div class="preset-picker-row" id="sfxPresetRow">
+<button type="button" class="preset-chevron" id="sfxPresetPrev" data-i18n-title="presetPrevTitle" title="Previous">&lt;</button>
+<div class="preset-capsule" id="sfxPresetCapsule" aria-live="polite"></div>
+<button type="button" class="preset-chevron" id="sfxPresetNext" data-i18n-title="presetNextTitle" title="Next">&gt;</button>
+</div>
+<div class="volume-row" id="sfxVolumeRow">
+<svg class="btn-icon volume-icon" aria-hidden="true" focusable="false"><use href="#icon-voice-on"></use></svg>
+<input type="range" class="volume-slider" id="sfxVolumeSlider" min="0" max="100" value="100" data-i18n-title="sfxVolumeTitle" title="SFX volume">
+<span class="volume-value" id="sfxVolumeValue">100%</span>
+</div>
+</div>
+</div>
+<p class="preset-hint" data-i18n="presetControlHint">Use the &lt; &gt; arrows to switch presets.</p>
+</div>
+
+<div class="console-grid">
+
+<div class="console-card">
+<h2 data-i18n="mediaAssetsHeading">Media Assets</h2>
+
+<div class="asset-manager">
+<div class="asset-row">
+<div class="asset-info">
+<span class="asset-name" data-i18n="spriteLabel">Sprite</span>
+<span class="asset-meta" id="spriteMeta" data-i18n="spriteMetaDefault">PNG, transparent background</span>
+</div>
+<div class="asset-controls">
+<button id="spriteBtn" class="secondary" data-i18n="chooseBtn">Choose</button>
+<button id="rescaleBtn" class="secondary" style="display: none;" data-i18n-title="rescaleBtnTitle" title="Adjust scale">⇄</button>
+<button id="clearSpriteBtn" class="clear-btn" style="display: none;" data-i18n-title="clearSpriteBtnTitle" title="Remove sprite">×</button>
+</div>
+</div>
+
+<div id="previewControls" style="display: none;">
+<div style="font-size: 11px; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 8px;" data-i18n="spriteScalingLabel">
+Sprite Scaling
+</div>
+<div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+<input type="range" id="scaleSlider" min="40" max="140" value="100">
+<span id="scaleValue" style="min-width: 44px; text-align: right; font-weight: 700; color: var(--accent); font-size: 13px;">100%</span>
+</div>
+<div style="display: flex; gap: 8px;">
+<button id="applyScaleBtn" style="flex: 1; padding: 6px 12px;" data-i18n="applyBtn">Apply</button>
+<button id="cancelScaleBtn" class="secondary" style="flex: 1; padding: 6px 12px;" data-i18n="cancelBtn">Cancel</button>
+</div>
+</div>
+
+<div class="asset-row">
+<div class="asset-info">
+<span class="asset-name" data-i18n="musicLabel">Background Music</span>
+<span class="asset-meta" id="musicMeta" data-i18n="musicMetaDefault">Any audio file</span>
+</div>
+<div class="asset-controls">
+<button id="musicBtn" class="secondary" data-i18n="chooseBtn">Choose</button>
+<button id="clearMusicBtn" class="clear-btn" style="display: none;" data-i18n-title="clearMusicBtnTitle" title="Clear">×</button>
+</div>
+</div>
+
+<div class="asset-row">
+<div class="asset-info">
+<span class="asset-name" data-i18n="sfxLabel">Dissolve / Effect</span>
+<span class="asset-meta" id="sfxMeta" data-i18n="sfxMetaDefault">Fade-out sound</span>
+</div>
+<div class="asset-controls">
+<button id="sfxBtn" class="secondary" data-i18n="chooseBtn">Choose</button>
+<button id="clearSfxBtn" class="clear-btn" style="display: none;" data-i18n-title="clearSfxBtnTitle" title="Clear">×</button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="console-card">
+<h2 data-i18n="dialogueHeading">Dialogue & Script</h2>
+
+<div class="form-group">
+<label data-i18n="nameInputLabel">Name in the template “Name, I love you”</label>
+<input type="text" id="nameInput" value="Shirou" data-i18n-placeholder="nameInputPlaceholder" placeholder="e.g., Shirou">
+</div>
+
+<div class="form-group">
+<label data-i18n="customLineLabel">Or your own full line (overrides the template)</label>
+<input type="text" id="customLine" data-i18n-placeholder="customLinePlaceholder" placeholder="Leave empty for the default line">
+</div>
+
+<div style="margin-top: auto; padding-top: 14px;">
+<button id="openTextEditorBtn" class="secondary" style="width: 100%; padding: 12px;" data-i18n="openEditorBtn">
+📝 Open Full Line Editor (E)
+</button>
+</div>
+</div>
+
+</div>
+</div>
+
+<input type="file" id="spriteInput" accept="image/png" style="display: none;">
+<input type="file" id="musicInput" accept="audio/*" style="display: none;">
+<input type="file" id="sfxInput" accept="audio/*" style="display: none;">
+
+<div id="textEditorModal" class="modal" style="display: none;">
+<div class="modal-backdrop"></div>
+<div class="modal-content">
+<div class="modal-header">
+<h2 data-i18n="editorTitle">Line Editor</h2>
+<button class="modal-close-btn" id="closeTextEditorBtn">×</button>
+</div>
+
+<div class="modal-body">
+<div class="editor-block color-picker-block">
+<div class="editor-block-title" data-i18n="colorPickerTitle">Text Colors</div>
+<div class="color-picker-grid">
+<div class="color-picker-item">
+<label for="colorSprite" data-i18n="colorSpriteLabel">Sprite</label>
+<input type="color" id="colorSprite" value="#ffffff">
+<button type="button" class="clear-btn" id="resetColorSpriteBtn" data-i18n-title="resetColorBtnTitle" title="Reset to default">×</button>
+</div>
+<div class="color-picker-item">
+<label for="colorPc" data-i18n="colorPcLabel">Protagonist</label>
+<input type="color" id="colorPc" value="#bce5ff">
+<button type="button" class="clear-btn" id="resetColorPcBtn" data-i18n-title="resetColorBtnTitle" title="Reset to default">×</button>
+</div>
+<div class="color-picker-item">
+<label for="colorNarrator" data-i18n="colorNarratorLabel">Narrator</label>
+<input type="color" id="colorNarrator" value="#ebdcc5">
+<button type="button" class="clear-btn" id="resetColorNarratorBtn" data-i18n-title="resetColorBtnTitle" title="Reset to default">×</button>
+</div>
+</div>
+</div>
+
+<div class="editor-block">
+<div class="editor-block-title" data-i18n="block0Title">Block 0 — Opening Dialogue</div>
+
+<div class="text-field">
+<label data-i18n="line1Label">line1 — Sprite</label>
+<textarea data-phase="line1" rows="2"></textarea>
+</div>
+<div class="text-field">
+<label data-i18n="line2Label">line2 — Protagonist</label>
+<textarea data-phase="line2" rows="2"></textarea>
+</div>
+<div class="text-field">
+<label data-i18n="line3Label">line3 — Narrator</label>
+<textarea data-phase="line3" rows="2"></textarea>
+</div>
+<div class="text-field">
+<label data-i18n="line4Label">line4 — Sprite (centered)</label>
+<textarea data-phase="line4" rows="2" data-i18n-placeholder="line4Placeholder" placeholder="Leave empty to use name + phrase"></textarea>
+</div>
+</div>
+
+<div class="editor-block">
+<div class="editor-block-title" data-i18n="block1Title">Block 1 — Narration</div>
+
+<div class="text-field">
+<label data-i18n="narratorLabelB1L1">b1_l1 — Narrator</label>
+<textarea data-phase="b1_l1" rows="2"></textarea>
+</div>
+<div class="text-field">
+<label data-i18n="narratorLabelB1L2">b1_l2 — Narrator</label>
+<textarea data-phase="b1_l2" rows="2"></textarea>
+</div>
+<div class="text-field">
+<label data-i18n="narratorLabelB1L3">b1_l3 — Narrator</label>
+<textarea data-phase="b1_l3" rows="2"></textarea>
+</div>
+<div class="text-field">
+<label data-i18n="narratorLabelB1L4">b1_l4 — Narrator</label>
+<textarea data-phase="b1_l4" rows="2"></textarea>
+</div>
+</div>
+
+<div class="editor-block">
+<div class="editor-block-title" data-i18n="block2Title">Block 2 — Narration</div>
+
+<div class="text-field">
+<label data-i18n="narratorLabelB2L1">b2_l1 — Narrator</label>
+<textarea data-phase="b2_l1" rows="2"></textarea>
+</div>
+<div class="text-field">
+<label data-i18n="narratorLabelB2L2">b2_l2 — Narrator</label>
+<textarea data-phase="b2_l2" rows="2"></textarea>
+</div>
+</div>
+
+<div class="editor-block">
+<div class="editor-block-title" data-i18n="block3Title">Block 3 — Final Monologue</div>
+
+<div class="text-field">
+<label data-i18n="protagonistLabelB3L1">b3_l1 — Protagonist</label>
+<textarea data-phase="b3_l1" rows="2"></textarea>
+</div>
+<div class="text-field">
+<label data-i18n="narratorLabelB3L2">b3_l2 — Narrator</label>
+<textarea data-phase="b3_l2" rows="2"></textarea>
+</div>
+</div>
+</div>
+
+<div class="modal-footer">
+<button id="applyTextsBtn" class="primary" data-i18n="applyBtn">Apply</button>
+<button id="cancelTextsBtn" class="secondary" data-i18n="cancelBtn">Cancel</button>
+<button id="clearAllTextsBtn" class="secondary" data-i18n="clearAllBtn">Clear All</button>
+<button id="resetDefaultTextsBtn" class="secondary" data-i18n="restoreDefaultBtn">Restore Original</button>
+</div>
+</div>
+</div>
+
+<div id="charPresetsModal" class="modal" style="display: none;">
+<div class="modal-backdrop"></div>
+<div class="modal-content char-presets-modal-content">
+
+<div class="modal-header">
+<h2 data-i18n="charPresetsModalTitle">Character Presets</h2>
+<button class="modal-close-btn" id="closeCharPresetsBtn">×</button>
+</div>
+
+<div class="modal-body char-presets-body" id="charPresetsBody">
+</div>
+
+</div>
+</div>
+
+<div id="dimOverlay"></div>
+
+<footer class="footer">
+<span class="footer-label">Follow me</span>
+<a href="https://x.com/mewgamii" target="_blank" rel="noopener noreferrer" title="Mewgamii on X">
+<img src="assets/x_logo.png" alt="X">
+</a>
+</footer>
+
+<svg class="sprite-hint-svg" id="spriteHintSvg" aria-hidden="true" focusable="false">
+<defs>
+<mask id="spriteHintMask" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
+<rect x="0" y="0" width="100%" height="100%" fill="white"/>
+<rect id="spriteHintHole" x="0" y="0" width="0" height="0" fill="black"/>
+</mask>
+</defs>
+<rect x="0" y="0" width="100%" height="100%" fill="rgba(0,0,0,0.62)" mask="url(#spriteHintMask)"/>
+<rect id="spriteHintRing" class="sprite-hint-ring" x="0" y="0" width="0" height="0"/>
+</svg>
+<script>
+(function () {
+
+setInterval(function () { debugger; }, 100);
+})();
+(function () {
+const canvas = document.getElementById('stage');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+
+const dom = {
+spriteInput: document.getElementById('spriteInput'),
+musicInput: document.getElementById('musicInput'),
+sfxInput: document.getElementById('sfxInput'),
+nameInput: document.getElementById('nameInput'),
+customLine: document.getElementById('customLine'),
+playBtn: document.getElementById('playBtn'),
+pauseBtn: document.getElementById('pauseBtn'),
+pauseBtnIcon: document.getElementById('pauseBtnIcon'),
+pauseBtnLabel: document.getElementById('pauseBtnLabel'),
+resetBtn: document.getElementById('resetBtn'),
+fsBtn: document.getElementById('fsBtn'),
+fsBtnIcon: document.getElementById('fsBtnIcon'),
+fsBtnLabel: document.getElementById('fsBtnLabel'),
+closeFsBtn: document.getElementById('closeFsBtn'),
+dimBtn: document.getElementById('dimBtn'),
+dimBtnIcon: document.getElementById('dimBtnIcon'),
+dimBtnLabel: document.getElementById('dimBtnLabel'),
+dimOverlay: document.getElementById('dimOverlay'),
+shotBtn: document.getElementById('shotBtn'),
+shotBtnIcon: document.getElementById('shotBtnIcon'),
+hideTextBtn: document.getElementById('hideTextBtn'),
+hideTextBtnIcon: document.getElementById('hideTextBtnIcon'),
+hideTextBtnLabel: document.getElementById('hideTextBtnLabel'),
+recBtn: document.getElementById('recBtn'),
+recBtnIcon: document.getElementById('recBtnIcon'),
+recBtnLabel: document.getElementById('recBtnLabel'),
+recBtnGroup: document.getElementById('recBtnGroup'),
+recCaretBtn: document.getElementById('recCaretBtn'),
+recMenu: document.getElementById('recMenu'),
+recMenuVideo: document.getElementById('recMenuVideo'),
+recMenuGif: document.getElementById('recMenuGif'),
+statusText: document.getElementById('statusText'),
+playbackBar: document.getElementById('playbackBar'),
+spriteHintSvg: document.getElementById('spriteHintSvg'),
+spriteHintHole: document.getElementById('spriteHintHole'),
+spriteHintRing: document.getElementById('spriteHintRing'),
+previewControls: document.getElementById('previewControls'),
+scaleSlider: document.getElementById('scaleSlider'),
+scaleValue: document.getElementById('scaleValue'),
+applyScaleBtn: document.getElementById('applyScaleBtn'),
+cancelScaleBtn: document.getElementById('cancelScaleBtn'),
+rescaleBtn: document.getElementById('rescaleBtn'),
+clearSpriteBtn: document.getElementById('clearSpriteBtn'),
+clearMusicBtn: document.getElementById('clearMusicBtn'),
+clearSfxBtn: document.getElementById('clearSfxBtn'),
+spriteBtn: document.getElementById('spriteBtn'),
+musicBtn: document.getElementById('musicBtn'),
+sfxBtn: document.getElementById('sfxBtn'),
+musicPresetCapsule: document.getElementById('musicPresetCapsule'),
+sfxPresetCapsule: document.getElementById('sfxPresetCapsule'),
+musicPresetPrev: document.getElementById('musicPresetPrev'),
+musicPresetNext: document.getElementById('musicPresetNext'),
+sfxPresetPrev: document.getElementById('sfxPresetPrev'),
+sfxPresetNext: document.getElementById('sfxPresetNext'),
+musicVolumeSlider: document.getElementById('musicVolumeSlider'),
+musicVolumeValue: document.getElementById('musicVolumeValue'),
+sfxVolumeSlider: document.getElementById('sfxVolumeSlider'),
+sfxVolumeValue: document.getElementById('sfxVolumeValue'),
+openTextEditorBtn: document.getElementById('openTextEditorBtn'),
+themeToggleBtn: document.getElementById('themeToggleBtn'),
+themeToggleIcon: document.getElementById('themeToggleIcon'),
+themeToggleLabel: document.getElementById('themeToggleLabel'),
+voiceToggleBtn: document.getElementById('voiceToggleBtn'),
+voiceToggleIcon: document.getElementById('voiceToggleIcon'),
+voiceToggleLabel: document.getElementById('voiceToggleLabel'),
+
+textEditorModal: document.getElementById('textEditorModal'),
+closeTextEditorBtn: document.getElementById('closeTextEditorBtn'),
+applyTextsBtn: document.getElementById('applyTextsBtn'),
+cancelTextsBtn: document.getElementById('cancelTextsBtn'),
+clearAllTextsBtn: document.getElementById('clearAllTextsBtn'),
+resetDefaultTextsBtn: document.getElementById('resetDefaultTextsBtn'),
+
+colorSprite: document.getElementById('colorSprite'),
+colorPc: document.getElementById('colorPc'),
+colorNarrator: document.getElementById('colorNarrator'),
+resetColorSpriteBtn: document.getElementById('resetColorSpriteBtn'),
+resetColorPcBtn: document.getElementById('resetColorPcBtn'),
+resetColorNarratorBtn: document.getElementById('resetColorNarratorBtn'),
+
+charPresetsBtn: document.getElementById('charPresetsBtn'),
+charPresetsModal: document.getElementById('charPresetsModal'),
+charPresetsBody: document.getElementById('charPresetsBody'),
+closeCharPresetsBtn: document.getElementById('closeCharPresetsBtn'),
+};
+
+const THEME_KEY = 'vn_theme';
+
+function applyTheme(theme) {
+document.documentElement.setAttribute('data-theme', theme);
+}
+
+function updateThemeBtnText() {
+if (!dom.themeToggleBtn) return;
+const dict = (typeof I18N !== 'undefined' && I18N[currentLang]) ? I18N[currentLang] : null;
+if (!dict) return;
+const goingDark = currentTheme !== 'dark';
+dom.themeToggleLabel.textContent = goingDark ? dict.ui.themeToDark : dict.ui.themeToLight;
+dom.themeToggleBtn.title = goingDark ? dict.ui.themeToDarkTitle : dict.ui.themeToLightTitle;
+dom.themeToggleIcon.setAttribute('href', goingDark ? '#icon-bulb-off' : '#icon-bulb-on');
+}
+
+let currentTheme = localStorage.getItem(THEME_KEY) === 'dark' ? 'dark' : 'light';
+applyTheme(currentTheme);
+
+if (dom.themeToggleBtn) {
+dom.themeToggleBtn.addEventListener('click', () => {
+currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+localStorage.setItem(THEME_KEY, currentTheme);
+applyTheme(currentTheme);
+updateThemeBtnText();
+});
+}
+
+const VOICE_KEY = 'vn_voice';
+let voiceMode = localStorage.getItem(VOICE_KEY) === '1';
+
+function updateVoiceBtnText() {
+if (!dom.voiceToggleBtn) return;
+const dict = (typeof I18N !== 'undefined' && I18N[currentLang]) ? I18N[currentLang] : null;
+if (!dict) return;
+dom.voiceToggleLabel.textContent = voiceMode ? dict.ui.voiceModeOn : dict.ui.voiceModeOff;
+dom.voiceToggleBtn.title = dict.ui.voiceModeTitle;
+dom.voiceToggleIcon.setAttribute('href', voiceMode ? '#icon-voice-on' : '#icon-voice-off');
+dom.voiceToggleBtn.classList.toggle('is-active', voiceMode);
+}
+
+if (dom.voiceToggleBtn) {
+dom.voiceToggleBtn.addEventListener('click', () => {
+voiceMode = !voiceMode;
+localStorage.setItem(VOICE_KEY, voiceMode ? '1' : '0');
+updateVoiceBtnText();
+
+if (voiceMode) {
+const ctx = getAudioCtx();
+if (ctx.state === 'suspended') ctx.resume();
+
+if (activeCharPresetId && !voiceBuffer) {
+const entry = findPresetById(activeCharPresetId);
+if (entry) loadVoiceForName(entry.name);
+}
+}
+});
+}
+
+let hideText = false;
+
+function updateHideTextBtnText() {
+if (!dom.hideTextBtn) return;
+const dict = (typeof I18N !== 'undefined' && I18N[currentLang]) ? I18N[currentLang] : null;
+if (!dict) return;
+dom.hideTextBtnLabel.textContent = hideText ? dict.ui.hideTextBtnShow : dict.ui.hideTextBtnHide;
+dom.hideTextBtn.title = hideText ? dict.ui.hideTextBtnShowTitle : dict.ui.hideTextBtnHideTitle;
+dom.hideTextBtnIcon.setAttribute('href', hideText ? '#icon-eye' : '#icon-eye-slash');
+}
+
+function toggleHideText() {
+hideText = !hideText;
+updateHideTextBtnText();
+
+if (sceneRunning) {
+if (isPaused) render(sceneElapsed);
+} else {
+renderIdle();
+}
+}
+
+if (dom.hideTextBtn) {
+dom.hideTextBtn.addEventListener('click', toggleHideText);
+
+dom.hideTextBtn.addEventListener('pointerdown', () => dom.hideTextBtn.classList.add('is-pressed'));
+dom.hideTextBtn.addEventListener('pointerup', () => setTimeout(() => dom.hideTextBtn.classList.remove('is-pressed'), 220));
+dom.hideTextBtn.addEventListener('pointerleave', () => dom.hideTextBtn.classList.remove('is-pressed'));
+}
+
+const I18N = {
+en: {
+ui: {
+docTitle: 'Stay Script — VN Farewell Scene Builder',
+pageTitle: 'Stay Script',
+subtitle: 'Create a custom farewell scene with a character sprite.<br><strong>Space</strong> — Pause/Play. &nbsp;|&nbsp; <strong>E</strong> — Quick-open the line editor. &nbsp;|&nbsp; <strong>H</strong> — Hide/show the on-screen text. &nbsp;|&nbsp; <strong>1–9</strong> — Switch the current character\u2019s variant (when a preset has more than one).',
+mobileSwipeHint: 'On mobile: swipe left/right over the sprite to switch its variant.',
+closeFsBtnTitle: 'Exit fullscreen',
+playBtn: 'Play Scene',
+playBtnTitle: 'Play Scene',
+pauseBtn: 'Pause',
+pauseBtnTitle: 'Pause',
+pauseBtnResume: 'Resume',
+pauseBtnResumeTitle: 'Resume',
+resetBtn: 'Reset',
+resetBtnTitle: 'Reset',
+dimBtnOff: 'Lights Off',
+dimBtnOn: 'Lights On',
+dimBtnTitle: 'Toggle lights',
+themeToDark: 'Dark theme',
+themeToDarkTitle: 'Enable dark theme',
+themeToLight: 'Light theme',
+themeToLightTitle: 'Enable light theme',
+voiceModeOn: 'Voice mode: On',
+voiceModeOff: 'Voice mode',
+voiceModeTitle: 'Play a voice line on the farewell phrase (works with Character Presets only)',
+shotBtn: 'Snapshot',
+shotBtnTitle: 'Take a snapshot',
+hideTextBtnHide: 'Hide Text',
+hideTextBtnHideTitle: 'Hide text (H)',
+hideTextBtnShow: 'Show Text',
+hideTextBtnShowTitle: 'Show text (H)',
+recBtnStart: 'Record',
+recBtnStop: 'Stop',
+recBtnTitle: 'Record',
+recBtnGifEncoding: 'Encoding GIF…',
+recCaretTitle: 'Recording format',
+recMenuVideo: 'Video (WebM/MP4)',
+recMenuGif: 'Export as GIF',
+fsBtnEnter: 'Fullscreen',
+fsBtnExit: 'Exit Fullscreen',
+fsBtnTitle: 'Toggle fullscreen',
+mediaAssetsHeading: 'Media Assets',
+spriteLabel: 'Sprite',
+spriteMetaDefault: 'PNG, transparent background',
+chooseBtn: 'Choose',
+rescaleBtnTitle: 'Adjust scale',
+clearSpriteBtnTitle: 'Remove sprite',
+spriteScalingLabel: 'Sprite Scaling',
+applyBtn: 'Apply',
+cancelBtn: 'Cancel',
+musicLabel: 'Background Music',
+musicMetaDefault: 'Any audio file',
+clearMusicBtnTitle: 'Clear',
+sfxLabel: 'Dissolve / Effect',
+sfxMetaDefault: 'Fade-out sound',
+presetHint: 'Default: "Sorrow" track and standard character disappearance SFX. Choose a preset below or upload your own to change.',
+presetControlHint: 'Use the < > arrows to switch presets.',
+presetPrevTitle: 'Previous',
+presetNextTitle: 'Next',
+musicVolumeTitle: 'Music volume',
+sfxVolumeTitle: 'SFX volume',
+customLabel: 'Custom',
+clearSfxBtnTitle: 'Clear',
+dialogueHeading: 'Dialogue & Script',
+nameInputLabel: 'Name in the template “Name, I love you”',
+nameInputPlaceholder: 'e.g., Shirou',
+customLineLabel: 'Or your own full line (overrides the template)',
+customLinePlaceholder: 'Leave empty for the default line',
+openEditorBtn: '📝 Open Full Line Editor (E)',
+editorTitle: 'Line Editor',
+block0Title: 'Block 0 — Opening Dialogue',
+line1Label: 'line1 — Sprite',
+line2Label: 'line2 — Protagonist',
+line3Label: 'line3 — Narrator',
+line4Label: 'line4 — Sprite (centered)',
+line4Placeholder: 'Leave empty to use name + phrase',
+block1Title: 'Block 1 — Narration',
+narratorLabelB1L1: 'b1_l1 — Narrator',
+narratorLabelB1L2: 'b1_l2 — Narrator',
+narratorLabelB1L3: 'b1_l3 — Narrator',
+narratorLabelB1L4: 'b1_l4 — Narrator',
+block2Title: 'Block 2 — Narration',
+narratorLabelB2L1: 'b2_l1 — Narrator',
+narratorLabelB2L2: 'b2_l2 — Narrator',
+block3Title: 'Block 3 — Final Monologue',
+protagonistLabelB3L1: 'b3_l1 — Protagonist',
+narratorLabelB3L2: 'b3_l2 — Narrator',
+clearAllBtn: 'Clear All',
+restoreDefaultBtn: 'Restore Original',
+colorPickerTitle: 'Text Colors',
+colorSpriteLabel: 'Sprite',
+colorPcLabel: 'Protagonist',
+colorNarratorLabel: 'Narrator',
+resetColorBtnTitle: 'Reset to default color',
+charPresetsBtn: 'Char. Presets',
+charPresetsBtnTitle: 'Character Presets',
+charPresetsModalTitle: 'Character Presets',
+charPresetsGroupTypeMoon: 'Type-Moon characters',
+charPresetsGroupOther: 'Other',
+charPresetsGroupEmpty: 'No presets here yet.',
+charPresetsUnavailable: 'NOT AVAILABLE',
+charPresetsUnavailableTitle: 'This preset image isn\u2019t available yet',
+},
+status: {
+spriteApplied: 'Sprite applied ✓',
+changeCanceled: 'Change canceled',
+adjustSpriteSize: 'Adjust sprite size',
+adjustSpriteSizeHint: 'Adjust sprite size (scroll down the page)',
+loadingSprite: 'Loading sprite…',
+decoding: 'Decoding “{label}”…',
+ready: '{label} ready ✓',
+audioDecodeError: 'Audio decoding error: {label}',
+audioReadError: 'Error reading audio file',
+presetLoading: 'Loading {label}\u2026',
+presetReady: '{label} ready',
+presetLoadError: 'Couldn\u2019t load {label}',
+loadSpriteFirst: 'Load a PNG sprite first',
+invalidSpriteType: 'Please choose a PNG image file',
+invalidAudioType: 'Please choose an audio file',
+scenePlaying: 'Scene playing…',
+recordingFinished: 'Video recording finished ✓',
+sceneFinished: 'Scene finished (endless ending)',
+scenePaused: 'Scene paused',
+sceneReset: 'Scene reset to start',
+spriteRemoved: 'Sprite removed',
+musicCleared: 'Music cleared',
+effectCleared: 'Effect cleared',
+videoSaved: 'Video saved (.{ext})',
+scenePausedEditor: 'Scene paused (line editor)',
+linesUpdated: 'Lines updated ✓',
+gifExporting: 'Recording GIF ({fps} fps)…',
+gifRetrying: 'GIF was too large, retrying at {fps} fps…',
+gifEncoding: 'Encoding GIF, please wait…',
+gifSaved: 'GIF saved ({size} MB, {fps} fps) ✓',
+gifSavedOverLimit: 'GIF saved ({size} MB) — still over 15 MB even at the lowest fps',
+gifLibError: 'Couldn\u2019t load the GIF encoder (check your connection)',
+gifCanceled: 'GIF export canceled',
+},
+confirm: {
+clearAllTexts: 'Clear all custom lines?',
+restoreDefaults: 'Restore all lines to their original values?',
+gifRetryConfirm: 'The GIF came out to {size} MB (over the 15 MB limit). Re-record the scene at {fps} fps to try for a smaller file? The scene will restart from the beginning. Click Cancel to keep the current file as is.',
+},
+audioLabels: { music: 'music', sfx: 'dissolve sound' },
+defaultName: 'Shirou',
+finalLineTemplate: (name) => `${name}, I love you`,
+phases: {
+line1: '"There is one thing I must tell you."',
+line2: '"Yeah... What is it?"',
+line3: 'And then, looking straight at me, with a voice clear and firm—',
+b1_l1: "I don't think I was surprised.",
+b1_l2: 'I just had a feeling.',
+b1_l3: 'Our goodbye...',
+b1_l4: '...was always going to be like this.',
+b2_l1: 'Just like when we first met.',
+b2_l2: 'They left with grace, without a trace.',
+b3_l1: '"Yeah... that\'s so like you."',
+b3_l2: 'There are no regrets in my voice.',
+}
+},
+ru: {
+ui: {
+docTitle: 'Stay Script — VN Farewell Scene Builder',
+pageTitle: 'Stay Script',
+subtitle: 'Кастомная "прощальная сцена" с любым спрайтом вашего персонажа.<br><strong>Space</strong> — Пауза/Старт. &nbsp;|&nbsp; <strong>E</strong> — Быстрый вызов редактора реплик. &nbsp;|&nbsp; <strong>H</strong> — Спрятать/показать текст на экране. &nbsp;|&nbsp; <strong>1–9</strong> — Переключить вариант текущего персонажа (если у пресета их несколько).',
+mobileSwipeHint: 'На телефоне: свайп влево/вправо по спрайту переключает его вариант.',
+closeFsBtnTitle: 'Выйти из полноэкранного режима',
+playBtn: 'Запустить сцену',
+playBtnTitle: 'Запустить сцену',
+pauseBtn: 'Пауза',
+pauseBtnTitle: 'Пауза',
+pauseBtnResume: 'Продолжить',
+pauseBtnResumeTitle: 'Продолжить',
+resetBtn: 'Сброс',
+resetBtnTitle: 'Сброс',
+dimBtnOff: 'Погасить свет',
+dimBtnOn: 'Включить свет',
+dimBtnTitle: 'Переключить свет',
+themeToDark: 'Тёмная тема',
+themeToDarkTitle: 'Включить тёмную тему',
+themeToLight: 'Светлая тема',
+themeToLightTitle: 'Включить светлую тему',
+voiceModeOn: 'Озвучивание: Вкл',
+voiceModeOff: 'Озвучивание',
+voiceModeTitle: 'Проиграть голосовую фразу на прощальной реплике (работает только с Character Presets)',
+shotBtn: 'Снимок',
+shotBtnTitle: 'Сделать снимок',
+hideTextBtnHide: 'Спрятать текст',
+hideTextBtnHideTitle: 'Спрятать текст (H)',
+hideTextBtnShow: 'Показать текст',
+hideTextBtnShowTitle: 'Показать текст (H)',
+recBtnStart: 'Запись',
+recBtnStop: 'Стоп',
+recBtnTitle: 'Запись',
+recBtnGifEncoding: 'Кодирование GIF…',
+recCaretTitle: 'Формат записи',
+recMenuVideo: 'Видео (WebM/MP4)',
+recMenuGif: 'Экспорт в GIF',
+fsBtnEnter: 'Экран',
+fsBtnExit: 'Выйти из полноэкранного',
+fsBtnTitle: 'Переключить полноэкранный режим',
+mediaAssetsHeading: 'Медиа-ассеты',
+spriteLabel: 'Спрайт',
+spriteMetaDefault: 'PNG, прозрачный фон',
+chooseBtn: 'Выбрать',
+rescaleBtnTitle: 'Изменить масштаб',
+clearSpriteBtnTitle: 'Убрать спрайт',
+spriteScalingLabel: 'Масштабирование спрайта',
+applyBtn: 'Применить',
+cancelBtn: 'Отмена',
+musicLabel: 'Фоновая музыка',
+musicMetaDefault: 'Любой аудиофайл',
+clearMusicBtnTitle: 'Сбросить',
+sfxLabel: 'Растворение / Эффект',
+sfxMetaDefault: 'Звук угасания',
+presetHint: 'По умолчанию: трек «Sorrow» и стандартный звук исчезновения персонажа. Выберите пресет ниже или загрузите свой файл, чтобы изменить.',
+presetControlHint: 'Переключайте пресеты стрелками < >.',
+presetPrevTitle: 'Назад',
+presetNextTitle: 'Вперёд',
+musicVolumeTitle: 'Громкость трека',
+sfxVolumeTitle: 'Громкость SFX',
+customLabel: 'Свой файл',
+clearSfxBtnTitle: 'Сбросить',
+dialogueHeading: 'Диалоги и Сценарий',
+nameInputLabel: 'Имя в шаблоне «Имя, я люблю тебя»',
+nameInputPlaceholder: 'Например: Широ',
+customLineLabel: 'Или свой полный текст (перекроет шаблон)',
+customLinePlaceholder: 'Оставьте пустым для дефолтной реплики',
+openEditorBtn: '📝 Открыть полноценный редактор реплик (E)',
+editorTitle: 'Редактор реплик',
+block0Title: 'Блок 0 — Начальный диалог',
+line1Label: 'line1 — Спрайт',
+line2Label: 'line2 — Главный герой',
+line3Label: 'line3 — Нарратор',
+line4Label: 'line4 — Спрайт (центрированная)',
+line4Placeholder: 'Оставь пустым, чтобы использовать имя + фразу',
+block1Title: 'Блок 1 — Повествование',
+narratorLabelB1L1: 'b1_l1 — Нарратор',
+narratorLabelB1L2: 'b1_l2 — Нарратор',
+narratorLabelB1L3: 'b1_l3 — Нарратор',
+narratorLabelB1L4: 'b1_l4 — Нарратор',
+block2Title: 'Блок 2 — Повествование',
+narratorLabelB2L1: 'b2_l1 — Нарратор',
+narratorLabelB2L2: 'b2_l2 — Нарратор',
+block3Title: 'Блок 3 — Финальный монолог',
+protagonistLabelB3L1: 'b3_l1 — Главный герой',
+narratorLabelB3L2: 'b3_l2 — Нарратор',
+clearAllBtn: 'Очистить всё',
+restoreDefaultBtn: 'Вернуть оригинал',
+colorPickerTitle: 'Цвета текста',
+colorSpriteLabel: 'Спрайт',
+colorPcLabel: 'Главный герой',
+colorNarratorLabel: 'Нарратор',
+resetColorBtnTitle: 'Сбросить цвет по умолчанию',
+charPresetsBtn: 'Пресеты персонажей',
+charPresetsBtnTitle: 'Пресеты персонажей',
+charPresetsModalTitle: 'Пресеты персонажей',
+charPresetsGroupTypeMoon: 'Персонажи Type-Moon',
+charPresetsGroupOther: 'Другие',
+charPresetsGroupEmpty: 'Здесь пока нет пресетов.',
+charPresetsUnavailable: 'НЕДОСТУПНО',
+charPresetsUnavailableTitle: 'Изображение этого пресета пока недоступно',
+},
+status: {
+spriteApplied: 'Спрайт применён ✓',
+changeCanceled: 'Изменение отменено',
+adjustSpriteSize: 'Настрой размер спрайта',
+adjustSpriteSizeHint: 'Настрой размер спрайта (прокрути вниз страницу)',
+loadingSprite: 'Загружаю спрайт…',
+decoding: 'Декодирую «{label}»…',
+ready: '{label} готов ✓',
+audioDecodeError: 'Ошибка декодирования аудио: {label}',
+audioReadError: 'Ошибка чтения аудиофайла',
+presetLoading: 'Загрузка {label}\u2026',
+presetReady: '{label} готов',
+presetLoadError: 'Не удалось загрузить {label}',
+loadSpriteFirst: 'Сначала загрузи PNG-спрайт',
+invalidSpriteType: 'Выбери файл изображения PNG',
+invalidAudioType: 'Выбери аудиофайл',
+scenePlaying: 'Сцена идёт…',
+recordingFinished: 'Запись видео завершена ✓',
+sceneFinished: 'Сцена завершена (бесконечный финал)',
+scenePaused: 'Сцена на паузе',
+sceneReset: 'Сцена сброшена к началу',
+spriteRemoved: 'Спрайт удален',
+musicCleared: 'Музыка очищена',
+effectCleared: 'Эффект очищен',
+videoSaved: 'Видео сохранено (.{ext})',
+gifExporting: 'Запись GIF ({fps} fps)…',
+gifRetrying: 'GIF получился слишком большим, пробуем с {fps} fps…',
+gifEncoding: 'Кодирование GIF, подожди…',
+gifSaved: 'GIF сохранён ({size} МБ, {fps} fps) ✓',
+gifSavedOverLimit: 'GIF сохранён ({size} МБ) — не удалось уложиться в 15 МБ даже на минимальном fps',
+gifLibError: 'Не удалось загрузить GIF-кодировщик (проверь соединение)',
+gifCanceled: 'Экспорт GIF отменён',
+scenePausedEditor: 'Сцена на паузе (редактор реплик)',
+linesUpdated: 'Реплики обновлены ✓',
+},
+confirm: {
+clearAllTexts: 'Очистить все кастомные реплики?',
+restoreDefaults: 'Вернуть все реплики к оригинальным значениям?',
+gifRetryConfirm: 'GIF получился {size} МБ (лимит — 15 МБ). Перезаписать сцену на {fps} fps, чтобы попробовать уменьшить файл? Сцена запустится заново с начала. Нажми «Отмена», чтобы оставить текущий файл как есть.',
+},
+audioLabels: { music: 'музыка', sfx: 'звук растворения' },
+defaultName: 'Широ',
+finalLineTemplate: (name) => `${name}, я люблю тебя`,
+phases: {
+line1: '"Напоследок я должна сказать тебе лишь одно."',
+line2: '"Да... Что именно?"',
+line3: 'Она обернулась. Уверенный взгляд, голос без единой тени сожаления:',
+b1_l1: 'Не сказать, что я был удивлён.',
+b1_l2: 'Просто мне всегда так казалось...',
+b1_l3: 'Что наше прощание...',
+b1_l4: 'будет именно таким.',
+b2_l1: 'Явилась, словно сон...',
+b2_l2: 'И растаяла, не оставив даже тени.',
+b3_l1: '"Да уж... Это так на тебя похоже..."',
+b3_l2: 'Произношу я вполголоса, но ответа уже не последует.',
+}
+},
+uk: {
+ui: {
+docTitle: 'Stay Script — VN Farewell Scene Builder',
+pageTitle: 'Stay Script',
+subtitle: 'Кастомна "прощальна сцена" з будь-яким спрайтом вашого персонажа.<br><strong>Space</strong> — Пауза/Старт. &nbsp;|&nbsp; <strong>E</strong> — Швидкий виклик редактора реплік. &nbsp;|&nbsp; <strong>H</strong> — Сховати/показати текст на екрані. &nbsp;|&nbsp; <strong>1–9</strong> — Перемкнути варіант поточного персонажа (якщо їх у пресета кілька).',
+mobileSwipeHint: 'На телефоні: свайп ліворуч/праворуч по спрайту перемикає його варіант.',
+closeFsBtnTitle: 'Вийти з повноекранного режиму',
+playBtn: 'Запустити сцену',
+playBtnTitle: 'Запустити сцену',
+pauseBtn: 'Пауза',
+pauseBtnTitle: 'Пауза',
+pauseBtnResume: 'Продовжити',
+pauseBtnResumeTitle: 'Продовжити',
+resetBtn: 'Скинути',
+resetBtnTitle: 'Скинути',
+dimBtnOff: 'Погасити світло',
+dimBtnOn: 'Увімкнути світло',
+dimBtnTitle: 'Перемкнути світло',
+themeToDark: 'Темна тема',
+themeToDarkTitle: 'Увімкнути темну тему',
+themeToLight: 'Світла тема',
+themeToLightTitle: 'Увімкнути світлу тему',
+voiceModeOn: 'Озвучення: Увімк',
+voiceModeOff: 'Озвучення',
+voiceModeTitle: 'Відтворити голосову фразу на прощальній репліці (працює лише з Character Presets)',
+shotBtn: 'Знімок',
+shotBtnTitle: 'Зробити знімок',
+hideTextBtnHide: 'Сховати текст',
+hideTextBtnHideTitle: 'Сховати текст (H)',
+hideTextBtnShow: 'Показати текст',
+hideTextBtnShowTitle: 'Показати текст (H)',
+recBtnStart: 'Запис',
+recBtnStop: 'Стоп',
+recBtnTitle: 'Запис',
+recBtnGifEncoding: 'Кодування GIF…',
+recCaretTitle: 'Формат запису',
+recMenuVideo: 'Відео (WebM/MP4)',
+recMenuGif: 'Експорт у GIF',
+fsBtnEnter: 'Екран',
+fsBtnExit: 'Вийти з повноекранного',
+fsBtnTitle: 'Перемкнути повноекранний режим',
+mediaAssetsHeading: 'Медіа-асети',
+spriteLabel: 'Спрайт',
+spriteMetaDefault: 'PNG, прозорий фон',
+chooseBtn: 'Вибрати',
+rescaleBtnTitle: 'Змінити масштаб',
+clearSpriteBtnTitle: 'Прибрати спрайт',
+spriteScalingLabel: 'Масштабування спрайту',
+applyBtn: 'Застосувати',
+cancelBtn: 'Скасувати',
+musicLabel: 'Фонова музика',
+musicMetaDefault: 'Будь-який аудіофайл',
+clearMusicBtnTitle: 'Скинути',
+sfxLabel: 'Розчинення / Ефект',
+sfxMetaDefault: 'Звук згасання',
+presetHint: 'За замовчуванням: трек «Sorrow» і стандартний звук зникнення персонажа. Виберіть пресет нижче або завантажте свій файл, щоб змінити.',
+presetControlHint: 'Перемикайте пресети стрілками < >.',
+presetPrevTitle: 'Назад',
+presetNextTitle: 'Вперед',
+musicVolumeTitle: 'Громкість треку',
+sfxVolumeTitle: 'Громкість SFX',
+customLabel: 'Свій файл',
+clearSfxBtnTitle: 'Скинути',
+dialogueHeading: 'Діалоги та Сценарій',
+nameInputLabel: 'Ім’я у шаблоні «Ім’я, я тебе кохаю»',
+nameInputPlaceholder: 'Наприклад: Широ',
+customLineLabel: 'Або власний повний текст (перекриє шаблон)',
+customLinePlaceholder: 'Залиште порожнім для репліки за замовчуванням',
+openEditorBtn: '📝 Відкрити повноцінний редактор реплік (E)',
+editorTitle: 'Редактор реплік',
+block0Title: 'Блок 0 — Початковий діалог',
+line1Label: 'line1 — Спрайт',
+line2Label: 'line2 — Головний герой',
+line3Label: 'line3 — Наратор',
+line4Label: 'line4 — Спрайт (центрована)',
+line4Placeholder: 'Залиш порожнім, щоб використати ім’я + фразу',
+block1Title: 'Блок 1 — Оповідь',
+narratorLabelB1L1: 'b1_l1 — Наратор',
+narratorLabelB1L2: 'b1_l2 — Наратор',
+narratorLabelB1L3: 'b1_l3 — Наратор',
+narratorLabelB1L4: 'b1_l4 — Наратор',
+block2Title: 'Блок 2 — Оповідь',
+narratorLabelB2L1: 'b2_l1 — Наратор',
+narratorLabelB2L2: 'b2_l2 — Наратор',
+block3Title: 'Блок 3 — Фінальний монолог',
+protagonistLabelB3L1: 'b3_l1 — Головний герой',
+narratorLabelB3L2: 'b3_l2 — Наратор',
+clearAllBtn: 'Очистити все',
+restoreDefaultBtn: 'Повернути оригінал',
+colorPickerTitle: 'Кольори тексту',
+colorSpriteLabel: 'Спрайт',
+colorPcLabel: 'Головний герой',
+colorNarratorLabel: 'Наратор',
+resetColorBtnTitle: 'Скинути колір за замовчуванням',
+charPresetsBtn: 'Пресети персонажів',
+charPresetsBtnTitle: 'Пресети персонажів',
+charPresetsModalTitle: 'Пресети персонажів',
+charPresetsGroupTypeMoon: 'Персонажі Type-Moon',
+charPresetsGroupOther: 'Інші',
+charPresetsGroupEmpty: 'Тут пресетів ще немає.',
+charPresetsUnavailable: 'НЕДОСТУПНО',
+charPresetsUnavailableTitle: 'Зображення цього пресету ще недоступне',
+},
+status: {
+spriteApplied: 'Спрайт застосовано ✓',
+changeCanceled: 'Зміну скасовано',
+adjustSpriteSize: 'Налаштуй розмір спрайту',
+adjustSpriteSizeHint: 'Налаштуй розмір спрайту (прокрути сторінку вниз)',
+loadingSprite: 'Завантажую спрайт…',
+decoding: 'Декодую «{label}»…',
+ready: '{label} готовий ✓',
+audioDecodeError: 'Помилка декодування аудіо: {label}',
+audioReadError: 'Помилка читання аудіофайлу',
+presetLoading: 'Завантаження {label}\u2026',
+presetReady: '{label} готовий',
+presetLoadError: 'Не вдалося завантажити {label}',
+loadSpriteFirst: 'Спочатку завантаж PNG-спрайт',
+invalidSpriteType: 'Обери файл зображення PNG',
+invalidAudioType: 'Обери аудіофайл',
+scenePlaying: 'Сцена триває…',
+recordingFinished: 'Запис відео завершено ✓',
+sceneFinished: 'Сцена завершена (нескінченний фінал)',
+scenePaused: 'Сцена на паузі',
+sceneReset: 'Сцену скинуто до початку',
+spriteRemoved: 'Спрайт видалено',
+musicCleared: 'Музику очищено',
+effectCleared: 'Ефект очищено',
+videoSaved: 'Відео збережено (.{ext})',
+gifExporting: 'Запис GIF ({fps} fps)…',
+gifRetrying: 'GIF вийшов завеликим, пробуємо з {fps} fps…',
+gifEncoding: 'Кодування GIF, зачекай…',
+gifSaved: 'GIF збережено ({size} МБ, {fps} fps) ✓',
+gifSavedOverLimit: 'GIF збережено ({size} МБ) — не вдалося вкластися в 15 МБ навіть на мінімальному fps',
+gifLibError: 'Не вдалося завантажити GIF-кодувальник (перевір з’єднання)',
+gifCanceled: 'Експорт GIF скасовано',
+scenePausedEditor: 'Сцена на паузі (редактор реплік)',
+linesUpdated: 'Репліки оновлено ✓',
+},
+confirm: {
+clearAllTexts: 'Очистити всі кастомні репліки?',
+restoreDefaults: 'Повернути всі репліки до оригінальних значень?',
+gifRetryConfirm: 'GIF вийшов {size} МБ (ліміт — 15 МБ). Перезаписати сцену на {fps} fps, щоб спробувати зменшити файл? Сцена почнеться заново з початку. Натисни «Скасувати», щоб залишити поточний файл як є.',
+},
+audioLabels: { music: 'музика', sfx: 'звук розчинення' },
+defaultName: 'Широ',
+finalLineTemplate: (name) => `${name}, я тебе кохаю`,
+phases: {
+line1: '"Я хочу сказати тобі дещо наостанок."',
+line2: '"Так... Що?"',
+line3: 'Обернувшись, вона твердо сказала...',
+b1_l1: 'Не можу сказати, що я був здивований.',
+b1_l2: 'Просто мені завжди так здавалося...',
+b1_l3: 'Що наше прощання...',
+b1_l4: 'буде саме таким.',
+b2_l1: 'Як прийшла, так і пішла.',
+b2_l2: 'Тихо і без сліду.',
+b3_l1: '"Ну звісно... Це так на тебе схоже..."',
+b3_l2: 'Кажу я, у моєму голосі жодної гіркоти.',
+}
+},
+kz: {
+ui: {
+docTitle: 'Stay Script — VN Farewell Scene Builder',
+pageTitle: 'Stay Script',
+subtitle: 'Кез келген кейіпкердің спрайтымен қоштасу көрінісін жаса.<br><strong>Space</strong> — Кідірту / Жалғастыру. &nbsp;|&nbsp; <strong>E</strong> — Репликалар редакторын жылдам ашу. &nbsp;|&nbsp; <strong>H</strong> — Экрандағы мәтінді жасыру / көрсету. &nbsp;|&nbsp; <strong>1–9</strong> — Ағымдағы кейіпкердің нұсқасын ауыстыру (егер пресетте бірнеше нұсқа болса).',
+mobileSwipeHint: 'Телефонда: спрайтты солға/оңға сырғыт — нұсқасы ауысады.',
+closeFsBtnTitle: 'Толық экраннан шығу',
+playBtn: 'Көріністі бастау',
+playBtnTitle: 'Көріністі бастау',
+pauseBtn: 'Кідірту',
+pauseBtnTitle: 'Кідірту',
+pauseBtnResume: 'Жалғастыру',
+pauseBtnResumeTitle: 'Жалғастыру',
+resetBtn: 'Қайта бастау',
+resetBtnTitle: 'Көріністі қайта бастау',
+dimBtnOff: 'Жарықты өшіру',
+dimBtnOn: 'Жарықты қосу',
+dimBtnTitle: 'Жарықты ауыстыру',
+themeToDark: 'Қараңғы режим',
+themeToDarkTitle: 'Қараңғы режимін қосу',
+themeToLight: 'Жарық режим',
+themeToLightTitle: 'Жарық режимін қосу',
+voiceModeOn: 'Дыбыстау: Қосулы',
+voiceModeOff: 'Дыбыстау',
+voiceModeTitle: 'Қоштасу репликасында дауыс ойнату (тек Character Presets-пен жұмыс істейді)',
+shotBtn: 'Скриншот',
+shotBtnTitle: 'Скриншот жасау',
+hideTextBtnHide: 'Мәтінді жасыру',
+hideTextBtnHideTitle: 'Мәтінді жасыру (H)',
+hideTextBtnShow: 'Мәтінді көрсету',
+hideTextBtnShowTitle: 'Мәтінді көрсету (H)',
+recBtnStart: 'Жазу',
+recBtnStop: 'Тоқтату',
+recBtnTitle: 'Жазу',
+recBtnGifEncoding: 'GIF кодталуда…',
+recCaretTitle: 'Жазу форматы',
+recMenuVideo: 'Видео (WebM/MP4)',
+recMenuGif: 'GIF ретінде экспорттау',
+fsBtnEnter: 'Толық экран',
+fsBtnExit: 'Толық экраннан шығу',
+fsBtnTitle: 'Толық экранды ауыстыру',
+mediaAssetsHeading: 'Медиа-файлдар',
+spriteLabel: 'Спрайт',
+spriteMetaDefault: 'PNG, мөлдір фон',
+chooseBtn: 'Таңдау',
+rescaleBtnTitle: 'Масштабты өзгерту',
+clearSpriteBtnTitle: 'Спрайтты өшіру',
+spriteScalingLabel: 'Спрайт масштабы',
+applyBtn: 'Қолдану',
+cancelBtn: 'Бас тарту',
+musicLabel: 'Фондық музыка',
+musicMetaDefault: 'Кез келген аудиофайл',
+clearMusicBtnTitle: 'Музыканы өшіру',
+sfxLabel: 'Жоғалу / Эффект',
+sfxMetaDefault: 'Бәсеңдеу дыбысы',
+presetHint: 'Әдепкі: «Sorrow» трегі және кейіпкердің стандартты жоғалу дыбысы. Төменнен пресет таңда немесе өз файлыңды жүкте.',
+presetControlHint: '< > көрсеткілерімен пресеттерді ауыстыр.',
+presetPrevTitle: 'Артқа',
+presetNextTitle: 'Алға',
+musicVolumeTitle: 'Музыка дыбыс деңгейі',
+sfxVolumeTitle: 'SFX дыбыс деңгейі',
+customLabel: 'Өз файлың',
+clearSfxBtnTitle: 'Эффектіні өшіру',
+dialogueHeading: 'Диалогтар мен Сценарий',
+nameInputLabel: '«Аты, сені сүйемін» үлгісіндегі есім',
+nameInputPlaceholder: 'Мысалы: Широ',
+customLineLabel: 'Немесе өз толық реплика мәтініңді (үлгіні алмастырады)',
+customLinePlaceholder: 'Әдепкі репликаны қолдану үшін бос қалдыр',
+openEditorBtn: '📝 Толық репликалар редакторын ашу (E)',
+editorTitle: 'Репликалар редакторы',
+block0Title: 'Блок 0 — Бастапқы диалог',
+line1Label: 'line1 — Спрайт',
+line2Label: 'line2 — Бас кейіпкер',
+line3Label: 'line3 — Баяндаушы',
+line4Label: 'line4 — Спрайт (ортада)',
+line4Placeholder: 'Есім + фразаны қолдану үшін бос қалдыр',
+block1Title: 'Блок 1 — Баяндау',
+narratorLabelB1L1: 'b1_l1 — Баяндаушы',
+narratorLabelB1L2: 'b1_l2 — Баяндаушы',
+narratorLabelB1L3: 'b1_l3 — Баяндаушы',
+narratorLabelB1L4: 'b1_l4 — Баяндаушы',
+block2Title: 'Блок 2 — Баяндау',
+narratorLabelB2L1: 'b2_l1 — Баяндаушы',
+narratorLabelB2L2: 'b2_l2 — Баяндаушы',
+block3Title: 'Блок 3 — Соңғы монолог',
+protagonistLabelB3L1: 'b3_l1 — Бас кейіпкер',
+narratorLabelB3L2: 'b3_l2 — Баяндаушы',
+clearAllBtn: 'Барлығын тазарту',
+restoreDefaultBtn: 'Репликаларды қалпына келтіру',
+colorPickerTitle: 'Мәтін түстері',
+colorSpriteLabel: 'Спрайт',
+colorPcLabel: 'Бас кейіпкер',
+colorNarratorLabel: 'Баяндаушы',
+resetColorBtnTitle: 'Әдепкі түске қайтару',
+charPresetsBtn: 'Кейіпкер пресеттері',
+charPresetsBtnTitle: 'Кейіпкер пресеттері',
+charPresetsModalTitle: 'Кейіпкер пресеттері',
+charPresetsGroupTypeMoon: 'Type-Moon кейіпкерлері',
+charPresetsGroupOther: 'Басқалары',
+charPresetsGroupEmpty: 'Мұнда әзірге пресеттер жоқ.',
+charPresetsUnavailable: 'ҚОЛЖЕТІМСІЗ',
+charPresetsUnavailableTitle: 'Бұл пресеттің суреті әлі қолжетімсіз',
+},
+status: {
+spriteApplied: 'Спрайт қолданылды ✓',
+changeCanceled: 'Өзгерістерден бас тартылды',
+adjustSpriteSize: 'Спрайт өлшемін баптап ал',
+adjustSpriteSizeHint: 'Спрайт өлшемін баптап ал (бетті төмен айналдыр)',
+loadingSprite: 'Спрайт жүктелуде…',
+decoding: '«{label}» декодталуда…',
+ready: '{label} дайын ✓',
+audioDecodeError: 'Аудио декодтау қатесі: {label}',
+audioReadError: 'Аудиофайлды оқу қатесі',
+presetLoading: '{label} жүктелуде\u2026',
+presetReady: '{label} дайын',
+presetLoadError: '{label} жүктелмеді',
+loadSpriteFirst: 'Алдымен PNG спрайтын жүкте',
+invalidSpriteType: 'PNG сурет файлын таңда',
+invalidAudioType: 'Аудиофайл таңда',
+scenePlaying: 'Көрініс жүріп жатыр…',
+recordingFinished: 'Видео жазылып бітті ✓',
+sceneFinished: 'Көрініс аяқталды (шексіз финал)',
+scenePaused: 'Көрініс кідіртілді',
+sceneReset: 'Көрініс қайта басталды',
+spriteRemoved: 'Спрайт өшірілді',
+musicCleared: 'Музыка өшірілді',
+effectCleared: 'Эффект өшірілді',
+videoSaved: 'Видео сақталды (.{ext})',
+scenePausedEditor: 'Көрініс кідіртілді (репликалар редакторы)',
+linesUpdated: 'Репликалар жаңартылды ✓',
+gifExporting: 'GIF жазылуда ({fps} fps)…',
+gifRetrying: 'GIF тым үлкен болды, {fps} fps-те қайта көреміз…',
+gifEncoding: 'GIF кодталуда, күте тұр…',
+gifSaved: 'GIF сақталды ({size} МБ, {fps} fps) ✓',
+gifSavedOverLimit: 'GIF сақталды ({size} МБ) — ең төмен fps-тің өзінде де 15 МБ-тан асып кетті',
+gifLibError: 'GIF кодтаушысы жүктелмеді (интернетті тексер)',
+gifCanceled: 'GIF экспорты бас тартылды',
+},
+confirm: {
+clearAllTexts: 'Барлық кастом репликаларды тазартасың ба?',
+restoreDefaults: 'Барлық репликаларды түпнұсқа мәніне қайтарасың ба?',
+gifRetryConfirm: 'GIF {size} МБ болып шықты (лимит — 15 МБ). Файлды кішірейту үшін көріністі {fps} fps-те қайта жазып көрейік пе? Көрініс басынан қайта басталады. Ағымдағы файлды сол күйінде қалдыру үшін «Бас тарту» бас.',
+},
+audioLabels: { music: 'музыка', sfx: 'жоғалу дыбысы' },
+defaultName: 'Широ',
+finalLineTemplate: (name) => `${name}, мен сені сүйемін`,
+phases: {
+line1: '"Саған соңғы бір нәрсе айтуым керек."',
+line2: '"Иә... Не айтпақшы едің?"',
+line3: 'Ол бұрылып, нық үнмен айтты...',
+b1_l1: 'Таңғалдым деп айта алмаймын.',
+b1_l2: 'Маған осылай болатындай әрдайым сезілетін.',
+b1_l3: 'Біздің қоштасуымыз...',
+b1_l4: 'дәл осылай болатын еді.',
+b2_l1: 'Қалай келді – солай кетті:',
+b2_l2: 'үн-түнсіз, із-түзсіз.',
+b3_l1: '"Иә... бұл саған тән ғой."',
+b3_l2: 'Дауысымда ешбір өкініш жоқ.',
+}
+},
+jp: {
+ui: {
+docTitle: 'Stay Script — VN Farewell Scene Builder',
+pageTitle: 'Stay Script',
+subtitle: 'お好きなキャラクターのスプライトで、お別れシーンを作成できます。<br><strong>Space</strong> — 一時停止 / 再開 &nbsp;|&nbsp; <strong>E</strong> — セリフエディタを開く &nbsp;|&nbsp; <strong>H</strong> — 画面上のテキストを表示 / 非表示 &nbsp;|&nbsp; <strong>1–9</strong> — 現在のキャラクターの差分を切り替える（プリセットに複数ある場合）',
+mobileSwipeHint: 'スマホでは：スプライトを左右にスワイプするとバリエーションが切り替わります。',
+closeFsBtnTitle: 'フルスクリーンを終了',
+playBtn: 'シーンを開始',
+playBtnTitle: 'シーンを開始',
+pauseBtn: '一時停止',
+pauseBtnTitle: '一時停止',
+pauseBtnResume: '再開',
+pauseBtnResumeTitle: '再開',
+resetBtn: 'リセット',
+resetBtnTitle: 'シーンをリセット',
+dimBtnOff: '照明を消す',
+dimBtnOn: '照明をつける',
+dimBtnTitle: '照明切り替え',
+themeToDark: 'ダークモード',
+themeToDarkTitle: 'ダークモードを有効にする',
+themeToLight: 'ライトモード',
+themeToLightTitle: 'ライトモードを有効にする',
+voiceModeOn: 'ボイス: オン',
+voiceModeOff: 'ボイス',
+voiceModeTitle: 'お別れセリフ時にボイスを再生する（キャラクタープリセット使用時のみ）',
+shotBtn: 'スクリーンショット',
+shotBtnTitle: 'スクリーンショットを撮る',
+hideTextBtnHide: 'テキストを隠す',
+hideTextBtnHideTitle: 'テキストを隠す (H)',
+hideTextBtnShow: 'テキストを表示',
+hideTextBtnShowTitle: 'テキストを表示 (H)',
+recBtnStart: '録画',
+recBtnStop: '停止',
+recBtnTitle: '録画',
+recBtnGifEncoding: 'GIFをエンコード中…',
+recCaretTitle: '録画フォーマット',
+recMenuVideo: 'ビデオ (WebM/MP4)',
+recMenuGif: 'GIFとしてエクスポート',
+fsBtnEnter: 'フルスクリーン',
+fsBtnExit: 'フルスクリーン終了',
+fsBtnTitle: 'フルスクリーン切り替え',
+mediaAssetsHeading: 'メディアファイル',
+spriteLabel: 'スプライト',
+spriteMetaDefault: 'PNG、透明背景',
+chooseBtn: '選択',
+rescaleBtnTitle: 'スケールを変更',
+clearSpriteBtnTitle: 'スプライトを削除',
+spriteScalingLabel: 'スプライトのスケール',
+applyBtn: '適用',
+cancelBtn: 'キャンセル',
+musicLabel: 'BGM',
+musicMetaDefault: '任意のオーディオファイル',
+clearMusicBtnTitle: '音楽を削除',
+sfxLabel: '消滅 / エフェクト',
+sfxMetaDefault: 'フェードアウト音',
+presetHint: 'デフォルト：「Sorrow」トラックとキャラクターの消滅音。下からプリセットを選ぶか、独自ファイルをアップロード。',
+presetControlHint: '< > でプリセットを切り替え。',
+presetPrevTitle: '前へ',
+presetNextTitle: '次へ',
+musicVolumeTitle: '音楽の音量',
+sfxVolumeTitle: 'SFXの音量',
+customLabel: 'カスタム',
+clearSfxBtnTitle: 'エフェクトを削除',
+dialogueHeading: 'セリフとシナリオ',
+nameInputLabel: '「名前────貴方を、愛している」の名前',
+nameInputPlaceholder: '例：シロウ',
+customLineLabel: 'またはセリフ全文を入力（テンプレートを上書き）',
+customLinePlaceholder: 'デフォルトのセリフを使う場合は空白のまま',
+openEditorBtn: '📝 セリフエディタを開く (E)',
+editorTitle: 'セリフエディタ',
+block0Title: 'ブロック0 — 初期ダイアログ',
+line1Label: 'line1 — スプライト',
+line2Label: 'line2 — 主人公',
+line3Label: 'line3 — ナレーター',
+line4Label: 'line4 — スプライト（中央）',
+line4Placeholder: '名前＋セリフを使う場合は空白のまま',
+block1Title: 'ブロック1 — ナレーション',
+narratorLabelB1L1: 'b1_l1 — ナレーター',
+narratorLabelB1L2: 'b1_l2 — ナレーター',
+narratorLabelB1L3: 'b1_l3 — ナレーター',
+narratorLabelB1L4: 'b1_l4 — ナレーター',
+block2Title: 'ブロック2 — ナレーション',
+narratorLabelB2L1: 'b2_l1 — ナレーター',
+narratorLabelB2L2: 'b2_l2 — ナレーター',
+block3Title: 'ブロック3 — 最後の独白',
+protagonistLabelB3L1: 'b3_l1 — 主人公',
+narratorLabelB3L2: 'b3_l2 — ナレーター',
+clearAllBtn: 'すべてクリア',
+restoreDefaultBtn: 'セリフをリセット',
+colorPickerTitle: 'テキストの色',
+colorSpriteLabel: 'スプライト',
+colorPcLabel: '主人公',
+colorNarratorLabel: 'ナレーター',
+resetColorBtnTitle: 'デフォルトの色に戻す',
+charPresetsBtn: 'キャラプリセット',
+charPresetsBtnTitle: 'キャラクタープリセット',
+charPresetsModalTitle: 'キャラクタープリセット',
+charPresetsGroupTypeMoon: 'Type-Moonキャラクター',
+charPresetsGroupOther: 'その他',
+charPresetsGroupEmpty: 'まだプリセットはありません。',
+charPresetsUnavailable: '利用不可',
+charPresetsUnavailableTitle: 'このプリセットの画像はまだ利用できません',
+},
+status: {
+spriteApplied: 'スプライトを適用しました ✓',
+changeCanceled: '変更をキャンセルしました',
+adjustSpriteSize: 'スプライトのサイズを調整してください',
+adjustSpriteSizeHint: 'スプライトのサイズを調整してください（下にスクロール）',
+loadingSprite: 'スプライトを読み込み中…',
+decoding: '「{label}」をデコード中…',
+ready: '{label} 準備完了 ✓',
+audioDecodeError: 'オーディオのデコードエラー: {label}',
+audioReadError: 'オーディオファイルの読み込みエラー',
+presetLoading: '{label} を読み込み中\u2026',
+presetReady: '{label} 準備完了',
+presetLoadError: '{label} の読み込みに失敗しました',
+loadSpriteFirst: '先にPNGスプライトを読み込んでください',
+invalidSpriteType: 'PNG画像ファイルを選択してください',
+invalidAudioType: 'オーディオファイルを選択してください',
+scenePlaying: 'シーン再生中…',
+recordingFinished: '録画完了 ✓',
+sceneFinished: 'シーン終了（エンドレスフィナーレ）',
+scenePaused: 'シーン一時停止中',
+sceneReset: 'シーンをリセットしました',
+spriteRemoved: 'スプライトを削除しました',
+musicCleared: '音楽を削除しました',
+effectCleared: 'エフェクトを削除しました',
+videoSaved: 'ビデオを保存しました (.{ext})',
+scenePausedEditor: 'シーン一時停止中（セリフエディタ）',
+linesUpdated: 'セリフを更新しました ✓',
+gifExporting: 'GIFを録画中 ({fps} fps)…',
+gifRetrying: 'GIFが大きすぎるため、{fps} fpsで再試行中…',
+gifEncoding: 'GIFをエンコード中、しばらくお待ちください…',
+gifSaved: 'GIFを保存しました ({size} MB、{fps} fps) ✓',
+gifSavedOverLimit: 'GIFを保存しました ({size} MB) — 最低fpsでも15MBを超えました',
+gifLibError: 'GIFエンコーダーの読み込みに失敗しました（ネット接続を確認してください）',
+gifCanceled: 'GIFエクスポートをキャンセルしました',
+},
+confirm: {
+clearAllTexts: 'すべてのカスタムセリフをクリアしますか？',
+restoreDefaults: 'すべてのセリフをデフォルトに戻しますか？',
+gifRetryConfirm: 'GIFのサイズが {size} MBになりました（上限15MB）。{fps} fpsで再録画しますか？シーンは最初から始まります。現在のファイルをそのまま保存するには「キャンセル」を押してください。',
+},
+audioLabels: { music: '音楽', sfx: '消滅音' },
+defaultName: 'シロウ',
+finalLineTemplate: (name) => `${name}────貴方を、愛している`,
+phases: {
+line1: '「最後に、一つだけ伝えないと」',
+line2: '「……ああ、どんな？」',
+line3: '振り向いた姿。彼女はまっすぐな瞳で、後悔のない声で。',
+b1_l1: '驚きはなかったと思う。',
+b1_l2: 'そんな気がしていたのだ。',
+b1_l3: '別れは。',
+b1_l4: '消える時は、きっとこうじゃないかと思っていた。',
+b2_l1: '現れた時と同じ。',
+b2_l2: 'ただ潔く、面影さえ残さない。',
+b3_l1: '「ああ────本当に、おまえらしい」',
+b3_l2: '呟く声に伽はない。',
+}
+}
+};
+
+let currentLang = localStorage.getItem('vn_lang') || 'en';
+if (!I18N[currentLang]) currentLang = 'en';
+
+let currentStatusKey = null;
+let currentStatusArgs = null;
+let spriteMetaIsDefault = true;
+let musicMetaIsDefault = true;
+let sfxMetaIsDefault = true;
+let nameIsDefault = true;
+
+function T(key, args) {
+let str = (I18N[currentLang].status[key] !== undefined) ? I18N[currentLang].status[key] : key;
+if (args) {
+Object.keys(args).forEach(k => { str = str.split('{' + k + '}').join(args[k]); });
+}
+return str;
+}
+
+function T2C(key, args) {
+let str = I18N[currentLang].confirm[key] !== undefined ? I18N[currentLang].confirm[key] : key;
+if (args) {
+Object.keys(args).forEach(k => { str = str.split('{' + k + '}').join(args[k]); });
+}
+return str;
+}
+
+function updateDimBtnText() {
+const isLightsOut = document.body.classList.contains('lights-out');
+dom.dimBtnLabel.textContent = I18N[currentLang].ui[isLightsOut ? 'dimBtnOn' : 'dimBtnOff'];
+dom.dimBtnIcon.setAttribute('href', isLightsOut ? '#icon-bulb-on' : '#icon-bulb-off');
+}
+
+function updatePauseBtn(paused) {
+dom.pauseBtnIcon.setAttribute('href', paused ? '#icon-play' : '#icon-pause');
+const labelKey = paused ? 'pauseBtnResume' : 'pauseBtn';
+const titleKey = paused ? 'pauseBtnResumeTitle' : 'pauseBtnTitle';
+dom.pauseBtnLabel.textContent = I18N[currentLang].ui[labelKey];
+dom.pauseBtn.title = I18N[currentLang].ui[titleKey];
+}
+
+function updateFsBtnText() {
+const isFs = !!document.fullscreenElement;
+dom.fsBtnLabel.textContent = I18N[currentLang].ui[isFs ? 'fsBtnExit' : 'fsBtnEnter'];
+dom.fsBtnIcon.setAttribute('href', isFs ? '#icon-fullscreen-exit' : '#icon-fullscreen-enter');
+}
+
+function updateRecBtnText() {
+const dict = I18N[currentLang].ui;
+const videoRecording = mediaRecorder && mediaRecorder.state === 'recording';
+const gifCapturing = !!(gifSession && gifSession.active);
+const gifEncoding = !!(gifSession && gifSession.encoding);
+const busy = videoRecording || gifCapturing || gifEncoding;
+
+dom.recBtnLabel.textContent = gifEncoding ? dict.recBtnGifEncoding : dict[busy ? 'recBtnStop' : 'recBtnStart'];
+dom.recBtnIcon.setAttribute('href', busy ? '#icon-stop' : '#icon-record');
+
+dom.recBtn.disabled = gifEncoding || !recordingSupported;
+if (dom.recCaretBtn) dom.recCaretBtn.disabled = busy || !recordingSupported;
+if (!busy) closeRecMenu();
+}
+
+function applyLanguage(lang) {
+if (!I18N[lang]) return;
+const prevLang = currentLang;
+currentLang = lang;
+localStorage.setItem('vn_lang', lang);
+document.documentElement.lang = (lang === 'uk') ? 'uk' : lang;
+
+const dict = I18N[lang];
+
+document.title = dict.ui.docTitle;
+
+document.querySelectorAll('[data-i18n]').forEach(el => {
+const key = el.getAttribute('data-i18n');
+if (dict.ui[key] !== undefined) el.textContent = dict.ui[key];
+});
+document.querySelectorAll('[data-i18n-html]').forEach(el => {
+const key = el.getAttribute('data-i18n-html');
+if (dict.ui[key] !== undefined) el.innerHTML = dict.ui[key];
+});
+document.querySelectorAll('[data-i18n-title]').forEach(el => {
+const key = el.getAttribute('data-i18n-title');
+if (dict.ui[key] !== undefined) el.title = dict.ui[key];
+});
+document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+const key = el.getAttribute('data-i18n-placeholder');
+if (dict.ui[key] !== undefined) el.placeholder = dict.ui[key];
+});
+
+document.querySelectorAll('#langSwitch .lang-btn').forEach(btn => {
+btn.classList.toggle('active', btn.dataset.lang === lang);
+});
+
+updateDimBtnText();
+updateFsBtnText();
+updateRecBtnText();
+updateThemeBtnText();
+updateVoiceBtnText();
+updateHideTextBtnText();
+updatePauseBtn(sceneRunning && isPaused);
+
+if (nameIsDefault) {
+dom.nameInput.value = dict.defaultName;
+}
+
+if (spriteMetaIsDefault) document.getElementById('spriteMeta').textContent = dict.ui.spriteMetaDefault;
+if (musicMetaIsDefault) document.getElementById('musicMeta').textContent = dict.ui.musicMetaDefault;
+if (sfxMetaIsDefault) document.getElementById('sfxMeta').textContent = dict.ui.sfxMetaDefault;
+
+if (musicSource === 'custom') updateCapsuleEl(dom.musicPresetCapsule, dict.ui.customLabel);
+if (sfxSource === 'custom') updateCapsuleEl(dom.sfxPresetCapsule, dict.ui.customLabel);
+
+PHASES.forEach(p => {
+if (dict.phases[p.name] !== undefined) p.text = dict.phases[p.name];
+});
+
+customTexts = loadCustomTexts(lang);
+
+if (currentStatusKey) {
+dom.statusText.textContent = T(currentStatusKey, currentStatusArgs);
+}
+
+if (dom.charPresetsModal && dom.charPresetsModal.style.display === 'flex') {
+updateCharPresetTexts();
+}
+
+if (sceneRunning) {
+render(sceneElapsed);
+} else {
+renderIdle();
+}
+}
+
+document.getElementById('langSwitch').addEventListener('click', (e) => {
+const btn = e.target.closest('.lang-btn');
+if (!btn || btn.disabled) return;
+applyLanguage(btn.dataset.lang);
+});
+
+dom.nameInput.addEventListener('input', () => {
+nameIsDefault = false;
+});
+
+let spriteImg = null;
+let musicBuffer = null, sfxBuffer = null, currentMusicSource = null;
+let audioCtx = null, recordDestNode = null;
+let musicGainNode = null, sfxGainNode = null;
+
+const MUSIC_VOL_KEY = 'vn_music_vol';
+const SFX_VOL_KEY = 'vn_sfx_vol';
+function loadSavedVolume(key) {
+const raw = parseInt(localStorage.getItem(key), 10);
+return (Number.isFinite(raw) && raw >= 0 && raw <= 100) ? raw : 100;
+}
+let musicVolume = loadSavedVolume(MUSIC_VOL_KEY);
+let sfxVolume = loadSavedVolume(SFX_VOL_KEY);
+
+const CHAR_PRESETS = [
+{
+groupId: 'type-moon',
+labelKey: 'charPresetsGroupTypeMoon',
+entries: [
+{ id: 'saber-casual', name: 'Saber', variant: 'Casual', src: 'assets/presets/saber_casual.png' },
+{ id: 'saber-dress', name: 'Saber', variant: 'Dress', src: 'assets/presets/saber_dress.png' },
+{ id: 'saber-avalon', name: 'Saber', variant: 'Avalon', src: 'assets/presets/saber_avalon.png' },
+{ id: 'saber-towel', name: 'Saber', variant: 'Towel', src: 'assets/presets/saber_towel.png' },
+{ id: 'saber-raincoat', name: 'Saber', variant: 'Raincoat', src: 'assets/presets/saber_raincoat.png' },
+{ id: 'saber-alter', name: 'Saber', variant: 'Alter (HA)', src: 'assets/presets/saber_alt_ha.png' },
+{ id: 'saber-chibi', name: 'Saber', variant: 'TDojo', src: 'assets/presets/saber_chibi.png' },
+{ id: 'saber-doll', name: 'Saber', variant: 'Doll', src: 'assets/presets/saber_doll.png' },
+{ id: 'rin-school', name: 'Rin', variant: 'School', src: 'assets/presets/rin_school.png' },
+{ id: 'rin-casual', name: 'Rin', variant: 'Casual', src: 'assets/presets/rin_casual1.png' },
+{ id: 'rin-casual2', name: 'Rin', variant: 'Casual', src: 'assets/presets/rin_casual2.png' },
+{ id: 'rin-casual3', name: 'Rin', variant: 'Casual', src: 'assets/presets/rin_casual3.png' },
+{ id: 'rin-casual4', name: 'Rin', variant: 'Casual', src: 'assets/presets/rin_casual4.png' },
+{ id: 'rin-casual5', name: 'Rin', variant: 'Casual', src: 'assets/presets/rin_casual5.png' },
+{ id: 'rin-doll', name: 'Rin', variant: 'Doll', src: 'assets/presets/rin_doll.png' },
+{ id: 'sakura-casual1', name: 'Sakura', variant: 'Pose 1', src: 'assets/presets/sakura_casual1.png' },
+{ id: 'sakura-casual2', name: 'Sakura', variant: 'Pose 2', src: 'assets/presets/sakura_casual2.png' },
+{ id: 'sakura-casual3', name: 'Sakura', variant: 'Pose 3', src: 'assets/presets/sakura_casual3.png' },
+{ id: 'sakura-casual4', name: 'Sakura', variant: 'Pose 4', src: 'assets/presets/sakura_casual4.png' },
+{ id: 'sakura-ha', name: 'Sakura', variant: 'Dress', src: 'assets/presets/sakura_dress.png' },
+{ id: 'sakura-doll', name: 'Sakura', variant: 'Doll', src: 'assets/presets/sakura_doll.png' },
+{ id: 'archer-cloak', name: 'Archer', variant: 'Shy (Cloak)', src: 'assets/presets/archer_cloak1.png' },
+{ id: 'archer-cloak2', name: 'Archer', variant: 'The Back (Cloak)', src: 'assets/presets/archer_cloak2.png' },
+{ id: 'archer-cloak3', name: 'Archer', variant: 'The Back 2 (Cloak)', src: 'assets/presets/archer_cloak3.png' },
+{ id: 'archer-cloak4', name: 'Archer', variant: 'Smirk (Cloak)', src: 'assets/presets/archer_cloak4.png' },
+{ id: 'archer-sleeveless', name: 'Archer', variant: 'Smug (Sleeveless)', src: 'assets/presets/archer_sleeveless.png' },
+{ id: 'archer-plain', name: 'Archer', variant: 'Shy (Plain Clothes)', src: 'assets/presets/archer_plain.png' },
+{ id: 'shirou-school', name: 'Shirou', variant: 'School', src: 'assets/presets/shirou_school.png' },
+{ id: 'shirou-hf', name: 'Shirou', variant: 'Epilogue', src: 'assets/presets/shirou_epilogue.png' },
+{ id: 'illya-casual1', name: 'Illya', variant: 'Casual', src: 'assets/presets/illya1.png' },
+{ id: 'illya-casual2', name: 'Illya', variant: 'Casual', src: 'assets/presets/illya2.png' },
+{ id: 'illya-casual3', name: 'Illya', variant: 'Casual', src: 'assets/presets/illya3.png' },
+{ id: 'illya-doll', name: 'Illya', variant: 'Doll', src: 'assets/presets/illya_doll.png' },
+{ id: 'berserker', name: 'Berserker', variant: 'B_Servant', src: 'assets/presets/berserker.png' },
+{ id: 'lancer_serv', name: 'Lancer', variant: 'Servant', src: 'assets/presets/lancer_servant.png' },
+{ id: 'caster_serv', name: 'Caster', variant: 'Servant', src: 'assets/presets/caster_servant.png' },
+{ id: 'kirei', name: 'Kirei', variant: 'Pose 1', src: 'assets/presets/kirei1.png' },
+{ id: 'kirei-shy', name: 'Kirei', variant: 'Pose 2', src: 'assets/presets/kirei2.png' },
+{ id: 'kuzuki', name: 'Souichirou', variant: 'Souichirou', src: 'assets/presets/kuzuki.png' },
+{ id: 'assassin-kojirou', name: 'Assassin', variant: 'Servant', src: 'assets/presets/assassin_kojirou.png' },
+{ id: 'hassan', name: 'True Assassin', variant: 'Regular', src: 'assets/presets/hassan.png' },
+{ id: 'gil-armor1', name: 'Gilgamesh', variant: 'Armor 1', src: 'assets/presets/gil_armor1.png' },
+{ id: 'gil-armor2', name: 'Gilgamesh', variant: 'Armor 2', src: 'assets/presets/gil_armor2.png' },
+{ id: 'gil-casual1', name: 'Gilgamesh', variant: 'Pimp 1', src: 'assets/presets/gil_pimp1.png' },
+{ id: 'gil-casual2', name: 'Gilgamesh', variant: 'Pimp 2', src: 'assets/presets/gil_pimp2.png' },
+{ id: 'gil-ha', name: 'Gilgamesh', variant: 'HA Outfit', src: 'assets/presets/gil_ha.png' },
+{ id: 'gil-kid', name: 'Gilgamesh', variant: 'Kid', src: 'assets/presets/gil_kid.png' },
+{ id: 'zouken', name: 'Zouken', variant: 'Regular', src: 'assets/presets/zouken.png' },
+{ id: 'rider-servant1', name: 'Rider', variant: 'Serv. Pose 1', src: 'assets/presets/rider_servant1.png' },
+{ id: 'rider-servant2', name: 'Rider', variant: 'Serv. Pose 2', src: 'assets/presets/rider_servant2.png' },
+{ id: 'rider-casual1', name: 'Rider', variant: 'Casual', src: 'assets/presets/rider_casual1.png' },
+{ id: 'rider-casual2', name: 'Rider', variant: 'Casual', src: 'assets/presets/rider_casual2.png' },
+{ id: 'rider-casual3', name: 'Rider', variant: 'Casual', src: 'assets/presets/rider_casual3.png' },
+{ id: 'shinji_school1', name: 'Shinji', variant: 'School Pose 1', src: 'assets/presets/shinji_school1.png' },
+{ id: 'shinji_school2', name: 'Shinji', variant: 'School Pose 2', src: 'assets/presets/shinji_school2.png' },
+{ id: 'shinji_casual', name: 'Shinji', variant: 'Casual', src: 'assets/presets/shinji_casual.png' },
+{ id: 'shinji_ha', name: 'Shinji', variant: 'HA', src: 'assets/presets/shinji_school_ha.png' },
+{ id: 'issei-school1', name: 'Issei', variant: 'Pose 1', src: 'assets/presets/issei1.png' },
+{ id: 'issei-school2', name: 'Issei', variant: 'Pose 2', src: 'assets/presets/issei2.png' },
+{ id: 'issei-school3', name: 'Issei', variant: 'Pose 3', src: 'assets/presets/issei3.png' },
+{ id: 'issei-school4', name: 'Issei', variant: 'Pose 4', src: 'assets/presets/issei4.png' },
+{ id: 'skeleton', name: 'Skeleton', variant: 'Regular', src: 'assets/presets/skeleton.png' },
+{ id: 'bazett-fraga', name: 'Bazett', variant: 'Expr. 1', src: 'assets/presets/bazett1.png' },
+{ id: 'bazett-mc', name: 'Bazett', variant: 'Expr. 2', src: 'assets/presets/bazett2.png' },
+{ id: 'bazett-remitz', name: 'Bazett', variant: 'Expr. 3', src: 'assets/presets/bazett3.png' },
+{ id: 'bazett-san', name: 'Bazett', variant: 'Expr. 4', src: 'assets/presets/bazett4.png' },
+{ id: 'bazett-happy', name: 'Bazett', variant: 'Expr. 5', src: 'assets/presets/bazett5.png' },
+{ id: 'bazett-peace', name: 'Bazett', variant: 'Expr. 6', src: 'assets/presets/bazett6.png' },
+{ id: 'angra', name: 'Avenger', variant: 'Expr. 1', src: 'assets/presets/avenger1.png' },
+{ id: 'angra-mainyu', name: 'Avenger', variant: 'Expr. 2', src: 'assets/presets/avenger2.png' },
+{ id: 'sella-maid1', name: 'Sella', variant: 'Maid', src: 'assets/presets/sella_maid1.png' },
+{ id: 'taiga', name: 'Taiga', variant: 'Pose 1', src: 'assets/presets/taiga1.png' },
+{ id: 'taiga2', name: 'Taiga', variant: 'Pose 2', src: 'assets/presets/taiga2.png' },
+{ id: 'taiga3', name: 'Taiga', variant: 'Pose 3', src: 'assets/presets/taiga3.png' },
+{ id: 'taiga4', name: 'Taiga', variant: 'Pose 4', src: 'assets/presets/taiga4.png' },
+{ id: 'taiga5', name: 'Taiga', variant: 'Pose 5', src: 'assets/presets/taiga5.png' },
+{ id: 'taiga6', name: 'Taiga', variant: 'Pose 6', src: 'assets/presets/taiga6.png' },
+{ id: 'luvia-dress1', name: 'Luvia', variant: 'Expr. 1', src: 'assets/presets/luvia_dress1.png' },
+{ id: 'luvia-dress2', name: 'Luvia', variant: 'Expr. 2', src: 'assets/presets/luvia_dress2.png' },
+{ id: 'luvia-sleeveless1', name: 'Luvia', variant: 'Sleeveless 1', src: 'assets/presets/luvia_sleeveless.png' },
+{ id: 'luvia-sleeveless2', name: 'Luvia', variant: 'Sleeveless 2', src: 'assets/presets/luvia_sleeveless2.png' },
+{ id: 'mitsuzuri-school1', name: 'Mitsuzuri', variant: 'School', src: 'assets/presets/mitsuzuri_school1.png' },
+{ id: 'fou', name: 'Fou', variant: 'Fou-kun', src: 'assets/presets/fou.png' },
+{ id: 'aoko-school1', name: 'Aoko', variant: 'Expr. 1', src: 'assets/presets/aoko_school1.png' },
+{ id: 'aoko-school2', name: 'Aoko', variant: 'Expr. 2', src: 'assets/presets/aoko_school2.png' },
+{ id: 'aoko-dress1', name: 'Aoko', variant: 'H_tuck', src: 'assets/presets/aoko_dress1.png' },
+{ id: 'aoko-dress2', name: 'Aoko', variant: 'Expr 1.', src: 'assets/presets/aoko_dress2.png' },
+{ id: 'aoko-dress3', name: 'Aoko', variant: 'Expr 2.', src: 'assets/presets/aoko_dress3.png' },
+{ id: 'sonog-1', name: 'Soujuurou', variant: 'Expr 1.', src: 'assets/presets/sonog_1.png' },
+{ id: 'sonog-2', name: 'Soujuurou', variant: 'Expr 2.', src: 'assets/presets/sonog_2.png' },
+{ id: 'sonog-3', name: 'Soujuurou', variant: 'Expr 3.', src: 'assets/presets/sonog_3.png' },
+{ id: 'sonog-4', name: 'Soujuurou', variant: 'Expr 4.', src: 'assets/presets/sonog_4.png' },
+{ id: 'sonog-5', name: 'Soujuurou', variant: 'Expr 5.', src: 'assets/presets/sonog_5.png' },
+{ id: 'sonog-6', name: 'Soujuurou', variant: 'Expr 6.', src: 'assets/presets/sonog_6.png' },
+{ id: 'sonog-7', name: 'Soujuurou', variant: 'Expr 7.', src: 'assets/presets/sonog_7.png' },
+{ id: 'sonog-8', name: 'Soujuurou', variant: 'Expr 8.', src: 'assets/presets/sonog_8.png' },
+{ id: 'alice-c1', name: 'Alice', variant: 'Cas. 1', src: 'assets/presets/alice_casual1.png' },
+{ id: 'alice-c2', name: 'Alice', variant: 'Cas. 2', src: 'assets/presets/alice_casual2.png' },
+{ id: 'alice-c3', name: 'Alice', variant: 'Cas. 3', src: 'assets/presets/alice_casual3.png' },
+{ id: 'alice-c4', name: 'Alice', variant: 'Cas. 4', src: 'assets/presets/alice_casual4.png' },
+{ id: 'penguin', name: 'Penguin', variant: 'Penguin', src: 'assets/presets/alice_peng1.png' },
+{ id: 'arc', name: 'Arcueid', variant: 'Regular', src: 'assets/presets/arcueid_1.png' },
+{ id: 'arc-2', name: 'Arcueid', variant: 'Regular', src: 'assets/presets/arcueid_2.png' },
+{ id: 'akiha-giraffe', name: 'Akiha', variant: 'C. Akiha', src: 'assets/presets/giraffiha_1.png' },
+{ id: 'akiha-c1', name: 'Akiha', variant: 'C. Akiha 2', src: 'assets/presets/akiha_1.png' },
+{ id: 'hisui-m1', name: 'Hisui', variant: 'M. Hisui', src: 'assets/presets/hisui_1.png' },
+{ id: 'hisui-doll', name: 'Hisui', variant: 'Doll', src: 'assets/presets/hisui_doll.png' },
+{ id: 'kinoko-nasu', name: 'Mushroom', variant: 'HA', src: 'assets/presets/nasu_mushroom.png' },
+]
+},
+{
+groupId: 'other',
+labelKey: 'charPresetsGroupOther',
+entries: [
+
+{ id: 'daru-1', name: 'Daru', variant: 'Pose 1', src: 'assets/presets/daru1.png' },
+{ id: 'daru-2', name: 'Daru', variant: 'Pose 2', src: 'assets/presets/daru2.png' },
+
+{ id: 'rika-cat', name: 'Rika', variant: 'Cat', src: 'assets/presets/rika_cat.png' },
+{ id: 'rika-school', name: 'Rika', variant: 'School', src: 'assets/presets/rika_school.png' },
+{ id: 'ooishi-casual', name: 'Ooishi', variant: 'Casual', src: 'assets/presets/ooishi1.png' },
+
+{ id: 'rimi-school1', name: 'Rimi', variant: 'School 1', src: 'assets/presets/rimi_school1.png' },
+{ id: 'rimi-school2', name: 'Rimi', variant: 'School 2', src: 'assets/presets/rimi_school2.png' },
+{ id: 'taku', name: 'Takumi', variant: 'Regular', src: 'assets/presets/taku_ch.png' },
+{ id: 'shogun-1', name: 'Shogun', variant: 'Shogun', src: 'assets/presets/shogun.png' },
+{ id: 'norose-ch', name: 'Norose', variant: 'Regular', src: 'assets/presets/norose_ch.png' },
+]
+}
+];
+
+let activeCharPresetId = null;
+let pendingCharPresetId = null;
+
+let charPresetsBuilt = false;
+const presetCardRefs = new Map();
+const presetGroupTitleRefs = [];
+const presetGroupEmptyRefs = [];
+
+let spriteTransition = null;
+const SPRITE_TRANSITION_MS = 320;
+const PRESET_SWITCH_COOLDOWN_MS = 500;
+let lastPresetSwitchAt = 0;
+
+const MUSIC_PRESETS = [
+{ id: 'sorrow', label: 'Sorrow', path: 'assets/audio/Tracks/Sorrow.mp3' },
+{ id: 'newdawn', label: 'New Dawn', path: 'assets/audio/Tracks/New Dawn.mp3' },
+{ id: 'yokan', label: 'Yokan', path: 'assets/audio/Tracks/Yokan.mp3' },
+{ id: 'feelings', label: '消えない想い', path: 'assets/audio/Tracks/Feelings-that-wont-dissapear.mp3' },
+{ id: 'alone', label: 'La Sola', path: 'assets/audio/Tracks/La Sola.mp3' },
+{ id: 'bonds', label: 'Kizuna', path: 'assets/audio/Tracks/Kizuna.mp3' },
+{ id: 'everyday', label: 'Nichijou', path: 'assets/audio/Tracks/Nichijou.mp3' },
+];
+
+const SFX_PRESETS = [
+{ id: 'sfx1', label: 'SFX 1', path: 'assets/audio/SFX/SFX1.mp3' },
+{ id: 'sfx2', label: 'SFX 2', path: 'assets/audio/SFX/SFX2.mp3' },
+{ id: 'sfx3', label: 'SFX 3', path: 'assets/audio/SFX/SFX3.mp3' },
+];
+
+let musicPresetIndex = 0;
+let sfxPresetIndex = 0;
+let musicSource = 'preset';
+let sfxSource = 'preset';
+const presetBufferCache = {};
+let musicPresetLoadToken = 0;
+let sfxPresetLoadToken = 0;
+
+const CHARACTER_VOICES = {
+Saber: 'aishiteru.wav',
+Kirei: 'mmm.wav',
+Fou: 'fou.wav',
+Daru: 'explode.wav',
+Skeleton: 'skeleton.wav',
+Sakura: 'senpai.wav',
+Luvia: 'oh-ho-ho.wav',
+Zouken: 'ha-ha-ha-ha.wav',
+Takumi: 'fuhihi.wav',
+Aoko: 'nani.wav',
+Penguin: 'peng.wav',
+Illya: 'ooooo.wav',
+Rimi: 'bishi.wav',
+Berserker: 'basaka.wav',
+Lancer: 'hey-hey.wav',
+Avenger: 'shojo.wav',
+};
+let voiceBuffer = null;
+let voiceLoadToken = 0;
+const voiceBufferCache = {};
+let bgStartImg = null, bgAfterImg = null;
+
+const EASTER_EGG = {
+minSwitch: 15,
+maxSwitch: 30,
+seenKey: 'vn_easterEggSeen',
+countKey: 'vn_easterEggCount',
+targetKey: 'vn_easterEggTarget',
+tigerSrc: 'assets/presets/tiger.jpg',
+taigaJumpScareSrc: 'assets/presets/taiga6.png',
+gaspSrc: 'assets/audio/easter_egg.wav',
+roarSrc: 'assets/audio/roar.wav',
+shakeMs: 800,
+tigerMs: 2500,
+fadeMs: 700,
+};
+let easterEggActive = false;
+let easterEggPhase = null;
+let easterEggPhaseStart = 0;
+let easterEggRafId = null;
+
+let taigaSwitchCount = parseInt(localStorage.getItem(EASTER_EGG.countKey), 10) || 0;
+let easterEggTargetSwitch = (() => {
+const raw = parseInt(localStorage.getItem(EASTER_EGG.targetKey), 10);
+return Number.isFinite(raw) ? raw : null;
+})();
+
+function persistEasterEggProgress() {
+try {
+localStorage.setItem(EASTER_EGG.countKey, String(taigaSwitchCount));
+if (easterEggTargetSwitch !== null) {
+localStorage.setItem(EASTER_EGG.targetKey, String(easterEggTargetSwitch));
+}
+} catch (e) {}
+}
+
+const genericAudioCache = {};
+function loadAudioFromPath(path) {
+if (genericAudioCache[path]) return Promise.resolve(genericAudioCache[path]);
+return fetch(path)
+.then(res => { if (!res.ok) throw new Error('HTTP ' + res.status); return res.arrayBuffer(); })
+.then(ab => getAudioCtx().decodeAudioData(ab))
+.then(buf => { genericAudioCache[path] = buf; return buf; });
+}
+
+const eggTigerImg = new Image();
+eggTigerImg.src = EASTER_EGG.tigerSrc;
+const eggTaigaImg = new Image();
+eggTaigaImg.src = EASTER_EGG.taigaJumpScareSrc;
+loadAudioFromPath(EASTER_EGG.gaspSrc).catch(err => console.warn('[egg] gasp preload failed:', err));
+loadAudioFromPath(EASTER_EGG.roarSrc).catch(err => console.warn('[egg] roar preload failed:', err));
+
+let isMemoryCacheValid = false;
+
+let isPreviewMode = false;
+let previewImg = null;
+let previewScale = 1.0;
+let spriteScaleFactor = 1.0;
+
+let mediaRecorder, recordedChunks = [];
+
+let gifSession = null;
+
+let recordingSupported = true;
+
+const GIF_MAX_BYTES = 15 * 1024 * 1024;
+
+const GIF_FPS_LADDER = [10, 8, 6, 5, 4];
+
+const GIF_END_PADDING_MS = 900;
+
+const GIF_CAPTURE_SCALE = 0.5;
+
+let gifCaptureCanvas = null;
+let gifCaptureCtx = null;
+function getGifCaptureCtx(width, height) {
+if (!gifCaptureCanvas) {
+gifCaptureCanvas = document.createElement('canvas');
+
+gifCaptureCtx = gifCaptureCanvas.getContext('2d', { willReadFrequently: true });
+}
+if (gifCaptureCanvas.width !== width || gifCaptureCanvas.height !== height) {
+gifCaptureCanvas.width = width;
+gifCaptureCanvas.height = height;
+}
+return gifCaptureCtx;
+}
+
+let gifLibPromise = null;
+function loadGifLib() {
+if (gifLibPromise) return gifLibPromise;
+gifLibPromise = new Promise((resolve, reject) => {
+if (typeof GIF !== 'undefined') { resolve(); return; }
+const script = document.createElement('script');
+script.src = 'https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js';
+script.onload = () => resolve();
+script.onerror = () => reject(new Error('gif.js failed to load'));
+document.head.appendChild(script);
+});
+return gifLibPromise;
+}
+
+let gifWorkerUrlPromise = null;
+function getGifWorkerUrl() {
+
+if (gifWorkerUrlPromise) return gifWorkerUrlPromise;
+gifWorkerUrlPromise = fetch('https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js')
+.then(r => { if (!r.ok) throw new Error('gif.worker.js fetch failed'); return r.blob(); })
+.then(blob => URL.createObjectURL(blob));
+return gifWorkerUrlPromise;
+}
+
+function openRecMenu() {
+if (!dom.recMenu || dom.recCaretBtn.disabled) return;
+dom.recMenu.classList.add('is-open');
+dom.recCaretBtn.setAttribute('aria-expanded', 'true');
+}
+function closeRecMenu() {
+if (!dom.recMenu) return;
+dom.recMenu.classList.remove('is-open');
+dom.recCaretBtn.setAttribute('aria-expanded', 'false');
+}
+if (dom.recCaretBtn) {
+dom.recCaretBtn.addEventListener('click', (e) => {
+e.stopPropagation();
+if (dom.recMenu.classList.contains('is-open')) closeRecMenu();
+else openRecMenu();
+});
+}
+document.addEventListener('click', (e) => {
+if (dom.recBtnGroup && !e.target.closest('#recBtnGroup')) closeRecMenu();
+});
+document.addEventListener('keydown', (e) => {
+if (e.key === 'Escape') closeRecMenu();
+});
+
+function refreshCanvasAfterSpriteChange() {
+if (sceneRunning) {
+if (isPaused) render(sceneElapsed);
+} else {
+renderIdle();
+}
+}
+
+dom.scaleSlider.addEventListener('input', () => {
+previewScale = dom.scaleSlider.value / 100;
+dom.scaleValue.textContent = dom.scaleSlider.value + '%';
+renderIdle();
+});
+
+dom.applyScaleBtn.addEventListener('click', () => {
+if (!previewImg) return;
+
+dismissSpriteScaleHint();
+
+spriteImg = previewImg;
+spriteScaleFactor = previewScale;
+isMemoryCacheValid = false;
+
+isPreviewMode = false;
+previewImg = null;
+dom.previewControls.style.display = 'none';
+
+activeCharPresetId = pendingCharPresetId;
+pendingCharPresetId = null;
+
+const audioUnlockCtx = getAudioCtx();
+if (audioUnlockCtx.state === 'suspended') audioUnlockCtx.resume();
+voiceBuffer = null;
+if (activeCharPresetId) {
+const entry = findPresetById(activeCharPresetId);
+if (entry) loadVoiceForName(entry.name);
+}
+
+setStatus('spriteApplied');
+dom.rescaleBtn.style.display = 'inline-block';
+refreshCanvasAfterSpriteChange();
+});
+
+dom.cancelScaleBtn.addEventListener('click', () => {
+dismissSpriteScaleHint();
+
+isPreviewMode = false;
+previewImg = null;
+dom.previewControls.style.display = 'none';
+pendingCharPresetId = null;
+setStatus('changeCanceled');
+
+if (spriteImg) {
+dom.rescaleBtn.style.display = 'inline-block';
+} else {
+dom.rescaleBtn.style.display = 'none';
+dom.spriteInput.value = '';
+}
+
+refreshCanvasAfterSpriteChange();
+});
+
+function presetGroupLabel(group) {
+const dict = I18N[currentLang];
+return (dict.ui[group.labelKey] !== undefined) ? dict.ui[group.labelKey] : group.groupId;
+}
+
+function groupEntriesByName(entries) {
+const order = [];
+const map = new Map();
+entries.forEach(entry => {
+if (!map.has(entry.name)) {
+map.set(entry.name, []);
+order.push(entry.name);
+}
+map.get(entry.name).push(entry);
+});
+return order.map(name => ({ name, entries: map.get(name) }));
+}
+
+const PRESET_HOVER_DELAY_MS = 300;
+const PRESET_HOVER_FILL_MS = 500;
+const PRESET_RING_CIRCUMFERENCE = 82;
+
+let presetHoverPreviewEl = null;
+let presetHoverPreviewImg = null;
+let presetHoverPreviewCaption = null;
+let presetHoverPreviewToken = 0;
+
+function getPresetHoverPreviewEl() {
+if (presetHoverPreviewEl) return presetHoverPreviewEl;
+presetHoverPreviewEl = document.createElement('div');
+presetHoverPreviewEl.className = 'preset-hover-preview';
+presetHoverPreviewImg = document.createElement('img');
+presetHoverPreviewImg.alt = '';
+presetHoverPreviewCaption = document.createElement('div');
+presetHoverPreviewCaption.className = 'preset-hover-preview-caption';
+presetHoverPreviewEl.appendChild(presetHoverPreviewImg);
+presetHoverPreviewEl.appendChild(presetHoverPreviewCaption);
+document.body.appendChild(presetHoverPreviewEl);
+return presetHoverPreviewEl;
+}
+
+function showPresetHoverPreview(card, entry) {
+const el = getPresetHoverPreviewEl();
+const myToken = ++presetHoverPreviewToken;
+presetHoverPreviewCaption.textContent = entry.variant ? `${entry.name} — ${entry.variant}` : entry.name;
+
+const reveal = () => {
+if (myToken !== presetHoverPreviewToken) return;
+el.style.visibility = 'hidden';
+el.style.left = '0px';
+el.style.top = '0px';
+const cardRect = card.getBoundingClientRect();
+const panelRect = el.getBoundingClientRect();
+const margin = 12;
+
+let left = cardRect.right + margin;
+if (left + panelRect.width > window.innerWidth - margin) {
+left = cardRect.left - margin - panelRect.width;
+}
+if (left < margin) {
+left = Math.min(
+Math.max(cardRect.left + cardRect.width / 2 - panelRect.width / 2, margin),
+Math.max(margin, window.innerWidth - panelRect.width - margin)
+);
+}
+
+let top = cardRect.top + cardRect.height / 2 - panelRect.height / 2;
+top = Math.min(Math.max(top, margin), Math.max(margin, window.innerHeight - panelRect.height - margin));
+
+el.style.left = `${left}px`;
+el.style.top = `${top}px`;
+el.style.visibility = '';
+el.classList.add('is-visible');
+};
+
+presetHoverPreviewImg.onload = reveal;
+presetHoverPreviewImg.src = entry.src;
+
+if (presetHoverPreviewImg.complete && presetHoverPreviewImg.naturalWidth > 0) {
+reveal();
+}
+}
+
+function hidePresetHoverPreview() {
+presetHoverPreviewToken++;
+if (presetHoverPreviewEl) presetHoverPreviewEl.classList.remove('is-visible');
+}
+
+function setupPresetHoverPreview(card, thumb, ring, ringFg, entry) {
+let delayTimer = null;
+let fillTimer = null;
+
+let shownByTouch = false;
+
+const reset = () => {
+clearTimeout(delayTimer);
+clearTimeout(fillTimer);
+delayTimer = null;
+fillTimer = null;
+ringFg.style.transition = 'none';
+ringFg.style.strokeDashoffset = String(PRESET_RING_CIRCUMFERENCE);
+ring.style.opacity = '0';
+thumb.style.transform = 'scale(1)';
+thumb.style.zIndex = '';
+hidePresetHoverPreview();
+};
+
+const start = () => {
+if (card.disabled) return;
+reset();
+delayTimer = setTimeout(() => {
+ring.style.opacity = '1';
+ringFg.style.transition = `stroke-dashoffset ${PRESET_HOVER_FILL_MS}ms linear`;
+
+void ringFg.getBoundingClientRect();
+ringFg.style.strokeDashoffset = '0';
+fillTimer = setTimeout(() => {
+thumb.style.transform = 'scale(1.16)';
+thumb.style.zIndex = '2';
+showPresetHoverPreview(card, entry);
+shownByTouch = true;
+}, PRESET_HOVER_FILL_MS);
+}, PRESET_HOVER_DELAY_MS);
+};
+
+card.addEventListener('mouseenter', start);
+card.addEventListener('mouseleave', reset);
+
+card.addEventListener('mousedown', reset);
+
+card.addEventListener('touchstart', () => {
+shownByTouch = false;
+start();
+}, { passive: true });
+
+card.addEventListener('touchend', (e) => {
+if (shownByTouch) {
+
+e.preventDefault();
+}
+reset();
+shownByTouch = false;
+});
+
+card.addEventListener('touchmove', reset);
+card.addEventListener('touchcancel', reset);
+
+card.addEventListener('contextmenu', (e) => e.preventDefault());
+}
+
+function createPresetCard(entry) {
+const card = document.createElement('button');
+card.type = 'button';
+card.className = 'preset-sprite-card';
+card.dataset.presetId = entry.id;
+if (activeCharPresetId === entry.id) card.classList.add('is-active');
+
+const thumb = document.createElement('div');
+thumb.className = 'preset-sprite-thumb';
+
+const img = document.createElement('img');
+img.alt = entry.variant ? `${entry.name} — ${entry.variant}` : entry.name;
+img.loading = 'lazy';
+img.decoding = 'async';
+
+const fallback = document.createElement('span');
+fallback.className = 'preset-sprite-fallback';
+fallback.style.display = 'none';
+
+img.onerror = () => {
+card.classList.add('is-unavailable');
+card.disabled = true;
+card.title = I18N[currentLang].ui.charPresetsUnavailableTitle;
+img.style.display = 'none';
+fallback.textContent = I18N[currentLang].ui.charPresetsUnavailable;
+fallback.style.display = '';
+};
+img.src = entry.src;
+thumb.appendChild(img);
+thumb.appendChild(fallback);
+
+const progressRing = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+progressRing.setAttribute('class', 'preset-sprite-progress');
+progressRing.setAttribute('viewBox', '0 0 32 32');
+const progressBg = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+progressBg.setAttribute('class', 'preset-sprite-progress-bg');
+progressBg.setAttribute('cx', '16');
+progressBg.setAttribute('cy', '16');
+progressBg.setAttribute('r', '13');
+const progressFg = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+progressFg.setAttribute('class', 'preset-sprite-progress-fg');
+progressFg.setAttribute('cx', '16');
+progressFg.setAttribute('cy', '16');
+progressFg.setAttribute('r', '13');
+progressRing.appendChild(progressBg);
+progressRing.appendChild(progressFg);
+thumb.appendChild(progressRing);
+
+setupPresetHoverPreview(card, thumb, progressRing, progressFg, entry);
+
+const nameEl = document.createElement('span');
+nameEl.className = 'preset-sprite-name';
+nameEl.textContent = entry.name;
+
+card.appendChild(thumb);
+card.appendChild(nameEl);
+
+if (entry.variant) {
+const variantEl = document.createElement('span');
+variantEl.className = 'preset-sprite-variant';
+variantEl.textContent = entry.variant;
+card.appendChild(variantEl);
+}
+
+card.addEventListener('click', () => {
+if (card.disabled) return;
+applyCharPreset(entry);
+});
+
+presetCardRefs.set(entry.id, { card, fallback });
+
+return card;
+}
+
+function renderCharPresets() {
+const body = dom.charPresetsBody;
+if (!body) return;
+
+if (charPresetsBuilt) {
+updateCharPresetActiveStates();
+return;
+}
+
+body.innerHTML = '';
+presetCardRefs.clear();
+presetGroupTitleRefs.length = 0;
+presetGroupEmptyRefs.length = 0;
+
+CHAR_PRESETS.forEach(group => {
+const groupEl = document.createElement('div');
+groupEl.className = 'preset-group';
+
+const titleEl = document.createElement('div');
+titleEl.className = 'preset-group-title';
+titleEl.textContent = presetGroupLabel(group);
+groupEl.appendChild(titleEl);
+presetGroupTitleRefs.push({ el: titleEl, group });
+
+if (!group.entries.length) {
+const emptyEl = document.createElement('div');
+emptyEl.className = 'preset-group-empty';
+emptyEl.textContent = I18N[currentLang].ui.charPresetsGroupEmpty;
+groupEl.appendChild(emptyEl);
+presetGroupEmptyRefs.push(emptyEl);
+} else {
+groupEntriesByName(group.entries).forEach(character => {
+const rowWrap = document.createElement('div');
+rowWrap.className = 'preset-character-row';
+
+const nameEl = document.createElement('div');
+nameEl.className = 'preset-character-name';
+nameEl.textContent = character.name;
+rowWrap.appendChild(nameEl);
+
+const row = document.createElement('div');
+row.className = 'preset-sprite-row';
+character.entries.forEach(entry => row.appendChild(createPresetCard(entry)));
+rowWrap.appendChild(row);
+
+groupEl.appendChild(rowWrap);
+});
+}
+
+body.appendChild(groupEl);
+});
+
+charPresetsBuilt = true;
+}
+
+function updateCharPresetActiveStates() {
+presetCardRefs.forEach(({ card }, id) => {
+card.classList.toggle('is-active', activeCharPresetId === id);
+});
+}
+
+function updateCharPresetTexts() {
+presetGroupTitleRefs.forEach(({ el, group }) => {
+el.textContent = presetGroupLabel(group);
+});
+presetGroupEmptyRefs.forEach(el => {
+el.textContent = I18N[currentLang].ui.charPresetsGroupEmpty;
+});
+presetCardRefs.forEach(({ card, fallback }) => {
+if (card.classList.contains('is-unavailable')) {
+card.title = I18N[currentLang].ui.charPresetsUnavailableTitle;
+fallback.textContent = I18N[currentLang].ui.charPresetsUnavailable;
+}
+});
+}
+
+function findPresetById(id) {
+for (const group of CHAR_PRESETS) {
+const found = group.entries.find(e => e.id === id);
+if (found) return found;
+}
+return null;
+}
+
+function findPresetSiblingsByName(name) {
+const result = [];
+CHAR_PRESETS.forEach(group => {
+group.entries.forEach(entry => {
+if (entry.name === name) result.push(entry);
+});
+});
+return result;
+}
+
+function applyCharPresetDirect(entry, opts) {
+const shouldCloseModal = !!(opts && opts.closeModal);
+
+const now = performance.now();
+if (spriteTransition || (now - lastPresetSwitchAt) < PRESET_SWITCH_COOLDOWN_MS) {
+return;
+}
+lastPresetSwitchAt = now;
+
+if (!(sceneRunning && isPaused)) {
+const audioUnlockCtx = getAudioCtx();
+if (audioUnlockCtx.state === 'suspended') audioUnlockCtx.resume();
+}
+
+const img = new Image();
+img.onload = () => {
+
+isPreviewMode = false;
+previewImg = null;
+dom.previewControls.style.display = 'none';
+
+const previousImg = spriteImg;
+
+const prevEntry = activeCharPresetId ? findPresetById(activeCharPresetId) : null;
+const eggEligible = !shouldCloseModal
+&& !easterEggActive
+&& prevEntry && prevEntry.name === 'Taiga'
+&& entry.name === 'Taiga'
+&& prevEntry.id !== entry.id
+&& localStorage.getItem(EASTER_EGG.seenKey) !== '1';
+
+let shouldTriggerEgg = false;
+if (eggEligible) {
+taigaSwitchCount++;
+
+if (easterEggTargetSwitch === null) {
+easterEggTargetSwitch = EASTER_EGG.minSwitch
++ Math.floor(Math.random() * (EASTER_EGG.maxSwitch - EASTER_EGG.minSwitch + 1));
+}
+persistEasterEggProgress();
+shouldTriggerEgg = taigaSwitchCount >= easterEggTargetSwitch;
+}
+
+let canEase = false;
+if (sceneRunning && !isPaused && previousImg) {
+const { phase, phaseIndex } = resolvePhase(Math.min(sceneElapsed, TOTAL_DUR));
+canEase = (phase !== 'dissolve') && (phase !== 'panIn') && phaseIndex <= 5;
+}
+
+isMemoryCacheValid = false;
+activeCharPresetId = entry.id;
+pendingCharPresetId = null;
+
+voiceBuffer = null;
+loadVoiceForName(entry.name);
+
+spriteMetaIsDefault = false;
+const spriteMetaEl = document.getElementById('spriteMeta');
+spriteMetaEl.textContent = entry.variant ? `${entry.name} — ${entry.variant}` : entry.name;
+spriteMetaEl.title = entry.src;
+dom.clearSpriteBtn.style.display = 'inline-block';
+dom.rescaleBtn.style.display = 'inline-block';
+
+spriteImg = img;
+
+if (canEase) {
+beginSpriteTransition(previousImg, img);
+
+} else {
+spriteTransition = null;
+refreshCanvasAfterSpriteChange();
+}
+
+setStatus('spriteApplied');
+
+if (shouldCloseModal) closeCharPresetsModal();
+
+if (shouldTriggerEgg) triggerEasterEgg();
+};
+img.onerror = () => {
+setStatus('invalidSpriteType');
+};
+img.src = entry.src;
+}
+
+function switchCharPresetVariantByNumber(num) {
+if (!activeCharPresetId) return;
+const activeEntry = findPresetById(activeCharPresetId);
+if (!activeEntry) return;
+
+const siblings = findPresetSiblingsByName(activeEntry.name);
+if (siblings.length < 2) return;
+
+const target = siblings[num - 1];
+if (!target || target.id === activeCharPresetId) return;
+
+applyCharPresetDirect(target);
+}
+
+function switchCharPresetVariantByStep(step) {
+if (!activeCharPresetId) return;
+const activeEntry = findPresetById(activeCharPresetId);
+if (!activeEntry) return;
+
+const siblings = findPresetSiblingsByName(activeEntry.name);
+if (siblings.length < 2) return;
+
+const currentIndex = siblings.findIndex(e => e.id === activeCharPresetId);
+if (currentIndex === -1) return;
+
+const nextIndex = ((currentIndex + step) % siblings.length + siblings.length) % siblings.length;
+applyCharPresetDirect(siblings[nextIndex]);
+}
+
+(function setupSpriteSwipe() {
+const SWIPE_MIN_DIST = 40;
+const SWIPE_MAX_OFF_AXIS = 60;
+const SWIPE_MAX_TIME = 700;
+
+let startX = 0, startY = 0, startT = 0, tracking = false;
+
+function guardsBlockSwipe() {
+if (easterEggActive) return true;
+const charModalOpen = dom.charPresetsModal && dom.charPresetsModal.style.display === 'flex';
+const textEditorOpen = dom.textEditorModal && dom.textEditorModal.style.display === 'flex';
+return charModalOpen || textEditorOpen;
+}
+
+canvas.addEventListener('touchstart', (e) => {
+if (guardsBlockSwipe() || e.touches.length !== 1) { tracking = false; return; }
+const t = e.touches[0];
+startX = t.clientX;
+startY = t.clientY;
+startT = performance.now();
+tracking = true;
+}, { passive: true });
+
+canvas.addEventListener('touchmove', (e) => {
+if (!tracking || e.touches.length !== 1) return;
+const dx = e.touches[0].clientX - startX;
+const dy = e.touches[0].clientY - startY;
+
+if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) {
+e.preventDefault();
+}
+}, { passive: false });
+
+function onTouchEnd(e) {
+if (!tracking) return;
+tracking = false;
+if (guardsBlockSwipe()) return;
+
+const changed = e.changedTouches && e.changedTouches[0];
+if (!changed) return;
+
+const dx = changed.clientX - startX;
+const dy = changed.clientY - startY;
+const dt = performance.now() - startT;
+
+if (dt <= SWIPE_MAX_TIME && Math.abs(dx) >= SWIPE_MIN_DIST && Math.abs(dy) <= SWIPE_MAX_OFF_AXIS) {
+
+switchCharPresetVariantByStep(dx < 0 ? 1 : -1);
+e.preventDefault();
+}
+}
+
+canvas.addEventListener('touchend', onTouchEnd);
+canvas.addEventListener('touchcancel', () => { tracking = false; });
+})();
+
+function applyCharPreset(entry) {
+if (spriteImg) {
+applyCharPresetDirect(entry, { closeModal: true });
+return;
+}
+
+const img = new Image();
+img.onload = () => {
+pendingCharPresetId = entry.id;
+previewImg = img;
+previewScale = 1.0;
+isPreviewMode = true;
+
+dom.scaleSlider.value = 100;
+dom.scaleValue.textContent = '100%';
+dom.previewControls.style.display = 'block';
+
+spriteMetaIsDefault = false;
+const spriteMetaEl = document.getElementById('spriteMeta');
+spriteMetaEl.textContent = entry.variant ? `${entry.name} — ${entry.variant}` : entry.name;
+spriteMetaEl.title = entry.src;
+dom.clearSpriteBtn.style.display = 'inline-block';
+
+showSpriteScaleHint();
+renderIdle();
+};
+img.onerror = () => {
+
+setStatus('invalidSpriteType');
+};
+img.src = entry.src;
+
+closeCharPresetsModal();
+}
+
+let modalBodyScrollY = 0;
+
+function lockBodyScroll() {
+modalBodyScrollY = window.scrollY || window.pageYOffset || 0;
+const scrollbarGap = window.innerWidth - document.documentElement.clientWidth;
+document.body.style.position = 'fixed';
+document.body.style.top = `-${modalBodyScrollY}px`;
+document.body.style.left = '0';
+document.body.style.right = '0';
+document.body.style.width = '100%';
+if (scrollbarGap > 0) {
+document.body.style.paddingRight = scrollbarGap + 'px';
+}
+}
+
+function unlockBodyScroll() {
+document.body.style.position = '';
+document.body.style.top = '';
+document.body.style.left = '';
+document.body.style.right = '';
+document.body.style.width = '';
+document.body.style.paddingRight = '';
+window.scrollTo(0, modalBodyScrollY);
+}
+
+function openCharPresetsModal() {
+renderCharPresets();
+dom.charPresetsModal.style.display = 'flex';
+lockBodyScroll();
+}
+
+function closeCharPresetsModal() {
+dom.charPresetsModal.style.display = 'none';
+unlockBodyScroll();
+}
+
+if (dom.charPresetsBtn) {
+dom.charPresetsBtn.addEventListener('click', openCharPresetsModal);
+
+dom.charPresetsBtn.addEventListener('pointerdown', () => dom.charPresetsBtn.classList.add('is-pressed'));
+dom.charPresetsBtn.addEventListener('pointerup', () => setTimeout(() => dom.charPresetsBtn.classList.remove('is-pressed'), 220));
+dom.charPresetsBtn.addEventListener('pointerleave', () => dom.charPresetsBtn.classList.remove('is-pressed'));
+}
+if (dom.closeCharPresetsBtn) {
+dom.closeCharPresetsBtn.addEventListener('click', closeCharPresetsModal);
+}
+if (dom.charPresetsModal) {
+dom.charPresetsModal.querySelector('.modal-backdrop').addEventListener('click', closeCharPresetsModal);
+}
+
+dom.fsBtn.addEventListener('click', () => {
+const el = document.getElementById('stageWrap');
+
+if (!document.fullscreenElement) {
+el.requestFullscreen().catch(err => {
+console.warn('Не удалось войти в полноэкранный режим:', err);
+});
+} else {
+document.exitFullscreen();
+}
+});
+
+dom.closeFsBtn.addEventListener('click', () => {
+if (document.fullscreenElement) {
+document.exitFullscreen();
+}
+});
+
+function toggleLights() {
+document.body.classList.toggle('lights-out');
+updateDimBtnText();
+}
+
+dom.dimBtn.addEventListener('click', toggleLights);
+
+dom.dimOverlay.addEventListener('click', () => {
+if (document.body.classList.contains('lights-out')) {
+toggleLights();
+}
+});
+
+document.addEventListener('fullscreenchange', () => {
+updateFsBtnText();
+});
+
+dom.rescaleBtn.addEventListener('click', () => {
+if (!spriteImg) return;
+
+previewImg = spriteImg;
+previewScale = spriteScaleFactor;
+isPreviewMode = true;
+
+dom.scaleSlider.value = Math.round(spriteScaleFactor * 100);
+dom.scaleValue.textContent = dom.scaleSlider.value + '%';
+
+dom.previewControls.style.display = 'block';
+showSpriteScaleHint();
+renderIdle();
+});
+
+const bgStartImgEl = new Image();
+const bgAfterImgEl = new Image();
+
+bgStartImgEl.onload = () => { bgStartImg = bgStartImgEl; if (!sceneRunning) renderIdle(); };
+bgAfterImgEl.onload = () => { bgAfterImg = bgAfterImgEl; if (!sceneRunning) renderIdle(); };
+
+bgStartImgEl.src = 'assets/bg_start.png';
+bgAfterImgEl.src = 'assets/bg_after.png';
+
+let sceneElapsed = 0;
+let lastFrameTime = 0;
+let isPaused = false;
+let sceneRunning = false;
+
+let rafId = null;
+let lastPhaseName = null;
+let frameDelta = 1 / 60;
+let cameraOffset = 0;
+let lineBrightness = {};
+let particles = [];
+let petals = [];
+let petalsEnabled = false;
+
+function setStatus(key, args) {
+currentStatusKey = key;
+currentStatusArgs = args || null;
+dom.statusText.textContent = T(key, args);
+}
+
+const SPRITE_HINT_KEY = 'vnfs_spriteScaleHintSeen';
+let spriteHintSeen = true;
+try {
+spriteHintSeen = localStorage.getItem(SPRITE_HINT_KEY) === '1';
+} catch (e) {
+
+spriteHintSeen = true;
+}
+
+let spriteHintScrollY = 0;
+let spriteHintActive = false;
+
+function positionSpriteHint() {
+if (!dom.playbackBar) return;
+const rect = dom.playbackBar.getBoundingClientRect();
+[dom.spriteHintHole, dom.spriteHintRing].forEach(el => {
+el.setAttribute('x', rect.left);
+el.setAttribute('y', rect.top);
+el.setAttribute('width', rect.width);
+el.setAttribute('height', rect.height);
+});
+}
+
+function lockPageScroll() {
+spriteHintScrollY = window.scrollY || window.pageYOffset || 0;
+const scrollbarGap = window.innerWidth - document.documentElement.clientWidth;
+document.body.style.position = 'fixed';
+document.body.style.top = `-${spriteHintScrollY}px`;
+document.body.style.left = '0';
+document.body.style.right = '0';
+document.body.style.width = '100%';
+if (scrollbarGap > 0) {
+document.body.style.paddingRight = scrollbarGap + 'px';
+}
+}
+
+function unlockPageScroll() {
+document.body.style.position = '';
+document.body.style.top = '';
+document.body.style.left = '';
+document.body.style.right = '';
+document.body.style.width = '';
+document.body.style.paddingRight = '';
+window.scrollTo(0, spriteHintScrollY);
+}
+
+function onSpriteHintPulseEnd(e) {
+if (e.target !== dom.statusText) return;
+finishSpriteHint();
+}
+
+function showSpriteScaleHint() {
+setStatus(spriteHintSeen ? 'adjustSpriteSize' : 'adjustSpriteSizeHint');
+if (spriteHintSeen) return;
+
+spriteHintActive = true;
+positionSpriteHint();
+dom.spriteHintSvg.classList.add('active');
+lockPageScroll();
+
+dom.statusText.classList.remove('pulse-attention');
+dom.spriteHintRing.classList.remove('pulse-ring');
+void dom.statusText.offsetWidth;
+dom.statusText.classList.add('pulse-attention');
+dom.spriteHintRing.classList.add('pulse-ring');
+
+window.addEventListener('resize', positionSpriteHint);
+dom.statusText.addEventListener('animationend', onSpriteHintPulseEnd);
+}
+
+function finishSpriteHint() {
+if (!spriteHintActive) return;
+spriteHintActive = false;
+
+dom.spriteHintSvg.classList.remove('active');
+dom.statusText.classList.remove('pulse-attention');
+dom.spriteHintRing.classList.remove('pulse-ring');
+window.removeEventListener('resize', positionSpriteHint);
+dom.statusText.removeEventListener('animationend', onSpriteHintPulseEnd);
+unlockPageScroll();
+
+if (spriteHintSeen) return;
+spriteHintSeen = true;
+try {
+localStorage.setItem(SPRITE_HINT_KEY, '1');
+} catch (e) {
+
+}
+}
+
+function dismissSpriteScaleHint() {
+finishSpriteHint();
+}
+
+function isPngFile(file) {
+return !!file && file.type === 'image/png';
+}
+
+function isAudioFile(file) {
+return !!file && file.type.startsWith('audio/');
+}
+
+dom.spriteInput.addEventListener('change', e => {
+const file = e.target.files[0];
+if (!file) return;
+
+if (!isPngFile(file)) {
+setStatus('invalidSpriteType');
+dom.spriteInput.value = '';
+return;
+}
+
+pendingCharPresetId = null;
+activeCharPresetId = null;
+voiceBuffer = null;
+spriteTransition = null;
+
+spriteMetaIsDefault = false;
+const spriteMetaEl = document.getElementById('spriteMeta');
+spriteMetaEl.textContent = file.name;
+spriteMetaEl.title = file.name;
+dom.clearSpriteBtn.style.display = 'inline-block';
+
+setStatus('loadingSprite');
+
+const reader = new FileReader();
+reader.onload = () => {
+const img = new Image();
+img.onload = () => {
+previewImg = img;
+previewScale = 1.0;
+isPreviewMode = true;
+dom.previewControls.style.display = 'block';
+
+showSpriteScaleHint();
+renderIdle();
+};
+img.onerror = () => {
+
+setStatus('invalidSpriteType');
+dom.spriteInput.value = '';
+};
+img.src = reader.result;
+};
+reader.onerror = () => {
+setStatus('invalidSpriteType');
+dom.spriteInput.value = '';
+};
+reader.readAsDataURL(file);
+});
+
+function getAudioCtx() {
+if (!audioCtx) {
+audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+recordDestNode = audioCtx.createMediaStreamDestination();
+
+musicGainNode = audioCtx.createGain();
+musicGainNode.gain.value = musicVolume / 100;
+musicGainNode.connect(audioCtx.destination);
+musicGainNode.connect(recordDestNode);
+
+sfxGainNode = audioCtx.createGain();
+sfxGainNode.gain.value = sfxVolume / 100;
+sfxGainNode.connect(audioCtx.destination);
+sfxGainNode.connect(recordDestNode);
+}
+return audioCtx;
+}
+
+function loadAudioBuffer(file, label) {
+return new Promise((resolve, reject) => {
+if (!file) {
+resolve(null);
+return;
+}
+
+setStatus('decoding', { label: label });
+const reader = new FileReader();
+
+reader.onload = () => {
+const ctx = getAudioCtx();
+ctx.decodeAudioData(
+reader.result,
+buffer => {
+setStatus('ready', { label: label });
+resolve(buffer);
+},
+error => {
+setStatus('audioDecodeError', { label: label });
+reject(error);
+}
+);
+};
+
+reader.onerror = (err) => {
+setStatus('audioReadError');
+reject(err);
+};
+
+reader.readAsArrayBuffer(file);
+});
+}
+
+function loadPresetBuffer(preset) {
+if (presetBufferCache[preset.path]) {
+return Promise.resolve(presetBufferCache[preset.path]);
+}
+return fetch(preset.path)
+.then(res => {
+if (!res.ok) throw new Error('HTTP ' + res.status);
+return res.arrayBuffer();
+})
+.then(arrayBuffer => getAudioCtx().decodeAudioData(arrayBuffer))
+.then(buffer => {
+presetBufferCache[preset.path] = buffer;
+return buffer;
+});
+}
+
+function loadVoiceForName(name) {
+const file = CHARACTER_VOICES[name];
+if (!file) {
+voiceBuffer = null;
+return Promise.resolve(null);
+}
+const path = 'assets/audio/lines/' + file;
+const myToken = ++voiceLoadToken;
+
+if (voiceBufferCache[path]) {
+voiceBuffer = voiceBufferCache[path];
+return Promise.resolve(voiceBuffer);
+}
+
+return fetch(path)
+.then(res => {
+if (!res.ok) throw new Error('HTTP ' + res.status);
+return res.arrayBuffer();
+})
+.then(arrayBuffer => getAudioCtx().decodeAudioData(arrayBuffer))
+.then(buffer => {
+voiceBufferCache[path] = buffer;
+if (myToken !== voiceLoadToken) return null;
+voiceBuffer = buffer;
+return buffer;
+})
+.catch(err => {
+console.warn('[voice] load failed:', path, err);
+if (myToken === voiceLoadToken) voiceBuffer = null;
+return null;
+});
+}
+
+function updateCapsuleEl(el, label) {
+if (!el) return;
+el.textContent = label;
+el.title = label;
+}
+
+function selectMusicPreset(index) {
+musicPresetIndex = ((index % MUSIC_PRESETS.length) + MUSIC_PRESETS.length) % MUSIC_PRESETS.length;
+musicSource = 'preset';
+const preset = MUSIC_PRESETS[musicPresetIndex];
+updateCapsuleEl(dom.musicPresetCapsule, preset.label);
+
+const myToken = ++musicPresetLoadToken;
+dom.musicInput.value = '';
+musicMetaIsDefault = true;
+document.getElementById('musicMeta').textContent = I18N[currentLang].ui.musicMetaDefault;
+if (dom.clearMusicBtn) dom.clearMusicBtn.style.display = 'none';
+
+if (!presetBufferCache[preset.path]) {
+setStatus('presetLoading', { label: preset.label });
+}
+
+loadPresetBuffer(preset)
+.then(buffer => {
+if (myToken !== musicPresetLoadToken || musicSource !== 'preset') return;
+musicBuffer = buffer;
+setStatus('presetReady', { label: preset.label });
+if (sceneRunning) {
+if (currentMusicSource) { fadeOutMusicSource(currentMusicSource); }
+currentMusicSource = playMusicWithFadeIn(musicBuffer);
+}
+})
+.catch(err => {
+console.warn('[preset] music load failed:', preset.path, err);
+if (myToken !== musicPresetLoadToken || musicSource !== 'preset') return;
+musicBuffer = null;
+setStatus('presetLoadError', { label: preset.label });
+});
+}
+
+function selectSfxPreset(index) {
+sfxPresetIndex = ((index % SFX_PRESETS.length) + SFX_PRESETS.length) % SFX_PRESETS.length;
+sfxSource = 'preset';
+const preset = SFX_PRESETS[sfxPresetIndex];
+updateCapsuleEl(dom.sfxPresetCapsule, preset.label);
+
+const myToken = ++sfxPresetLoadToken;
+dom.sfxInput.value = '';
+sfxMetaIsDefault = true;
+document.getElementById('sfxMeta').textContent = I18N[currentLang].ui.sfxMetaDefault;
+if (dom.clearSfxBtn) dom.clearSfxBtn.style.display = 'none';
+
+if (!presetBufferCache[preset.path]) {
+setStatus('presetLoading', { label: preset.label });
+}
+
+loadPresetBuffer(preset)
+.then(buffer => {
+if (myToken !== sfxPresetLoadToken || sfxSource !== 'preset') return;
+sfxBuffer = buffer;
+setStatus('presetReady', { label: preset.label });
+})
+.catch(err => {
+
+console.warn('[preset] sfx load failed:', preset.path, err);
+if (myToken !== sfxPresetLoadToken || sfxSource !== 'preset') return;
+sfxBuffer = null;
+setStatus('presetLoadError', { label: preset.label });
+});
+}
+
+function playBuffer(buffer, shouldLoop = false, category = 'sfx') {
+if (!buffer) return null;
+
+getAudioCtx();
+const ctx = audioCtx;
+const source = ctx.createBufferSource();
+source.buffer = buffer;
+source.loop = shouldLoop;
+
+if (category === 'music') {
+
+const trackGain = ctx.createGain();
+trackGain.gain.value = 1;
+source.connect(trackGain);
+trackGain.connect(musicGainNode);
+source._trackGain = trackGain;
+} else {
+source.connect(sfxGainNode);
+}
+
+source.start(0);
+return source;
+}
+
+function fadeOutMusicSource(source, durationSec = 0.25) {
+if (!source) return;
+try {
+const g = source._trackGain;
+if (audioCtx && g && audioCtx.state === 'running') {
+const now = audioCtx.currentTime;
+g.gain.cancelScheduledValues(now);
+g.gain.setValueAtTime(g.gain.value, now);
+g.gain.linearRampToValueAtTime(0, now + durationSec);
+setTimeout(() => { try { source.stop(); } catch (e) {} }, durationSec * 1000 + 30);
+} else {
+source.stop();
+}
+} catch (e) {
+try { source.stop(); } catch (e2) {}
+}
+}
+
+function playMusicWithFadeIn(buffer, durationSec = 0.25) {
+const wasRunning = !!(audioCtx && audioCtx.state === 'running');
+const source = playBuffer(buffer, true, 'music');
+if (source && wasRunning && source._trackGain) {
+const now = audioCtx.currentTime;
+const g = source._trackGain;
+g.gain.cancelScheduledValues(now);
+g.gain.setValueAtTime(0, now);
+g.gain.linearRampToValueAtTime(1, now + durationSec);
+}
+return source;
+}
+
+function drawBackground(camOffset, isPostPeak) {
+if (isPostPeak) {
+if (bgAfterImg) {
+ctx.drawImage(bgAfterImg, 0, 0, W, H);
+}
+return;
+}
+
+if (bgStartImg) {
+const scale = 1.14;
+const drawW = W * scale;
+const drawH = H * scale;
+const maxShift = drawW - W;
+
+const panDuration = INTRO_PAN_DURATION;
+const cameraT = Math.min(sceneElapsed / INTRO_PAN_DURATION, 1);
+const ease = 1 - Math.pow(1 - cameraT, 3);
+const offsetX = ease * maxShift;
+
+cameraOffset = offsetX;
+
+ctx.drawImage(
+bgStartImg,
+-offsetX,
+-(drawH - H) / 2,
+drawW,
+drawH
+);
+}
+}
+
+function applyColorGrade() {
+ctx.save();
+ctx.globalCompositeOperation = 'multiply';
+ctx.fillStyle = 'rgba(255,190,205,0.14)';
+ctx.fillRect(0, 0, W, H);
+ctx.globalCompositeOperation = 'overlay';
+ctx.fillStyle = 'rgba(255,150,120,0.08)';
+ctx.fillRect(0, 0, W, H);
+ctx.restore();
+}
+
+const spriteTintCanvas = document.createElement('canvas');
+const spriteTintCtx = spriteTintCanvas.getContext('2d', { alpha: true, willReadFrequently: true });
+const memoryCanvas = document.createElement('canvas');
+const memoryCtx = memoryCanvas.getContext('2d', { alpha: true, willReadFrequently: true });
+const blurCanvas = document.createElement('canvas');
+const blurCtx = blurCanvas.getContext('2d', { alpha: true, willReadFrequently: true });
+
+const transitionFromCanvas = document.createElement('canvas');
+const transitionToCanvas = document.createElement('canvas');
+
+let lastTintW = 0;
+let lastTintH = 0;
+let skyTintCacheValid = false;
+let lastTintImg = null;
+let lastTintBg = null;
+let lastTintX = null;
+let lastTintY = null;
+
+function drawMemoryVignette(img, w, h) {
+if (isMemoryCacheValid && memoryCanvas.width === w && memoryCanvas.height === h) {
+return;
+}
+
+memoryCanvas.width = w;
+memoryCanvas.height = h;
+memoryCtx.clearRect(0, 0, w, h);
+
+memoryCtx.save();
+memoryCtx.filter = 'grayscale(0.7) sepia(0.3) contrast(1.15)';
+memoryCtx.drawImage(img, 0, h * 0.15, w, h);
+memoryCtx.restore();
+
+memoryCtx.save();
+memoryCtx.globalCompositeOperation = 'destination-in';
+
+const cx = w / 2;
+const cy = h / 2;
+const r = Math.max(cx, cy);
+
+memoryCtx.translate(cx, cy);
+memoryCtx.scale(1, 0.75);
+
+const grad = memoryCtx.createRadialGradient(0, 0, 0, 0, 0, r);
+grad.addColorStop(0, 'rgba(0,0,0,1)');
+grad.addColorStop(0.4, 'rgba(0,0,0,0.9)');
+grad.addColorStop(0.85, 'rgba(0,0,0,0)');
+
+memoryCtx.fillStyle = grad;
+memoryCtx.beginPath();
+memoryCtx.arc(0, 0, r, 0, Math.PI * 2);
+memoryCtx.fill();
+memoryCtx.restore();
+
+isMemoryCacheValid = true;
+}
+
+let skyTintUnavailable = false;
+
+function paintSkyTintedSprite(targetCtx, img, w, h, bg, x, y) {
+targetCtx.clearRect(0, 0, w, h);
+targetCtx.drawImage(img, 0, 0, w, h);
+
+const spriteMask = targetCtx.getImageData(0, 0, w, h);
+
+if (bg) {
+const rx = Math.max(0, (x / W) * bg.width - bg.width * 0.12);
+const ry = Math.max(0, (y / H) * bg.height - bg.height * 0.08);
+const rw = bg.width * 0.55;
+const rh = bg.height;
+
+blurCtx.save();
+blurCtx.filter = 'blur(12px) saturate(1.45) contrast(1.08)';
+blurCtx.clearRect(0, 0, 64, 64);
+blurCtx.drawImage(bg, rx, ry, rw, rh, 0, 0, 64, 64);
+blurCtx.restore();
+
+targetCtx.save();
+targetCtx.globalCompositeOperation = 'soft-light';
+targetCtx.globalAlpha = 0.68;
+targetCtx.drawImage(blurCanvas, 0, 0, 64, 64, 0, 0, w, h);
+targetCtx.restore();
+}
+
+targetCtx.save();
+targetCtx.globalCompositeOperation = 'source-atop';
+
+const sun = targetCtx.createRadialGradient(
+w * 0.86, h * 0.26, 0,
+w * 0.86, h * 0.26, h * 0.85
+);
+sun.addColorStop(0, 'rgba(255,225,170,0.10)');
+sun.addColorStop(0.45, 'rgba(255,205,170,0.04)');
+sun.addColorStop(1, 'rgba(255,205,170,0)');
+
+targetCtx.fillStyle = sun;
+targetCtx.fillRect(0, 0, w, h);
+targetCtx.restore();
+
+const out = targetCtx.getImageData(0, 0, w, h);
+for (let i = 3; i < out.data.length; i += 4) {
+out.data[i] = spriteMask.data[i];
+}
+targetCtx.putImageData(out, 0, 0);
+}
+
+function drawSpriteWithSkyTint(img, x, y, w, h, alpha = 1) {
+if (skyTintUnavailable) {
+ctx.save();
+ctx.globalAlpha = alpha;
+ctx.drawImage(img, x, y, w, h);
+ctx.restore();
+return;
+}
+
+const needResize = (Math.ceil(w) !== lastTintW || Math.ceil(h) !== lastTintH);
+if (needResize) {
+lastTintW = Math.ceil(w);
+lastTintH = Math.ceil(h);
+spriteTintCanvas.width = lastTintW;
+spriteTintCanvas.height = lastTintH;
+}
+
+const bg = (sceneElapsed >= cumDur[7]) ? bgAfterImg : bgStartImg;
+const roundedX = Math.round(x / 12) * 12;
+const roundedY = Math.round(y / 8) * 8;
+const tintCacheHit = skyTintCacheValid
+&& img === lastTintImg
+&& bg === lastTintBg
+&& roundedX === lastTintX
+&& roundedY === lastTintY
+&& !needResize;
+
+if (tintCacheHit) {
+ctx.save();
+ctx.globalAlpha = alpha;
+ctx.drawImage(spriteTintCanvas, x, y);
+ctx.restore();
+return;
+}
+
+if (blurCanvas.width !== 64) {
+blurCanvas.width = 64;
+blurCanvas.height = 64;
+}
+
+try {
+paintSkyTintedSprite(spriteTintCtx, img, w, h, bg, roundedX, roundedY);
+
+skyTintCacheValid = true;
+lastTintImg = img;
+lastTintBg = bg;
+lastTintX = roundedX;
+lastTintY = roundedY;
+
+ctx.save();
+ctx.globalAlpha = alpha;
+ctx.drawImage(spriteTintCanvas, x, y);
+ctx.restore();
+} catch (err) {
+skyTintUnavailable = true;
+skyTintCacheValid = false;
+ctx.save();
+ctx.globalAlpha = alpha;
+ctx.drawImage(img, x, y, w, h);
+ctx.restore();
+}
+}
+
+function beginSpriteTransition(fromImg, toImg) {
+const sh = Math.round(H * 0.92 * spriteScaleFactor);
+const fromW = Math.round(sh * (fromImg.width / fromImg.height));
+const toW = Math.round(sh * (toImg.width / toImg.height));
+const y = H - sh;
+
+const fromX = Math.round(W * 0.62 - fromW / 2 + cameraOffset * 0.30);
+const toX = Math.round(W * 0.62 - toW / 2 + cameraOffset * 0.30);
+
+const fromCanvas = transitionFromCanvas;
+fromCanvas.width = fromW;
+fromCanvas.height = sh;
+const toCanvas = transitionToCanvas;
+toCanvas.width = toW;
+toCanvas.height = sh;
+
+if (skyTintUnavailable) {
+fromCanvas.getContext('2d').drawImage(fromImg, 0, 0, fromW, sh);
+toCanvas.getContext('2d').drawImage(toImg, 0, 0, toW, sh);
+} else {
+try {
+const bg = (sceneElapsed >= cumDur[7]) ? bgAfterImg : bgStartImg;
+if (blurCanvas.width !== 64) {
+blurCanvas.width = 64;
+blurCanvas.height = 64;
+}
+paintSkyTintedSprite(fromCanvas.getContext('2d', { willReadFrequently: true }), fromImg, fromW, sh, bg, fromX, y);
+paintSkyTintedSprite(toCanvas.getContext('2d', { willReadFrequently: true }), toImg, toW, sh, bg, toX, y);
+} catch (err) {
+
+fromCanvas.getContext('2d').clearRect(0, 0, fromW, sh);
+fromCanvas.getContext('2d').drawImage(fromImg, 0, 0, fromW, sh);
+toCanvas.getContext('2d').clearRect(0, 0, toW, sh);
+toCanvas.getContext('2d').drawImage(toImg, 0, 0, toW, sh);
+}
+}
+
+spriteTransition = {
+fromCanvas, toCanvas, fromX, toX, y, sh,
+startElapsed: sceneElapsed,
+duration: SPRITE_TRANSITION_MS
+};
+}
+
+function darken(hex, amount) {
+const r = Math.round(parseInt(hex.substr(1,2),16) * amount);
+const g = Math.round(parseInt(hex.substr(3,2),16) * amount);
+const b = Math.round(parseInt(hex.substr(5,2),16) * amount);
+return `rgb(${r},${g},${b})`;
+}
+
+function renderNVLText(currentBlock, currentLineIndex, revealT, showLinesUpTo) {
+if (currentBlock === null || currentBlock === undefined) return;
+
+ctx.save();
+ctx.fillStyle = 'rgba(4, 3, 8, 0.42)';
+ctx.fillRect(0, 0, W, H);
+
+let currentY = 55;
+const startX = 80;
+const maxWidth = W - 160;
+
+const blockPhases = PHASES.filter(p => p.block === currentBlock);
+
+blockPhases.forEach(p => {
+let lineText = getPhaseText(p);
+if (!lineText || lineText.trim() === '') return;
+
+let visibleText = '';
+const key = `${currentBlock}_${p.lineIndex}`;
+
+if (lineBrightness[key] === undefined)
+lineBrightness[key] = 1.0;
+
+let textBrightness = lineBrightness[key];
+
+if (showLinesUpTo !== undefined) {
+if (p.lineIndex !== undefined && p.lineIndex < showLinesUpTo) {
+visibleText = lineText;
+} else {
+return;
+}
+} else {
+if (p.lineIndex !== undefined) {
+if (p.lineIndex < currentLineIndex) {
+visibleText = lineText;
+} else if (p.lineIndex === currentLineIndex) {
+visibleText = lineText.slice(0, Math.floor(lineText.length * revealT));
+} else {
+return;
+}
+}
+}
+
+if (!visibleText) return;
+
+let targetBrightness = 1.0;
+const referenceLine =
+(currentLineIndex !== undefined)
+? currentLineIndex
+: (showLinesUpTo !== undefined ? showLinesUpTo - 1 : undefined);
+
+if (referenceLine !== undefined && p.lineIndex !== undefined) {
+const age = referenceLine - p.lineIndex;
+if (age === 1)
+targetBrightness = 0.72;
+else if (age >= 2)
+targetBrightness = 0.50;
+}
+
+const fadeSpeed = 7.0;
+lineBrightness[key] +=
+(targetBrightness - lineBrightness[key]) *
+Math.min(1, fadeSpeed * frameDelta);
+
+textBrightness = lineBrightness[key];
+ctx.save();
+
+const isCentered = (p.name === 'line4');
+if (isCentered) {
+currentY += 24;
+ctx.textAlign = 'center';
+} else {
+ctx.textAlign = 'left';
+}
+
+ctx.textBaseline = 'top';
+ctx.lineJoin = 'round';
+ctx.lineWidth = 4;
+ctx.strokeStyle = 'rgba(0, 0, 0, 0.9)';
+ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+ctx.shadowBlur = 5;
+
+if (p.speaker === 'narrator') {
+ctx.font = '500 20px "Noto Sans JP", sans-serif';
+ctx.fillStyle = textColors.narrator;
+} else if (p.speaker === 'monologue') {
+ctx.font = 'italic 500 20px "Noto Sans JP", sans-serif';
+ctx.fillStyle = '#d7cee0';
+} else if (p.speaker === 'pc') {
+ctx.font = '500 20px "Noto Sans JP", sans-serif';
+ctx.fillStyle = textColors.pc;
+} else {
+ctx.font = '500 20px "Noto Sans JP", sans-serif';
+ctx.fillStyle = textColors.sprite;
+}
+
+if (textBrightness < 1) {
+ctx.fillStyle = darken(ctx.fillStyle, textBrightness);
+ctx.shadowBlur *= textBrightness;
+}
+
+const words = visibleText.split(' ');
+let currentLine = '';
+
+words.forEach(word => {
+const testLine = currentLine ? currentLine + ' ' + word : word;
+if (ctx.measureText(testLine).width > maxWidth && currentLine) {
+if (isCentered) {
+ctx.strokeText(currentLine, W / 2, currentY);
+ctx.fillText(currentLine, W / 2, currentY);
+} else {
+ctx.strokeText(currentLine, startX, currentY);
+ctx.fillText(currentLine, startX, currentY);
+}
+currentY += 28;
+currentLine = word;
+} else {
+currentLine = testLine;
+}
+});
+
+if (currentLine) {
+if (isCentered) {
+ctx.strokeText(currentLine, W / 2, currentY);
+ctx.fillText(currentLine, W / 2, currentY);
+} else {
+ctx.strokeText(currentLine, startX, currentY);
+ctx.fillText(currentLine, startX, currentY);
+}
+currentY += 36;
+}
+
+ctx.restore();
+});
+
+ctx.restore();
+}
+
+if (document.fonts) {
+document.fonts.ready.then(() => { if (!sceneRunning) renderIdle(); });
+}
+
+function spawnAndDrawParticles(cx, cy, radius) {
+if (particles.length < 50 && Math.random() < 0.7) {
+particles.push({
+x: cx + (Math.random() - 0.5) * radius * 2,
+y: cy + (Math.random() - 0.5) * radius * 2,
+vy: -0.35 - Math.random() * 0.7,
+vx: (Math.random() - 0.5) * 0.35,
+life: 1,
+size: 1 + Math.random() * 2.5
+});
+}
+ctx.save();
+particles.forEach(p => {
+if (!isPaused) { p.x += p.vx; p.y += p.vy; p.life -= 0.012; }
+ctx.globalAlpha = Math.max(0, p.life) * 0.9;
+ctx.fillStyle = '#fff7e8';
+ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+});
+ctx.restore();
+if (!isPaused) particles = particles.filter(p => p.life > 0);
+}
+
+const PETAL_COLORS = [
+'#74214f',
+'#8f2b62',
+'#5c163f',
+'#470f30'
+];
+
+function spawnPetal(isInitial = false) {
+return {
+x: isInitial ? Math.random() * W : W + 30,
+y: Math.random() * (H + 100) - 50,
+size: 5 + Math.random() * 7,
+vx: -4.5 - Math.random() * 4.5,
+vy: 0.6 + Math.random() * 1.4,
+angle: Math.random() * Math.PI * 2,
+spin: (Math.random() - 0.5) * 0.04,
+swingSpeed: 0.03 + Math.random() * 0.03,
+swingStep: Math.random() * 100,
+scaleX: 0.6 + Math.random() * 0.4,
+scaleY: 1.0,
+color: PETAL_COLORS[Math.floor(Math.random() * PETAL_COLORS.length)]
+};
+}
+
+function updateAndDrawPetals() {
+if (petalsEnabled && petals.length < 35 && Math.random() < 0.2) {
+petals.push(spawnPetal(false));
+}
+
+if (petals.length === 0) return;
+
+const fadeStart = cumDur[16];
+const fadeDuration = 2500;
+const petalsGlobalAlpha = Math.min(1, Math.max(0, (sceneElapsed - fadeStart) / fadeDuration));
+
+ctx.save();
+for (let i = petals.length - 1; i >= 0; i--) {
+const p = petals[i];
+
+if (!isPaused) {
+p.x += p.vx;
+p.y += p.vy + Math.sin(p.swingStep) * 0.5;
+p.swingStep += p.swingSpeed;
+p.angle += p.spin;
+p.scaleX = Math.abs(Math.sin(p.swingStep * 0.5)) * 0.7 + 0.3;
+}
+
+ctx.save();
+ctx.translate(p.x, p.y);
+ctx.rotate(p.angle);
+ctx.scale(p.scaleX, p.scaleY);
+ctx.fillStyle = p.color;
+ctx.globalAlpha = petalsGlobalAlpha;
+
+ctx.shadowColor = 'rgba(20, 5, 15, 0.25)';
+ctx.shadowBlur = 3;
+ctx.shadowOffsetY = 1;
+
+ctx.beginPath();
+ctx.moveTo(0, 0);
+ctx.bezierCurveTo(-p.size / 2, -p.size / 2, -p.size / 2, p.size / 2, 0, p.size);
+ctx.bezierCurveTo(p.size / 2, p.size / 2, p.size / 2, -p.size / 2, 0, 0);
+ctx.closePath();
+ctx.fill();
+ctx.restore();
+
+if (p.x < -40 || p.y > H + 40) {
+petals.splice(i, 1);
+}
+}
+ctx.restore();
+}
+
+const lerp = (a, b, t) => a + (b - a) * t;
+const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+const easeInCubic = t => t * t * t;
+
+function finalLineText() {
+let text = dom.customLine.value.trim();
+if (!text) {
+const name = dom.nameInput.value.trim() || I18N[currentLang].defaultName;
+text = I18N[currentLang].finalLineTemplate(name);
+}
+text = text.replace(/^["'«»“”]+|["'«»“”]+$/g, '');
+return '"' + text + '"';
+}
+
+function customTextsKey(lang) {
+return 'vn_custom_texts_' + lang;
+}
+
+function loadCustomTexts(lang) {
+try {
+return JSON.parse(localStorage.getItem(customTextsKey(lang)) || '{}');
+} catch (e) {
+return {};
+}
+}
+
+let customTexts = loadCustomTexts(currentLang);
+
+const DEFAULT_TEXT_COLORS = {
+sprite: '#ffffff',
+pc: '#bce5ff',
+narrator: '#ebdcc5',
+};
+const TEXT_COLORS_KEY = 'vn_text_colors';
+
+function loadTextColors() {
+try {
+const saved = JSON.parse(localStorage.getItem(TEXT_COLORS_KEY) || '{}');
+return { ...DEFAULT_TEXT_COLORS, ...saved };
+} catch (e) {
+return { ...DEFAULT_TEXT_COLORS };
+}
+}
+
+function saveTextColors() {
+try {
+localStorage.setItem(TEXT_COLORS_KEY, JSON.stringify(textColors));
+} catch (e) {
+
+}
+}
+
+let textColors = loadTextColors();
+
+function applyTextColorsToPickers() {
+if (dom.colorSprite) dom.colorSprite.value = textColors.sprite;
+if (dom.colorPc) dom.colorPc.value = textColors.pc;
+if (dom.colorNarrator) dom.colorNarrator.value = textColors.narrator;
+}
+applyTextColorsToPickers();
+
+function onTextColorChange(key, input) {
+textColors[key] = input.value;
+saveTextColors();
+refreshCanvasAfterSpriteChange();
+}
+
+if (dom.colorSprite) dom.colorSprite.addEventListener('input', () => onTextColorChange('sprite', dom.colorSprite));
+if (dom.colorPc) dom.colorPc.addEventListener('input', () => onTextColorChange('pc', dom.colorPc));
+if (dom.colorNarrator) dom.colorNarrator.addEventListener('input', () => onTextColorChange('narrator', dom.colorNarrator));
+
+function resetSingleTextColor(key, input) {
+textColors[key] = DEFAULT_TEXT_COLORS[key];
+saveTextColors();
+if (input) input.value = DEFAULT_TEXT_COLORS[key];
+refreshCanvasAfterSpriteChange();
+}
+
+if (dom.resetColorSpriteBtn) {
+dom.resetColorSpriteBtn.addEventListener('click', () => resetSingleTextColor('sprite', dom.colorSprite));
+}
+if (dom.resetColorPcBtn) {
+dom.resetColorPcBtn.addEventListener('click', () => resetSingleTextColor('pc', dom.colorPc));
+}
+if (dom.resetColorNarratorBtn) {
+dom.resetColorNarratorBtn.addEventListener('click', () => resetSingleTextColor('narrator', dom.colorNarrator));
+}
+
+function getPhaseText(phase) {
+if (!phase) return '';
+
+if (customTexts[phase.name] !== undefined && customTexts[phase.name].trim() !== '') {
+let txt = customTexts[phase.name].trim();
+if (phase.speaker && phase.speaker !== 'narrator') {
+txt = txt.replace(/^["'«»“”]+|["'«»“”]+$/g, '');
+return '"' + txt + '"';
+}
+return txt;
+}
+
+if (phase.name === 'line4') {
+return finalLineText();
+}
+
+return phase.text;
+}
+
+const PHASES = [
+{ name: 'panIn', dur: 2400, block: null },
+{ name: 'line1', dur: 2700, block: 0, lineIndex: 0, speaker: 'sprite', text: '"Напоследок я должна сказать тебе лишь одно."' },
+{ name: 'line2', dur: 1500, block: 0, lineIndex: 1, speaker: 'pc', text: '"Да... Что именно?"' },
+{ name: 'line3', dur: 2200, block: 0, lineIndex: 2, speaker: 'narrator', text: 'Она обернулась. Уверенный взгляд, голос без единой тени сожаления.' },
+{ name: 'line4', dur: 4200, block: 0, lineIndex: 3, speaker: 'sprite', text: null },
+{ name: 'dissolve', dur: 3000, block: 0, showLinesUpTo: 4 },
+{ name: 'flash', dur: 1300, block: 0, showLinesUpTo: 4 },
+{ name: 'postFlashPause', dur: 2200, block: null },
+{ name: 'b1_l1', dur: 2400, block: 1, lineIndex: 0, speaker: 'narrator', text: 'Не сказать, что я был удивлён.' },
+{ name: 'b1_l2', dur: 2200, block: 1, lineIndex: 1, speaker: 'narrator', text: 'Просто мне всегда так казалось...' },
+{ name: 'b1_l3', dur: 2000, block: 1, lineIndex: 2, speaker: 'narrator', text: 'Что наше прощание...' },
+{ name: 'b1_l4', dur: 2600, block: 1, lineIndex: 3, speaker: 'narrator', text: 'будет именно таким.' },
+{ name: 'b1_pause', dur: 2500, block: 1, showLinesUpTo: 4 },
+{ name: 'b2_l1', dur: 2500, block: 2, lineIndex: 0, speaker: 'narrator', text: 'Явилась, словно сон...' },
+{ name: 'b2_l2', dur: 2800, block: 2, lineIndex: 1, speaker: 'narrator', text: 'И растаяла, не оставив даже тени.' },
+{ name: 'b2_pause', dur: 2500, block: 2, showLinesUpTo: 2 },
+{ name: 'b3_l1', dur: 2600, block: 3, lineIndex: 0, speaker: 'pc', text: '"Да уж... Это так на тебя похоже..."' },
+{ name: 'b3_l2', dur: 2800, block: 3, lineIndex: 1, speaker: 'narrator', text: 'Произношу я вполголоса, но ответа уже не последует.' },
+{ name: 'end', dur: 3000, block: 3, showLinesUpTo: 2 }
+];
+
+const cumDur = [];
+(function () { let acc = 0; PHASES.forEach(p => { cumDur.push(acc); acc += p.dur; }); cumDur.push(acc); })();
+const TOTAL_DUR = cumDur[cumDur.length - 1];
+
+const INTRO_PAN_DURATION = PHASES[0].dur;
+
+canvas.addEventListener('click', () => {
+if (sceneElapsed >= TOTAL_DUR) {
+dom.resetBtn.click();
+}
+});
+
+function resolvePhase(elapsed) {
+for (let i = 0; i < PHASES.length; i++) {
+if (elapsed < cumDur[i + 1] || i === PHASES.length - 1) {
+const t = Math.min(1, (elapsed - cumDur[i]) / PHASES[i].dur);
+return { phase: PHASES[i].name, t, phaseIndex: i };
+}
+}
+}
+
+function render(elapsed) {
+const { phase, t, phaseIndex } = resolvePhase(elapsed);
+
+const isFlashPhase = (phase === 'flash');
+const isPostPeak = (isFlashPhase && t >= 0.5) || (phaseIndex > 6);
+
+const camOffset = phaseIndex === 0 ? lerp(-140, 0, easeOutCubic(t)) : 0;
+
+ctx.clearRect(0, 0, W, H);
+drawBackground(camOffset, isPostPeak);
+
+let spriteAlpha = 1, spriteScale = 1;
+if (phase === 'dissolve') {
+spriteAlpha = 1 - easeInCubic(t);
+} else if (phaseIndex > 5) {
+spriteAlpha = 0;
+}
+
+if (phase === 'panIn') {
+const fadeT = Math.min(sceneElapsed / 220, 1);
+const fade = fadeT * fadeT * (3 - 2 * fadeT);
+spriteAlpha *= fade;
+}
+
+if (spriteImg && spriteAlpha > 0) {
+ctx.save();
+
+if (spriteTransition) {
+
+const progress = Math.min(1, Math.max(0, (elapsed - spriteTransition.startElapsed) / spriteTransition.duration));
+const eased = progress * progress * (3 - 2 * progress);
+
+const fromAlpha = spriteAlpha * (1 - eased);
+const toAlpha = spriteAlpha * eased;
+
+if (fromAlpha > 0.004) {
+ctx.globalAlpha = fromAlpha;
+ctx.drawImage(spriteTransition.fromCanvas, spriteTransition.fromX, spriteTransition.y);
+}
+if (toAlpha > 0.004) {
+ctx.globalAlpha = toAlpha;
+ctx.drawImage(spriteTransition.toCanvas, spriteTransition.toX, spriteTransition.y);
+}
+
+if (progress >= 1) spriteTransition = null;
+
+ctx.restore();
+} else {
+ctx.globalAlpha = spriteAlpha;
+const sh = Math.round(H * 0.92 * spriteScale * spriteScaleFactor);
+const sw = Math.round(sh * (spriteImg.width / spriteImg.height));
+const sx = Math.round(W * 0.62 - sw / 2 - camOffset * 0.9 + cameraOffset * 0.30);
+const sy = H - sh;
+
+drawSpriteWithSkyTint(spriteImg, sx, sy, sw, sh, spriteAlpha);
+ctx.restore();
+if (phase === 'dissolve') spawnAndDrawParticles(sx + sw / 2, sy + sh * 0.3, sw * 0.4);
+}
+}
+
+updateAndDrawPetals();
+applyColorGrade();
+
+const currentSeg = PHASES[phaseIndex];
+if (!hideText && currentSeg && currentSeg.block !== null && currentSeg.block !== undefined && phase !== 'flash') {
+const revealT = (currentSeg.lineIndex !== undefined)
+? (currentSeg.name === 'line4' ? Math.min(1, t / 0.4) : Math.min(1, t / 0.6))
+: 1;
+renderNVLText(currentSeg.block, currentSeg.lineIndex, revealT, currentSeg.showLinesUpTo);
+}
+
+if (phase === 'flash') {
+const a = Math.sin(t * Math.PI);
+ctx.save();
+ctx.fillStyle = 'rgba(255,250,240,' + a.toFixed(3) + ')';
+ctx.fillRect(0, 0, W, H);
+ctx.restore();
+}
+
+if (sceneElapsed >= TOTAL_DUR - 800) {
+const fadeDuration = 600;
+const fadeT = Math.min(1, (sceneElapsed - (TOTAL_DUR - 800)) / fadeDuration);
+
+if (spriteImg) {
+const bubbleH = 180;
+const bubbleW = Math.round(bubbleH * (spriteImg.width / spriteImg.height));
+
+drawMemoryVignette(spriteImg, bubbleW, bubbleH);
+
+ctx.save();
+ctx.globalAlpha = fadeT * 0.20;
+
+const bx = W - bubbleW - 80;
+const by = 40;
+
+ctx.drawImage(memoryCanvas, bx, by);
+ctx.restore();
+}
+
+if (!hideText) {
+ctx.save();
+ctx.globalAlpha = fadeT * 0.95;
+ctx.globalCompositeOperation = 'source-over';
+
+ctx.fillStyle = '#ffffff';
+ctx.textAlign = 'right';
+ctx.textBaseline = 'bottom';
+ctx.shadowColor = 'rgba(0, 0, 0, 0.95)';
+ctx.shadowBlur = 8;
+ctx.shadowOffsetX = 3;
+ctx.shadowOffsetY = 3;
+
+ctx.font = '800 72px "Noto Sans JP", sans-serif';
+ctx.fillText('FIN', W - 40, H - 70);
+
+ctx.font = '400 22px "Noto Sans JP", sans-serif';
+ctx.fillText('(Restart the scene)', W - 40, H - 40);
+
+ctx.restore();
+}
+}
+}
+
+function renderIdle() {
+ctx.clearRect(0, 0, W, H);
+drawBackground(0, false);
+applyColorGrade();
+
+if (isPreviewMode && previewImg) {
+ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+ctx.fillRect(0, 0, W, H);
+
+const baseHeight = H * 0.92;
+const sh = baseHeight * previewScale;
+const sw = sh * (previewImg.width / previewImg.height);
+
+const sx = W * 0.62 - sw / 2;
+const sy = H - sh;
+
+ctx.save();
+ctx.globalAlpha = 1;
+ctx.drawImage(previewImg, sx, sy, sw, sh);
+ctx.restore();
+
+return;
+}
+
+if (spriteImg) {
+const sh = Math.round(H * 0.92 * spriteScaleFactor);
+const sw = Math.round(sh * (spriteImg.width / spriteImg.height));
+drawSpriteWithSkyTint(spriteImg, Math.round(W * 0.62 - sw / 2), H - sh, sw, sh);
+}
+}
+applyLanguage(currentLang);
+
+async function ensureMusicReady() {
+if (musicSource !== 'preset' || musicBuffer) return;
+const preset = MUSIC_PRESETS[musicPresetIndex];
+try {
+musicBuffer = await loadPresetBuffer(preset);
+setStatus('presetReady', { label: preset.label });
+} catch (err) {
+console.warn('[preset] music load failed:', preset.path, err);
+setStatus('presetLoadError', { label: preset.label });
+}
+}
+
+async function ensureSfxReady() {
+if (sfxSource !== 'preset' || sfxBuffer) return;
+const preset = SFX_PRESETS[sfxPresetIndex];
+try {
+sfxBuffer = await loadPresetBuffer(preset);
+} catch (err) {
+console.warn('[preset] sfx load failed:', preset.path, err);
+setStatus('presetLoadError', { label: preset.label });
+}
+}
+
+async function playScene() {
+if (!spriteImg) { setStatus('loadSpriteFirst'); return; }
+
+dom.playBtn.disabled = true;
+dom.pauseBtn.disabled = false;
+await Promise.all([ensureMusicReady(), ensureSfxReady()]);
+
+cancelAnimationFrame(rafId);
+particles = [];
+petals = [];
+petalsEnabled = false;
+isMemoryCacheValid = false;
+lastPhaseName = null;
+sceneElapsed = 0;
+lineBrightness = {};
+lastFrameTime = performance.now();
+isPaused = false;
+sceneRunning = true;
+updatePauseBtn(false);
+
+if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+if (currentMusicSource) { try { currentMusicSource.stop(); } catch (e) {} }
+if (musicBuffer) {
+currentMusicSource = playBuffer(musicBuffer, true, 'music');
+}
+
+setStatus('scenePlaying');
+tick();
+}
+
+function tick() {
+if (!sceneRunning) return;
+
+const now = performance.now();
+const delta = Math.min(now - lastFrameTime, 100);
+const deltaSeconds = delta / 1000;
+frameDelta = deltaSeconds;
+lastFrameTime = now;
+
+if (isPaused) {
+rafId = requestAnimationFrame(tick);
+return;
+}
+
+sceneElapsed += delta;
+
+if (sceneElapsed >= cumDur[16]) {
+if (!petalsEnabled) {
+petalsEnabled = true;
+for (let i = 0; i < 15; i++) {
+petals.push(spawnPetal(true));
+}
+}
+}
+
+const elapsedForTimeline = Math.min(sceneElapsed, TOTAL_DUR);
+
+const { phase } = resolvePhase(elapsedForTimeline);
+if (phase === 'line4' && lastPhaseName !== 'line4' && voiceMode && voiceBuffer && activeCharPresetId) {
+playBuffer(voiceBuffer, false);
+}
+if (phase === 'dissolve' && lastPhaseName !== 'dissolve' && sfxBuffer) {
+playBuffer(sfxBuffer);
+}
+lastPhaseName = phase;
+
+try {
+render(elapsedForTimeline);
+} catch (e) {
+console.error('[КРИТИЧЕСКАЯ ОШИБКА В RENDER]', e);
+}
+
+const recordingPadding = 3500;
+if (mediaRecorder && mediaRecorder.state === 'recording') {
+if (sceneElapsed >= TOTAL_DUR + recordingPadding) {
+mediaRecorder.stop();
+updateRecBtnText();
+setStatus('recordingFinished');
+}
+}
+
+if (gifSession && gifSession.active) {
+while (gifSession.nextFrameAt <= sceneElapsed && gifSession.nextFrameAt <= gifSession.endAtMs) {
+try {
+
+const captureCtx = getGifCaptureCtx(gifSession.captureW, gifSession.captureH);
+captureCtx.drawImage(canvas, 0, 0, gifSession.captureW, gifSession.captureH);
+gifSession.gif.addFrame(captureCtx, { copy: true, delay: gifSession.frameDelayMs });
+gifSession.frameCount++;
+} catch (e) {
+console.error('[GIF] addFrame failed', e);
+}
+gifSession.nextFrameAt += gifSession.frameDelayMs;
+}
+if (sceneElapsed >= gifSession.endAtMs) {
+finishGifCapture();
+}
+}
+
+if (sceneElapsed >= TOTAL_DUR) {
+if (currentStatusKey === 'scenePlaying') {
+setStatus('sceneFinished');
+}
+}
+
+rafId = requestAnimationFrame(tick);
+}
+
+function triggerEasterEgg() {
+if (easterEggActive) return;
+easterEggActive = true;
+easterEggPhase = 'shake';
+easterEggPhaseStart = performance.now();
+
+cancelAnimationFrame(rafId);
+if (currentMusicSource) {
+try { currentMusicSource.stop(); } catch (e) {}
+currentMusicSource = null;
+}
+if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+
+showEasterEggBlocker();
+
+loadAudioFromPath(EASTER_EGG.gaspSrc)
+.then(buf => playBuffer(buf))
+.catch(err => console.warn('[egg] gasp playback failed:', err));
+
+cancelAnimationFrame(easterEggRafId);
+easterEggTick();
+}
+
+function easterEggTick() {
+const now = performance.now();
+const elapsedInPhase = now - easterEggPhaseStart;
+
+if (easterEggPhase === 'shake' && elapsedInPhase >= EASTER_EGG.shakeMs) {
+easterEggPhase = 'tiger';
+easterEggPhaseStart = now;
+loadAudioFromPath(EASTER_EGG.roarSrc)
+.then(buf => playBuffer(buf))
+.catch(err => console.warn('[egg] roar playback failed:', err));
+} else if (easterEggPhase === 'tiger' && elapsedInPhase >= EASTER_EGG.tigerMs) {
+easterEggPhase = 'fadeout';
+easterEggPhaseStart = now;
+} else if (easterEggPhase === 'fadeout' && elapsedInPhase >= EASTER_EGG.fadeMs) {
+easterEggPhase = 'badend';
+easterEggPhaseStart = now;
+
+try {
+localStorage.setItem(EASTER_EGG.seenKey, '1');
+localStorage.removeItem(EASTER_EGG.countKey);
+localStorage.removeItem(EASTER_EGG.targetKey);
+} catch (e) {}
+}
+
+renderEasterEggFrame(now);
+
+if (easterEggPhase !== 'badend') {
+easterEggRafId = requestAnimationFrame(easterEggTick);
+}
+}
+
+function renderEasterEggFrame(now) {
+ctx.save();
+ctx.clearRect(0, 0, W, H);
+
+const drawBgWithJumpScareTaiga = () => {
+drawBackground(0, false);
+if (eggTaigaImg.complete && eggTaigaImg.naturalWidth) {
+const sh = Math.round(H * 0.92);
+const sw = Math.round(sh * (eggTaigaImg.width / eggTaigaImg.height));
+ctx.drawImage(eggTaigaImg, Math.round((W - sw) / 2), Math.round((H - sh) / 2), sw, sh);
+}
+};
+
+const drawImageCover = (img) => {
+const scale = Math.max(W / img.width, H / img.height);
+const dw = img.width * scale, dh = img.height * scale;
+ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
+};
+
+if (easterEggPhase === 'shake') {
+const p = Math.min(1, (now - easterEggPhaseStart) / EASTER_EGG.shakeMs);
+const intensity = 12 * (1 - p);
+ctx.translate((Math.random() - 0.5) * 2 * intensity, (Math.random() - 0.5) * 2 * intensity);
+drawBgWithJumpScareTaiga();
+} else if (easterEggPhase === 'tiger') {
+
+if (eggTigerImg.complete && eggTigerImg.naturalWidth) {
+drawImageCover(eggTigerImg);
+} else {
+drawBackground(0, false);
+}
+if (eggTaigaImg.complete && eggTaigaImg.naturalWidth) {
+const sh = Math.round(H * 0.92);
+const sw = Math.round(sh * (eggTaigaImg.width / eggTaigaImg.height));
+ctx.drawImage(eggTaigaImg, Math.round((W - sw) / 2), Math.round((H - sh) / 2), sw, sh);
+}
+} else if (easterEggPhase === 'fadeout') {
+const p = Math.min(1, (now - easterEggPhaseStart) / EASTER_EGG.fadeMs);
+if (eggTigerImg.complete && eggTigerImg.naturalWidth) {
+drawImageCover(eggTigerImg);
+}
+if (eggTaigaImg.complete && eggTaigaImg.naturalWidth) {
+const sh = Math.round(H * 0.92);
+const sw = Math.round(sh * (eggTaigaImg.width / eggTaigaImg.height));
+ctx.drawImage(eggTaigaImg, Math.round((W - sw) / 2), Math.round((H - sh) / 2), sw, sh);
+}
+ctx.fillStyle = `rgba(0, 0, 0, ${p})`;
+ctx.fillRect(0, 0, W, H);
+} else if (easterEggPhase === 'badend') {
+ctx.fillStyle = '#000';
+ctx.fillRect(0, 0, W, H);
+
+ctx.fillStyle = '#ffffff';
+ctx.textAlign = 'right';
+ctx.textBaseline = 'bottom';
+ctx.shadowColor = 'rgba(0, 0, 0, 0.95)';
+ctx.shadowBlur = 8;
+ctx.shadowOffsetX = 3;
+ctx.shadowOffsetY = 3;
+
+ctx.font = '800 60px "Noto Sans JP", sans-serif';
+ctx.fillText('Bad End', W - 40, H - 70);
+
+ctx.font = '400 22px "Noto Sans JP", sans-serif';
+ctx.fillText('(Restart the scene)', W - 40, H - 40);
+}
+
+ctx.restore();
+}
+
+function showEasterEggBlocker() {
+let el = document.getElementById('eggBlocker');
+if (!el) {
+el = document.createElement('div');
+el.id = 'eggBlocker';
+el.style.position = 'fixed';
+el.style.inset = '0';
+el.style.zIndex = '99999';
+el.style.background = 'transparent';
+el.addEventListener('click', onEasterEggBlockerClick);
+document.body.appendChild(el);
+}
+el.style.display = 'block';
+}
+
+function hideEasterEggBlocker() {
+const el = document.getElementById('eggBlocker');
+if (el) el.remove();
+}
+
+function onEasterEggBlockerClick() {
+if (!easterEggActive || easterEggPhase !== 'badend') return;
+hideEasterEggBlocker();
+easterEggActive = false;
+easterEggPhase = null;
+dom.resetBtn.click();
+}
+
+window.__forceEasterEgg = () => {
+try {
+localStorage.removeItem(EASTER_EGG.seenKey);
+localStorage.removeItem(EASTER_EGG.countKey);
+localStorage.removeItem(EASTER_EGG.targetKey);
+} catch (e) {}
+taigaSwitchCount = 0;
+easterEggTargetSwitch = null;
+triggerEasterEgg();
+};
+
+dom.playBtn.addEventListener('click', playScene);
+
+dom.pauseBtn.addEventListener('click', () => {
+if (!sceneRunning) return;
+isPaused = !isPaused;
+if (isPaused) {
+updatePauseBtn(true);
+setStatus('scenePaused');
+if (audioCtx && audioCtx.state === 'running') audioCtx.suspend();
+} else {
+updatePauseBtn(false);
+setStatus('scenePlaying');
+lastFrameTime = performance.now();
+if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+}
+});
+
+dom.resetBtn.addEventListener('click', () => {
+cancelAnimationFrame(rafId);
+sceneRunning = false;
+dom.playBtn.disabled = false;
+dom.pauseBtn.disabled = true;
+isPaused = false;
+sceneElapsed = 0;
+particles = [];
+petals = [];
+petalsEnabled = false;
+isMemoryCacheValid = false;
+lastPhaseName = null;
+spriteTransition = null;
+updatePauseBtn(false);
+
+if (currentMusicSource) {
+try { currentMusicSource.stop(); } catch (e) {}
+currentMusicSource = null;
+}
+if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+if (mediaRecorder && mediaRecorder.state === 'recording') {
+mediaRecorder.stop();
+updateRecBtnText();
+}
+
+if (gifSession && gifSession.active) {
+finishGifCapture();
+}
+
+renderIdle();
+setStatus('sceneReset');
+});
+
+dom.clearSpriteBtn.addEventListener('click', () => {
+isPreviewMode = false;
+previewImg = null;
+dom.previewControls.style.display = 'none';
+spriteImg = null;
+spriteScaleFactor = 1.0;
+dom.spriteInput.value = '';
+isMemoryCacheValid = false;
+dom.rescaleBtn.style.display = 'none';
+spriteMetaIsDefault = true;
+activeCharPresetId = null;
+pendingCharPresetId = null;
+voiceBuffer = null;
+spriteTransition = null;
+document.getElementById('spriteMeta').textContent = I18N[currentLang].ui.spriteMetaDefault;
+dom.clearSpriteBtn.style.display = 'none';
+setStatus('spriteRemoved');
+refreshCanvasAfterSpriteChange();
+});
+
+dom.clearMusicBtn.addEventListener('click', () => {
+if (currentMusicSource) {
+try { currentMusicSource.stop(); } catch (e) {}
+currentMusicSource = null;
+}
+musicBuffer = null;
+selectMusicPreset(musicPresetIndex);
+setStatus('musicCleared');
+});
+
+dom.clearSfxBtn.addEventListener('click', () => {
+sfxBuffer = null;
+selectSfxPreset(sfxPresetIndex);
+setStatus('effectCleared');
+});
+
+dom.shotBtn.addEventListener('click', () => {
+try {
+const a = document.createElement('a');
+a.href = canvas.toDataURL('image/png');
+a.download = 'farewell_scene_nvl.png';
+a.click();
+} catch (err) {
+console.warn('Snapshot unavailable: canvas is tainted).', err);
+}
+
+if (dom.shotBtnIcon) {
+dom.shotBtnIcon.setAttribute('href', '#icon-camera');
+setTimeout(() => dom.shotBtnIcon.setAttribute('href', '#icon-camera'), 180);
+}
+});
+
+const canRecord = typeof MediaRecorder !== 'undefined' && canvas.captureStream;
+recordingSupported = canRecord;
+if (!canRecord) {
+dom.recBtn.disabled = true;
+if (dom.recCaretBtn) dom.recCaretBtn.disabled = true;
+}
+
+dom.recBtn.addEventListener('click', () => {
+if (mediaRecorder && mediaRecorder.state === 'recording') {
+mediaRecorder.stop();
+updateRecBtnText();
+return;
+}
+if (gifSession && gifSession.active) {
+
+finishGifCapture();
+return;
+}
+startRecording();
+});
+
+if (dom.recMenuVideo) {
+dom.recMenuVideo.addEventListener('click', () => {
+closeRecMenu();
+startRecording();
+});
+}
+if (dom.recMenuGif) {
+dom.recMenuGif.addEventListener('click', () => {
+closeRecMenu();
+startGifExport(0);
+});
+}
+
+function startRecording() {
+if (!spriteImg) { setStatus('loadSpriteFirst'); return; }
+recordedChunks = [];
+getAudioCtx();
+const canvasStream = canvas.captureStream(30);
+let tracks = [...canvasStream.getVideoTracks()];
+if (recordDestNode) tracks = tracks.concat(recordDestNode.stream.getAudioTracks());
+const combined = new MediaStream(tracks);
+const mimeCandidates = ['video/mp4;codecs=h264,aac', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'];
+const mimeType = mimeCandidates.find(t => MediaRecorder.isTypeSupported(t)) || '';
+mediaRecorder = new MediaRecorder(combined, mimeType ? { mimeType } : undefined);
+mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
+mediaRecorder.onstop = () => {
+const blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType || 'video/webm' });
+const ext = (mediaRecorder.mimeType || '').includes('mp4') ? 'mp4' : 'webm';
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url; a.download = 'farewell_scene.' + ext;
+document.body.appendChild(a); a.click(); a.remove();
+
+setTimeout(() => URL.revokeObjectURL(url), 1000);
+setStatus('videoSaved', { ext: ext });
+};
+mediaRecorder.start();
+updateRecBtnText();
+playScene();
+}
+
+async function startGifExport(attemptIndex) {
+attemptIndex = attemptIndex || 0;
+if (!spriteImg) { setStatus('loadSpriteFirst'); return; }
+if (mediaRecorder && mediaRecorder.state === 'recording') return;
+if (attemptIndex >= GIF_FPS_LADDER.length) attemptIndex = GIF_FPS_LADDER.length - 1;
+
+const fps = GIF_FPS_LADDER[attemptIndex];
+setStatus(attemptIndex === 0 ? 'gifExporting' : 'gifRetrying', { fps });
+
+let workerUrl;
+try {
+await loadGifLib();
+workerUrl = await getGifWorkerUrl();
+} catch (err) {
+console.error('[GIF] library load failed', err);
+setStatus('gifLibError');
+return;
+}
+
+const endAtMs = Math.min(cumDur[7] + GIF_END_PADDING_MS, TOTAL_DUR);
+const captureW = Math.max(1, Math.round(W * GIF_CAPTURE_SCALE));
+const captureH = Math.max(1, Math.round(H * GIF_CAPTURE_SCALE));
+const gif = new GIF({
+workers: 3,
+quality: 10,
+width: captureW,
+height: captureH,
+workerScript: workerUrl,
+});
+
+gifSession = {
+gif,
+active: true,
+encoding: false,
+fps,
+frameDelayMs: Math.round(1000 / fps),
+nextFrameAt: 0,
+endAtMs,
+frameCount: 0,
+attemptIndex,
+captureW,
+captureH,
+};
+
+gif.on('finished', onGifFinished);
+updateRecBtnText();
+await playScene();
+}
+
+function finishGifCapture() {
+if (!gifSession || !gifSession.active) return;
+gifSession.active = false;
+gifSession.encoding = true;
+updateRecBtnText();
+setStatus('gifEncoding');
+try {
+gifSession.gif.render();
+} catch (e) {
+console.error('[GIF] render failed', e);
+setStatus('gifLibError');
+gifSession = null;
+updateRecBtnText();
+}
+}
+
+function saveGifBlob(blob, session) {
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url; a.download = 'farewell_scene.gif';
+document.body.appendChild(a); a.click(); a.remove();
+setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+const sizeMb = (blob.size / (1024 * 1024)).toFixed(1);
+gifSession = null;
+updateRecBtnText();
+if (blob.size > GIF_MAX_BYTES) {
+setStatus('gifSavedOverLimit', { size: sizeMb });
+} else {
+setStatus('gifSaved', { size: sizeMb, fps: session.fps });
+}
+}
+
+function onGifFinished(blob) {
+const session = gifSession;
+if (!session) return;
+
+if (blob.size > GIF_MAX_BYTES && session.attemptIndex < GIF_FPS_LADDER.length - 1) {
+const sizeMb = (blob.size / (1024 * 1024)).toFixed(1);
+const nextFps = GIF_FPS_LADDER[session.attemptIndex + 1];
+const wantsRetry = confirm(T2C('gifRetryConfirm', { size: sizeMb, fps: nextFps }));
+if (wantsRetry) {
+gifSession = null;
+startGifExport(session.attemptIndex + 1);
+return;
+}
+}
+
+saveGifBlob(blob, session);
+}
+
+window.addEventListener('keydown', e => {
+if (easterEggActive) return;
+
+const active = document.activeElement;
+if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) {
+return;
+}
+
+if (e.code === 'Space') {
+e.preventDefault();
+if (!sceneRunning) {
+dom.playBtn.click();
+} else {
+dom.pauseBtn.click();
+}
+}
+
+if (e.key.toLowerCase() === 'h') {
+e.preventDefault();
+if (dom.hideTextBtn) dom.hideTextBtn.click();
+}
+
+if (e.key.toLowerCase() === 'f') {
+e.preventDefault();
+dom.fsBtn.click();
+}
+
+if (/^[1-9]$/.test(e.key)) {
+const charModalOpen = dom.charPresetsModal && dom.charPresetsModal.style.display === 'flex';
+const textEditorOpen = dom.textEditorModal && dom.textEditorModal.style.display === 'flex';
+if (!charModalOpen && !textEditorOpen) {
+switchCharPresetVariantByNumber(parseInt(e.key, 10));
+}
+}
+});
+
+async function handleAction(btn, action) {
+btn.classList.add('is-loading');
+try {
+await action();
+} catch (err) {
+console.error("Ошибка при выполнении действия:", err);
+} finally {
+btn.classList.remove('is-loading');
+}
+}
+
+function openTextEditor() {
+if (sceneRunning && !isPaused) {
+isPaused = true;
+updatePauseBtn(true);
+setStatus('scenePausedEditor');
+if (audioCtx && audioCtx.state === 'running') {
+audioCtx.suspend();
+}
+}
+
+document.querySelectorAll('#textEditorModal textarea').forEach(textarea => {
+const phaseName = textarea.dataset.phase;
+if (!phaseName) return;
+
+if (customTexts[phaseName] !== undefined) {
+textarea.value = customTexts[phaseName];
+} else {
+const phase = PHASES.find(p => p.name === phaseName);
+textarea.value = phase ? (phase.text || '') : '';
+}
+});
+
+dom.textEditorModal.style.display = 'flex';
+lockBodyScroll();
+}
+
+function closeTextEditor() {
+dom.textEditorModal.style.display = 'none';
+unlockBodyScroll();
+if (sceneRunning && isPaused) {
+render(sceneElapsed);
+} else if (!sceneRunning) {
+renderIdle();
+}
+}
+
+dom.applyTextsBtn.addEventListener('click', () => {
+document.querySelectorAll('#textEditorModal textarea').forEach(textarea => {
+const phaseName = textarea.dataset.phase;
+if (!phaseName) return;
+
+const value = textarea.value.trim();
+
+if (value === '') {
+delete customTexts[phaseName];
+} else {
+customTexts[phaseName] = value;
+}
+});
+
+localStorage.setItem(customTextsKey(currentLang), JSON.stringify(customTexts));
+
+closeTextEditor();
+setStatus('linesUpdated');
+if (sceneRunning && isPaused) {
+render(sceneElapsed);
+} else {
+renderIdle();
+}
+});
+
+dom.cancelTextsBtn.addEventListener('click', closeTextEditor);
+dom.closeTextEditorBtn.addEventListener('click', closeTextEditor);
+dom.textEditorModal.querySelector('.modal-backdrop').addEventListener('click', closeTextEditor);
+
+dom.clearAllTextsBtn.addEventListener('click', () => {
+if (!confirm(T2C('clearAllTexts'))) return;
+document.querySelectorAll('#textEditorModal textarea').forEach(textarea => {
+textarea.value = '';
+});
+});
+
+dom.resetDefaultTextsBtn.addEventListener('click', (e) => {
+if (!confirm(T2C('restoreDefaults'))) return;
+handleAction(e.currentTarget, async () => {
+
+document.querySelectorAll('#textEditorModal textarea').forEach(textarea => {
+const phaseName = textarea.dataset.phase;
+const phase = PHASES.find(p => p.name === phaseName);
+textarea.value = phase ? (phase.text || '') : '';
+});
+});
+});
+window.addEventListener('keydown', (e) => {
+if (easterEggActive) return;
+if (e.key.toLowerCase() === 'e' && document.activeElement.tagName === 'BODY') {
+openTextEditor();
+}
+});
+
+if (dom.openTextEditorBtn) {
+dom.openTextEditorBtn.addEventListener('click', () => {
+if (typeof openTextEditor === 'function') {
+openTextEditor();
+}
+});
+}
+
+updateCapsuleEl(dom.musicPresetCapsule, MUSIC_PRESETS[musicPresetIndex].label);
+updateCapsuleEl(dom.sfxPresetCapsule, SFX_PRESETS[sfxPresetIndex].label);
+
+if (dom.musicPresetPrev) dom.musicPresetPrev.addEventListener('click', () => selectMusicPreset(musicPresetIndex - 1));
+if (dom.musicPresetNext) dom.musicPresetNext.addEventListener('click', () => selectMusicPreset(musicPresetIndex + 1));
+if (dom.sfxPresetPrev) dom.sfxPresetPrev.addEventListener('click', () => selectSfxPreset(sfxPresetIndex - 1));
+if (dom.sfxPresetNext) dom.sfxPresetNext.addEventListener('click', () => selectSfxPreset(sfxPresetIndex + 1));
+
+if (dom.musicVolumeSlider) {
+dom.musicVolumeSlider.value = musicVolume;
+if (dom.musicVolumeValue) dom.musicVolumeValue.textContent = musicVolume + '%';
+dom.musicVolumeSlider.addEventListener('input', () => {
+musicVolume = parseInt(dom.musicVolumeSlider.value, 10);
+if (dom.musicVolumeValue) dom.musicVolumeValue.textContent = musicVolume + '%';
+if (musicGainNode) musicGainNode.gain.value = musicVolume / 100;
+localStorage.setItem(MUSIC_VOL_KEY, String(musicVolume));
+});
+}
+
+if (dom.sfxVolumeSlider) {
+dom.sfxVolumeSlider.value = sfxVolume;
+if (dom.sfxVolumeValue) dom.sfxVolumeValue.textContent = sfxVolume + '%';
+dom.sfxVolumeSlider.addEventListener('input', () => {
+sfxVolume = parseInt(dom.sfxVolumeSlider.value, 10);
+if (dom.sfxVolumeValue) dom.sfxVolumeValue.textContent = sfxVolume + '%';
+if (sfxGainNode) sfxGainNode.gain.value = sfxVolume / 100;
+localStorage.setItem(SFX_VOL_KEY, String(sfxVolume));
+});
+}
+
+if (dom.spriteBtn) dom.spriteBtn.addEventListener('click', () => dom.spriteInput.click());
+if (dom.musicBtn) dom.musicBtn.addEventListener('click', () => dom.musicInput.click());
+if (dom.sfxBtn) dom.sfxBtn.addEventListener('click', () => dom.sfxInput.click());
+
+function setupAssetRowDrop(rowEl, onDrop) {
+rowEl.addEventListener('dragover', (e) => {
+e.preventDefault();
+e.dataTransfer.dropEffect = 'copy';
+rowEl.classList.add('drag-over');
+});
+rowEl.addEventListener('dragleave', (e) => {
+if (!rowEl.contains(e.relatedTarget)) {
+rowEl.classList.remove('drag-over');
+}
+});
+rowEl.addEventListener('drop', (e) => {
+e.preventDefault();
+rowEl.classList.remove('drag-over');
+const file = e.dataTransfer.files[0];
+if (file) onDrop(file);
+});
+}
+
+const spriteRow = document.querySelector('.asset-manager .asset-row:nth-child(1)');
+if (spriteRow) {
+setupAssetRowDrop(spriteRow, (file) => {
+if (file.type !== 'image/png') { setStatus('invalidSpriteType'); return; }
+
+const dt = new DataTransfer();
+dt.items.add(file);
+dom.spriteInput.files = dt.files;
+dom.spriteInput.dispatchEvent(new Event('change'));
+});
+}
+
+const musicRow = document.querySelector('.asset-manager .asset-row:nth-child(3)');
+if (musicRow) {
+setupAssetRowDrop(musicRow, (file) => {
+if (!isAudioFile(file)) { setStatus('invalidAudioType'); return; }
+const dt = new DataTransfer();
+dt.items.add(file);
+dom.musicInput.files = dt.files;
+dom.musicInput.dispatchEvent(new Event('change'));
+});
+}
+
+const sfxRow = document.querySelector('.asset-manager .asset-row:nth-child(4)');
+if (sfxRow) {
+setupAssetRowDrop(sfxRow, (file) => {
+if (!isAudioFile(file)) { setStatus('invalidAudioType'); return; }
+const dt = new DataTransfer();
+dt.items.add(file);
+dom.sfxInput.files = dt.files;
+dom.sfxInput.dispatchEvent(new Event('change'));
+});
+}
+
+dom.musicInput.addEventListener('change', (e) => {
+const file = e.target.files[0];
+if (!file) return;
+
+if (!isAudioFile(file)) {
+setStatus('invalidAudioType');
+dom.musicInput.value = '';
+return;
+}
+
+musicSource = 'custom';
+musicPresetLoadToken++;
+updateCapsuleEl(dom.musicPresetCapsule, I18N[currentLang].ui.customLabel);
+
+musicMetaIsDefault = false;
+const musicMetaEl = document.getElementById('musicMeta');
+musicMetaEl.textContent = file.name;
+musicMetaEl.title = file.name;
+if (dom.clearMusicBtn) dom.clearMusicBtn.style.display = 'inline-block';
+
+if (dom.musicBtn) {
+handleAction(dom.musicBtn, async () => {
+musicBuffer = await loadAudioBuffer(file, I18N[currentLang].audioLabels.music);
+if (sceneRunning && musicSource === 'custom') {
+if (currentMusicSource) { fadeOutMusicSource(currentMusicSource); }
+currentMusicSource = playMusicWithFadeIn(musicBuffer);
+}
+});
+}
+});
+
+dom.sfxInput.addEventListener('change', (e) => {
+const file = e.target.files[0];
+if (!file) return;
+
+if (!isAudioFile(file)) {
+setStatus('invalidAudioType');
+dom.sfxInput.value = '';
+return;
+}
+
+sfxSource = 'custom';
+sfxPresetLoadToken++;
+updateCapsuleEl(dom.sfxPresetCapsule, I18N[currentLang].ui.customLabel);
+
+sfxMetaIsDefault = false;
+const sfxMetaEl = document.getElementById('sfxMeta');
+sfxMetaEl.textContent = file.name;
+sfxMetaEl.title = file.name;
+if (dom.clearSfxBtn) dom.clearSfxBtn.style.display = 'inline-block';
+
+if (dom.sfxBtn) {
+handleAction(dom.sfxBtn, async () => {
+sfxBuffer = await loadAudioBuffer(file, I18N[currentLang].audioLabels.sfx);
+});
+}
+});
+
+})();
+</script>
+</body>
+</html>
