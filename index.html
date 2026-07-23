@@ -3415,7 +3415,11 @@ card.addEventListener('mouseleave', reset);
 
 card.addEventListener('mousedown', reset);
 
-card.addEventListener('touchstart', () => {
+let startX = 0, startY = 0;
+
+card.addEventListener('touchstart', (e) => {
+const t = e.touches[0];
+startX = t.clientX; startY = t.clientY;
 shownByTouch = false;
 start();
 }, { passive: true });
@@ -3429,7 +3433,11 @@ reset();
 shownByTouch = false;
 });
 
-card.addEventListener('touchmove', reset);
+card.addEventListener('touchmove', (e) => {
+const t = e.touches[0];
+const dx = t.clientX - startX, dy = t.clientY - startY;
+if (Math.hypot(dx, dy) > 10) reset();
+}, { passive: true });
 card.addEventListener('touchcancel', reset);
 
 card.addEventListener('contextmenu', (e) => e.preventDefault());
