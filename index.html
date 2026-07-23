@@ -3417,10 +3417,12 @@ card.addEventListener('mousedown', reset);
 
 let startX = 0, startY = 0;
 let overCount = 0;
+let touchStartTime = 0;
 
 card.addEventListener('touchstart', (e) => {
 const t = e.touches[0];
 startX = t.clientX; startY = t.clientY;
+touchStartTime = performance.now();
 overCount = 0;
 shownByTouch = false;
 start();
@@ -3436,6 +3438,7 @@ shownByTouch = false;
 });
 
 card.addEventListener('touchmove', (e) => {
+if (performance.now() - touchStartTime < 150) return;
 const t = e.touches[0];
 const dx = t.clientX - startX;
 const dy = t.clientY - startY;
