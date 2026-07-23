@@ -3241,8 +3241,10 @@ dom.previewControls.style.display = 'none';
 activeCharPresetId = pendingCharPresetId;
 pendingCharPresetId = null;
 
+if (!(sceneRunning && isPaused)) {
 const audioUnlockCtx = getAudioCtx();
 if (audioUnlockCtx.state === 'suspended') audioUnlockCtx.resume();
+}
 voiceBuffer = null;
 if (activeCharPresetId) {
 const entry = findPresetById(activeCharPresetId);
