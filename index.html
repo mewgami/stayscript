@@ -3416,10 +3416,12 @@ card.addEventListener('mouseleave', reset);
 card.addEventListener('mousedown', reset);
 
 let startX = 0, startY = 0;
+let overCount = 0;
 
 card.addEventListener('touchstart', (e) => {
 const t = e.touches[0];
 startX = t.clientX; startY = t.clientY;
+overCount = 0;
 shownByTouch = false;
 start();
 }, { passive: true });
@@ -3435,8 +3437,15 @@ shownByTouch = false;
 
 card.addEventListener('touchmove', (e) => {
 const t = e.touches[0];
-const dx = t.clientX - startX, dy = t.clientY - startY;
-if (Math.hypot(dx, dy) > 10) reset();
+const dx = t.clientX - startX;
+const dy = t.clientY - startY;
+if (Math.hypot(dx, dy) > 10) {
+if (++overCount >= 2) {
+reset();
+}
+} else {
+overCount = 0;
+}
 }, { passive: true });
 card.addEventListener('touchcancel', reset);
 
