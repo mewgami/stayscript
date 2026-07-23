@@ -3,6 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-59YVQW83ZZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-59YVQW83ZZ');
+</script>
+  
 <title id="docTitle">Stay Script — VN Farewell Scene Builder</title>
 <meta name="description"
 content="Stay Script — an interactive VN-style farewell scene builder.">
@@ -11,7 +22,9 @@ content="Stay Script — an interactive VN-style farewell scene builder.">
 
 <meta property="og:title" content="Stay Script — VN Farewell Scene Builder">
 <meta property="og:description" content="Stay Script — an interactive VN-style farewell scene builder.">
-<meta property="og:image" content="https://mewgami.github.io/stayscript/assets/og-image.jpg">
+<meta property="og:image" content="https://mewgami.github.io/stayscript/assets/og-image.jpg?v=6">
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />  
 <meta property="og:url" content="https://mewgami.github.io/stayscript/">
 <meta property="og:site_name" content="Stay Script">
 <meta property="og:type" content="website">
@@ -19,7 +32,7 @@ content="Stay Script — an interactive VN-style farewell scene builder.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Stay Script — VN Farewell Scene Builder">
 <meta name="twitter:description" content="Stay Script — an interactive VN-style farewell scene builder.">
-<meta name="twitter:image" content="https://mewgami.github.io/stayscript/assets/og-image.jpg">
+<meta name="twitter:image" content="https://mewgami.github.io/stayscript/assets/og-image.jpg?v=6">
 
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2014,6 +2027,7 @@ charPresetsUnavailableTitle: 'This preset image isn\u2019t available yet',
 },
 status: {
 spriteApplied: 'Sprite applied ✓',
+spriteAppliedPreviewDiscarded: 'Preset applied — unsaved preview discarded',
 changeCanceled: 'Change canceled',
 adjustSpriteSize: 'Adjust sprite size',
 adjustSpriteSizeHint: 'Adjust sprite size (scroll down the page)',
@@ -2026,6 +2040,7 @@ presetLoading: 'Loading {label}\u2026',
 presetReady: '{label} ready',
 presetLoadError: 'Couldn\u2019t load {label}',
 loadSpriteFirst: 'Load a PNG sprite first',
+confirmPreviewFirst: 'Confirm or cancel the sprite preview first',
 invalidSpriteType: 'Please choose a PNG image file',
 invalidAudioType: 'Please choose an audio file',
 scenePlaying: 'Scene playing…',
@@ -2174,6 +2189,7 @@ charPresetsUnavailableTitle: 'Изображение этого пресета �
 },
 status: {
 spriteApplied: 'Спрайт применён ✓',
+spriteAppliedPreviewDiscarded: 'Пресет применён — несохранённое превью отменено',
 changeCanceled: 'Изменение отменено',
 adjustSpriteSize: 'Настрой размер спрайта',
 adjustSpriteSizeHint: 'Настрой размер спрайта (прокрути вниз страницу)',
@@ -2186,6 +2202,7 @@ presetLoading: 'Загрузка {label}\u2026',
 presetReady: '{label} готов',
 presetLoadError: 'Не удалось загрузить {label}',
 loadSpriteFirst: 'Сначала загрузи PNG-спрайт',
+confirmPreviewFirst: 'Сначала подтверди или отмени превью спрайта',
 invalidSpriteType: 'Выбери файл изображения PNG',
 invalidAudioType: 'Выбери аудиофайл',
 scenePlaying: 'Сцена идёт…',
@@ -2334,6 +2351,7 @@ charPresetsUnavailableTitle: 'Зображення цього пресету щ�
 },
 status: {
 spriteApplied: 'Спрайт застосовано ✓',
+spriteAppliedPreviewDiscarded: 'Пресет застосовано — незбережений перегляд скасовано',
 changeCanceled: 'Зміну скасовано',
 adjustSpriteSize: 'Налаштуй розмір спрайту',
 adjustSpriteSizeHint: 'Налаштуй розмір спрайту (прокрути сторінку вниз)',
@@ -2346,6 +2364,7 @@ presetLoading: 'Завантаження {label}\u2026',
 presetReady: '{label} готовий',
 presetLoadError: 'Не вдалося завантажити {label}',
 loadSpriteFirst: 'Спочатку завантаж PNG-спрайт',
+confirmPreviewFirst: 'Спочатку підтверди або скасуй перегляд спрайту',
 invalidSpriteType: 'Обери файл зображення PNG',
 invalidAudioType: 'Обери аудіофайл',
 scenePlaying: 'Сцена триває…',
@@ -2494,6 +2513,7 @@ charPresetsUnavailableTitle: 'Бұл пресеттің суреті әлі қо
 },
 status: {
 spriteApplied: 'Спрайт қолданылды ✓',
+spriteAppliedPreviewDiscarded: 'Пресет қолданылды — сақталмаған алдын ала қарау болдырылмады',
 changeCanceled: 'Өзгерістерден бас тартылды',
 adjustSpriteSize: 'Спрайт өлшемін баптап ал',
 adjustSpriteSizeHint: 'Спрайт өлшемін баптап ал (бетті төмен айналдыр)',
@@ -2506,6 +2526,7 @@ presetLoading: '{label} жүктелуде\u2026',
 presetReady: '{label} дайын',
 presetLoadError: '{label} жүктелмеді',
 loadSpriteFirst: 'Алдымен PNG спрайтын жүкте',
+confirmPreviewFirst: 'Алдымен спрайт алдын ала қарауын растаңыз немесе бас тартыңыз',
 invalidSpriteType: 'PNG сурет файлын таңда',
 invalidAudioType: 'Аудиофайл таңда',
 scenePlaying: 'Көрініс жүріп жатыр…',
@@ -2654,6 +2675,7 @@ charPresetsUnavailableTitle: 'このプリセットの画像はまだ利用で�
 },
 status: {
 spriteApplied: 'スプライトを適用しました ✓',
+spriteAppliedPreviewDiscarded: 'プリセットを適用しました（未保存のプレビューは破棄されました）',
 changeCanceled: '変更をキャンセルしました',
 adjustSpriteSize: 'スプライトのサイズを調整してください',
 adjustSpriteSizeHint: 'スプライトのサイズを調整してください（下にスクロール）',
@@ -2666,6 +2688,7 @@ presetLoading: '{label} を読み込み中\u2026',
 presetReady: '{label} 準備完了',
 presetLoadError: '{label} の読み込みに失敗しました',
 loadSpriteFirst: '先にPNGスプライトを読み込んでください',
+confirmPreviewFirst: '先にスプライトのプレビューを確定またはキャンセルしてください',
 invalidSpriteType: 'PNG画像ファイルを選択してください',
 invalidAudioType: 'オーディオファイルを選択してください',
 scenePlaying: 'シーン再生中…',
@@ -3228,8 +3251,10 @@ dom.previewControls.style.display = 'none';
 activeCharPresetId = pendingCharPresetId;
 pendingCharPresetId = null;
 
+if (!(sceneRunning && isPaused)) {
 const audioUnlockCtx = getAudioCtx();
 if (audioUnlockCtx.state === 'suspended') audioUnlockCtx.resume();
+}
 voiceBuffer = null;
 if (activeCharPresetId) {
 const entry = findPresetById(activeCharPresetId);
@@ -3592,6 +3617,8 @@ const audioUnlockCtx = getAudioCtx();
 if (audioUnlockCtx.state === 'suspended') audioUnlockCtx.resume();
 }
 
+const hadUnconfirmedPreview = isPreviewMode;
+
 const img = new Image();
 img.onload = () => {
 
@@ -3651,7 +3678,7 @@ spriteTransition = null;
 refreshCanvasAfterSpriteChange();
 }
 
-setStatus('spriteApplied');
+setStatus(hadUnconfirmedPreview ? 'spriteAppliedPreviewDiscarded' : 'spriteApplied');
 
 if (shouldCloseModal) closeCharPresetsModal();
 
@@ -4939,6 +4966,27 @@ return { phase: PHASES[i].name, t, phaseIndex: i };
 }
 
 function render(elapsed) {
+if (isPreviewMode && previewImg) {
+ctx.clearRect(0, 0, W, H);
+drawBackground(0, false);
+applyColorGrade();
+ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+ctx.fillRect(0, 0, W, H);
+
+const baseHeight = H * 0.92;
+const sh = baseHeight * previewScale;
+const sw = sh * (previewImg.width / previewImg.height);
+
+const sx = W * 0.62 - sw / 2;
+const sy = H - sh;
+
+ctx.save();
+ctx.globalAlpha = 1;
+ctx.drawImage(previewImg, sx, sy, sw, sh);
+ctx.restore();
+return;
+}
+
 const { phase, t, phaseIndex } = resolvePhase(elapsed);
 
 const isFlashPhase = (phase === 'flash');
@@ -5118,6 +5166,7 @@ setStatus('presetLoadError', { label: preset.label });
 
 async function playScene() {
 if (!spriteImg) { setStatus('loadSpriteFirst'); return; }
+if (isPreviewMode) { setStatus('confirmPreviewFirst'); return; }
 
 dom.playBtn.disabled = true;
 dom.pauseBtn.disabled = false;
@@ -5419,6 +5468,11 @@ lastPhaseName = null;
 spriteTransition = null;
 updatePauseBtn(false);
 
+isPreviewMode = false;
+previewImg = null;
+pendingCharPresetId = null;
+dom.previewControls.style.display = 'none';
+
 if (currentMusicSource) {
 try { currentMusicSource.stop(); } catch (e) {}
 currentMusicSource = null;
@@ -5660,11 +5714,14 @@ return;
 }
 
 if (e.code === 'Space') {
+const textEditorOpen = dom.textEditorModal && dom.textEditorModal.style.display === 'flex';
 e.preventDefault();
+if (!textEditorOpen) {
 if (!sceneRunning) {
 dom.playBtn.click();
 } else {
 dom.pauseBtn.click();
+}
 }
 }
 
