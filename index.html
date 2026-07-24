@@ -3313,6 +3313,11 @@ dom.previewControls.style.display = 'none';
 activeCharPresetId = pendingCharPresetId;
 pendingCharPresetId = null;
 
+if (pendingCharPresetId) {
+activeCharPresetId = pendingCharPresetId;
+}
+pendingCharPresetId = null;
+
 if (!(sceneRunning && isPaused)) {
 const audioUnlockCtx = getAudioCtx();
 if (audioUnlockCtx.state === 'suspended') audioUnlockCtx.resume();
