@@ -3310,22 +3310,19 @@ isPreviewMode = false;
 previewImg = null;
 dom.previewControls.style.display = 'none';
 
-activeCharPresetId = pendingCharPresetId;
-pendingCharPresetId = null;
-
 if (pendingCharPresetId) {
-activeCharPresetId = pendingCharPresetId;
+  activeCharPresetId = pendingCharPresetId;
 }
 pendingCharPresetId = null;
 
 if (!(sceneRunning && isPaused)) {
-const audioUnlockCtx = getAudioCtx();
-if (audioUnlockCtx.state === 'suspended') audioUnlockCtx.resume();
+  const audioUnlockCtx = getAudioCtx();
+  if (audioUnlockCtx.state === 'suspended') audioUnlockCtx.resume();
 }
 voiceBuffer = null;
 if (activeCharPresetId) {
-const entry = findPresetById(activeCharPresetId);
-if (entry) loadVoiceForName(entry.name);
+  const entry = findPresetById(activeCharPresetId);
+  if (entry) loadVoiceForName(entry.name);
 }
 
 setStatus('spriteApplied');
