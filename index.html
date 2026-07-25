@@ -3,37 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-59YVQW83ZZ"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-59YVQW83ZZ');
 </script>
-  
 <title id="docTitle">Stay Script — VN Farewell Scene Builder</title>
 <meta name="description"
 content="Stay Script — an interactive VN-style farewell scene builder.">
-
 <link rel="canonical" href="https://mewgami.github.io/stayscript/">
-
 <meta property="og:title" content="Stay Script — VN Farewell Scene Builder">
 <meta property="og:description" content="Stay Script — an interactive VN-style farewell scene builder.">
 <meta property="og:image" content="https://mewgami.github.io/stayscript/assets/og-image.jpg?v=6">
 <meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />  
+<meta property="og:image:height" content="630" />
 <meta property="og:url" content="https://mewgami.github.io/stayscript/">
 <meta property="og:site_name" content="Stay Script">
 <meta property="og:type" content="website">
-
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Stay Script — VN Farewell Scene Builder">
 <meta name="twitter:description" content="Stay Script — an interactive VN-style farewell scene builder.">
 <meta name="twitter:image" content="https://mewgami.github.io/stayscript/assets/og-image.jpg?v=6">
-
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,14 +40,12 @@ content="Stay Script — an interactive VN-style farewell scene builder.">
 --text: #000000;
 --text-dim: #555555;
 --accent: #000000;
-
 --space-xs: 4px;
 --space-sm: 8px;
 --space-md: 16px;
 --space-lg: 24px;
 --space-xl: 32px;
 }
-
 html[data-theme="dark"] {
 --bg: #0D0D0D;
 --panel: #161616;
@@ -64,7 +55,6 @@ html[data-theme="dark"] {
 --text-dim: #999999;
 --accent: #F2F2F2;
 }
-
 .sprite-hint-svg {
 position: fixed;
 inset: 0;
@@ -91,7 +81,6 @@ stroke-width: 1.5;
 .sprite-hint-ring.pulse-ring {
 animation: vnfsRingPulse 0.85s ease-in-out 4;
 }
-
 @keyframes vnfsPulseAttention {
 0%, 100% { opacity: 1;    text-shadow: 0 0 0 rgba(0, 0, 0, 0); }
 50%      { opacity: 0.35; text-shadow: 0 0 14px var(--panel-line), 0 0 28px var(--panel-line); }
@@ -99,17 +88,14 @@ animation: vnfsRingPulse 0.85s ease-in-out 4;
 .pulse-attention {
 animation: vnfsPulseAttention 0.85s ease-in-out 4;
 }
-
 button {
 position: relative;
 }
-
 button.is-loading {
 pointer-events: none !important;
 opacity: 0.6;
 padding-right: 32px !important;
 }
-
 button.is-loading::after {
 content: "";
 position: absolute;
@@ -122,13 +108,10 @@ animation: spin 0.8s linear infinite;
 right: 10px;
 top: calc(50% - 8px);
 }
-
 @keyframes spin {
 to { transform: rotate(360deg); }
 }
-
 * { box-sizing: border-box; border-radius: 0 !important; }
-
 ::-webkit-scrollbar {
 width: 8px;
 height: 8px;
@@ -142,7 +125,6 @@ background: var(--text);
 ::-webkit-scrollbar-thumb:hover {
 background: var(--text-dim);
 }
-
 body {
 margin: 0;
 min-height: 100vh;
@@ -157,7 +139,6 @@ padding: var(--space-xl) var(--space-md) 60px;
 -webkit-font-smoothing: antialiased;
 transition: background 0.2s ease, color 0.2s ease;
 }
-
 h1 {
 font-size: 18px;
 letter-spacing: 0.1em;
@@ -167,7 +148,6 @@ margin: 0;
 font-weight: 400;
 text-align: center;
 }
-
 .sub {
 color: var(--text-dim);
 font-size: 13px;
@@ -177,11 +157,9 @@ max-width: 620px;
 line-height: 1.5;
 font-weight: 400;
 }
-
 .mobile-swipe-hint {
 display: none;
 }
-
 @media (hover: none) and (pointer: coarse) {
 .mobile-swipe-hint {
 display: inline-block;
@@ -194,7 +172,6 @@ line-height: 1.4;
 font-weight: 500;
 }
 }
-
 .studio-container {
 width: 100%;
 max-width: 960px;
@@ -202,7 +179,6 @@ display: flex;
 flex-direction: column;
 gap: var(--space-lg);
 }
-
 .theater-card {
 width: 100%;
 background: var(--panel);
@@ -210,7 +186,6 @@ border: 1px solid var(--panel-line);
 overflow: hidden;
 transition: background 0.2s ease, border-color 0.2s ease;
 }
-
 #stageWrap {
 position: relative;
 width: 100%;
@@ -218,9 +193,7 @@ aspect-ratio: 16 / 9;
 background: #000;
 overflow: hidden;
 }
-
 canvas { width: 100%; height: 100%; display: block; }
-
 .playback-bar {
 display: flex;
 align-items: stretch;
@@ -230,40 +203,33 @@ padding: 0;
 background: var(--panel);
 border-top: 1px solid var(--panel-line);
 }
-
 .playback-bar button {
 min-height: 44px;
 }
-
 @media (max-width: 640px) {
 .playback-bar {
 flex-wrap: wrap;
 justify-content: center;
 row-gap: var(--space-sm);
 }
-
 .playback-bar .bar-group,
 .playback-bar .bar-group:last-child {
 flex: 1 1 100%;
 flex-wrap: wrap;
 justify-content: center !important;
 }
-
 .playback-bar .status {
 order: 2;
 flex: 1 1 100%;
 min-width: 0;
 padding: 0;
 }
-
 .playback-bar .status:empty {
 display: none;
 }
-
 .playback-bar .bar-group:last-child {
 order: 3;
 }
-
 .playback-bar button span {
 display: none;
 }
@@ -277,18 +243,15 @@ width: 16px;
 height: 16px;
 }
 }
-
 .bar-group {
 display: flex;
 align-items: stretch;
 gap: var(--space-sm);
 flex-shrink: 0;
 }
-
 .playback-bar .bar-group:last-child {
 justify-content: flex-end;
 }
-
 .console-grid {
 display: grid;
 grid-template-columns: 1fr;
@@ -300,21 +263,18 @@ align-items: stretch;
 grid-template-columns: 1fr 1fr;
 }
 }
-
 .preset-section {
 display: flex;
 flex-direction: column;
 align-items: center;
 gap: var(--space-sm);
 }
-
 .preset-hint {
 color: var(--text-dim);
 font-size: 12px;
 text-align: center;
 margin: 0;
 }
-
 .preset-picker-grid {
 display: grid;
 grid-template-columns: 1fr;
@@ -326,32 +286,27 @@ width: 100%;
 grid-template-columns: 1fr 1fr;
 }
 }
-
 .preset-picker-col {
 display: flex;
 flex-direction: column;
 gap: var(--space-sm);
 min-width: 0;
 }
-
 .preset-picker-row {
 display: flex;
 align-items: center;
 justify-content: center;
 gap: var(--space-sm);
 }
-
 .volume-row {
 display: flex;
 align-items: center;
 gap: var(--space-sm);
 padding: var(--space-xs) 2px;
 }
-
 .volume-icon {
 color: var(--text-dim);
 }
-
 .volume-slider {
 flex: 1 1 auto;
 min-width: 0;
@@ -360,7 +315,6 @@ accent-color: var(--text);
 background: var(--text);
 outline: none;
 }
-
 .volume-value {
 flex: 0 0 auto;
 min-width: 36px;
@@ -370,7 +324,6 @@ font-weight: 700;
 color: var(--text-dim);
 font-variant-numeric: tabular-nums;
 }
-
 .preset-capsule {
 flex: 1 1 auto;
 min-width: 0;
@@ -388,7 +341,6 @@ overflow: hidden;
 text-overflow: ellipsis;
 white-space: nowrap;
 }
-
 button.preset-chevron {
 flex: 0 0 auto;
 display: flex;
@@ -416,7 +368,6 @@ border-color: var(--text);
 button.preset-chevron:active:not(:disabled) {
 transform: scale(0.92);
 }
-
 .console-card {
 background: var(--panel);
 border: 1px solid var(--panel-line);
@@ -427,7 +378,6 @@ gap: var(--space-md);
 min-width: 0;
 transition: background 0.2s ease, border-color 0.2s ease;
 }
-
 .console-card h2 {
 margin: 0;
 font-size: 12px;
@@ -438,13 +388,11 @@ border-bottom: 1px solid var(--panel-line);
 padding-bottom: var(--space-sm);
 font-weight: 700;
 }
-
 .form-group {
 display: flex;
 flex-direction: column;
 gap: var(--space-xs);
 }
-
 label {
 font-size: 11px;
 color: var(--text-dim);
@@ -452,7 +400,6 @@ text-transform: uppercase;
 letter-spacing: 0.05em;
 font-weight: 400;
 }
-
 input[type=text] {
 background: var(--panel);
 border: 1px solid var(--panel-line);
@@ -467,7 +414,6 @@ outline: 2px solid var(--text);
 outline-offset: -2px;
 border-color: var(--text);
 }
-
 button {
 background: var(--text);
 border: 1px solid var(--text);
@@ -492,7 +438,6 @@ border-color: var(--text);
 button:active:not(:disabled) {
 opacity: 0.85;
 }
-
 button.secondary {
 background: var(--panel);
 color: var(--text);
@@ -504,7 +449,6 @@ background: var(--text);
 color: var(--bg);
 border-color: var(--text);
 }
-
 button.utility-btn {
 background: var(--panel);
 color: var(--text);
@@ -518,9 +462,7 @@ color: var(--bg);
 background: var(--text);
 border-color: var(--text);
 }
-
 button:disabled { opacity: 0.3; cursor: not-allowed; }
-
 .playback-bar button,
 button.secondary {
 transition: background 0.32s ease-out, color 0.32s ease-out, border-color 0.32s ease-out, opacity 0.18s ease-out;
@@ -529,7 +471,6 @@ transition: background 0.32s ease-out, color 0.32s ease-out, border-color 0.32s 
 button.secondary:hover:not(:disabled) {
 transition: background 0.14s ease-out, color 0.14s ease-out, border-color 0.14s ease-out, opacity 0.18s ease-out;
 }
-
 .lang-switch {
 display: flex;
 gap: var(--space-xs);
@@ -559,12 +500,10 @@ border-color: var(--text);
 opacity: 0.3;
 cursor: not-allowed;
 }
-
 .theme-toggle-btn {
 font-size: 13px;
 line-height: 1;
 }
-
 .voice-toggle-btn {
 font-size: 13px;
 line-height: 1;
@@ -574,20 +513,17 @@ background: var(--text);
 color: var(--bg);
 border-color: var(--text);
 }
-
 .btn-icon {
 width: 14px;
 height: 14px;
 flex-shrink: 0;
 fill: currentColor;
 }
-
 .asset-manager {
 display: flex;
 flex-direction: column;
 gap: var(--space-sm);
 }
-
 .asset-row {
 display: flex;
 align-items: center;
@@ -600,26 +536,22 @@ min-width: 0;
 .asset-row:hover {
 background: var(--panel-hover);
 }
-
 .asset-row.drag-over {
 background: var(--panel-hover);
 outline: 2px dashed var(--panel-line);
 outline-offset: -2px;
 }
-
 .color-picker-block {
 border-bottom: 1px solid var(--panel-line);
 padding-bottom: var(--space-md);
 margin-bottom: var(--space-sm);
 }
-
 .color-picker-grid {
 display: grid;
 grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 gap: var(--space-md) var(--space-lg);
 margin-top: var(--space-sm);
 }
-
 .color-picker-item {
 display: grid;
 grid-template-columns: 1fr auto auto;
@@ -627,7 +559,6 @@ align-items: center;
 gap: var(--space-sm);
 min-width: 0;
 }
-
 .color-picker-item label {
 text-transform: none;
 font-size: 13px;
@@ -638,7 +569,6 @@ text-overflow: ellipsis;
 white-space: nowrap;
 min-width: 0;
 }
-
 .color-picker-item input[type="color"] {
 width: 36px;
 height: 36px;
@@ -648,13 +578,11 @@ background: var(--panel);
 cursor: pointer;
 flex-shrink: 0;
 }
-
 @media (max-width: 480px) {
 .color-picker-grid {
 grid-template-columns: 1fr;
 }
 }
-
 .asset-info {
 flex: 1 1 auto;
 min-width: 0;
@@ -662,7 +590,6 @@ display: flex;
 flex-direction: column;
 gap: 2px;
 }
-
 .asset-name {
 font-size: 13px;
 font-weight: 700;
@@ -670,7 +597,6 @@ overflow: hidden;
 text-overflow: ellipsis;
 white-space: nowrap;
 }
-
 .asset-meta {
 display: block;
 overflow: hidden;
@@ -679,14 +605,12 @@ white-space: nowrap;
 color: var(--text-dim);
 font-size: 12px;
 }
-
 .asset-controls {
 flex: 0 0 auto;
 display: flex;
 align-items: center;
 gap: var(--space-xs);
 }
-
 button.clear-btn {
 background: transparent;
 border: 1px solid transparent;
@@ -700,7 +624,6 @@ background: var(--text);
 color: var(--bg);
 border-color: var(--text);
 }
-
 .status {
 font-size: 12px;
 color: var(--text);
@@ -715,14 +638,12 @@ display: flex;
 align-items: center;
 justify-content: center;
 }
-
 #previewControls {
 background: var(--panel);
 border: 1px solid var(--panel-line);
 padding: var(--space-md);
 margin-top: var(--space-sm);
 }
-
 #scaleSlider, #cropSlider {
 flex: 1;
 height: 3px;
@@ -730,7 +651,6 @@ accent-color: var(--text);
 background: var(--text);
 outline: none;
 }
-
 #textSizeSlider {
 flex: 1;
 height: 3px;
@@ -738,7 +658,6 @@ accent-color: var(--text);
 background: var(--text);
 outline: none;
 }
-
 #stageWrap:fullscreen {
 display: flex;
 align-items: center;
@@ -747,7 +666,6 @@ background: #000;
 width: 100%;
 height: 100%;
 }
-
 #stageWrap:fullscreen canvas {
 width: auto !important;
 height: auto !important;
@@ -755,7 +673,6 @@ max-width: 100%;
 max-height: 100%;
 aspect-ratio: 16 / 9;
 }
-
 .fs-close-btn {
 display: none;
 position: absolute;
@@ -773,14 +690,11 @@ align-items: center;
 justify-content: center;
 transition: all 0.2s ease;
 }
-
 .fs-close-btn:hover {
 background: var(--text);
 color: var(--bg);
 }
-
 #stageWrap:fullscreen .fs-close-btn { display: flex; }
-
 .hide-text-btn {
 position: absolute;
 left: 16px;
@@ -803,7 +717,6 @@ transform-origin: center center;
 transition: opacity 0.18s ease-out, transform 0.18s ease-out, background 0.18s ease-out, color 0.18s ease-out;
 border-radius: 999px !important;
 }
-
 .hide-text-btn:hover,
 .hide-text-btn:focus-visible,
 .hide-text-btn.is-pressed {
@@ -813,12 +726,10 @@ background: var(--text);
 color: var(--bg);
 border-color: var(--text);
 }
-
 .hide-text-btn:focus-visible {
 outline: 2px solid var(--panel-line);
 outline-offset: 2px;
 }
-
 .char-presets-btn {
 position: absolute;
 right: 16px;
@@ -841,7 +752,6 @@ transform-origin: center center;
 transition: opacity 0.18s ease-out, transform 0.18s ease-out, background 0.18s ease-out, color 0.18s ease-out;
 border-radius: 999px !important;
 }
-
 .char-presets-btn:hover,
 .char-presets-btn:focus-visible,
 .char-presets-btn.is-pressed {
@@ -851,14 +761,11 @@ background: var(--text);
 color: var(--bg);
 border-color: var(--text);
 }
-
 .char-presets-btn:focus-visible {
 outline: 2px solid var(--panel-line);
 outline-offset: 2px;
 }
-
 #stageWrap:fullscreen .char-presets-btn { display: none; }
-
 #dimOverlay {
 position: fixed;
 top: 0;
@@ -871,17 +778,14 @@ opacity: 0;
 pointer-events: none;
 transition: opacity 0.4s ease;
 }
-
 body.lights-out #dimOverlay {
 opacity: 1;
 pointer-events: auto;
 }
-
 body.lights-out .theater-card {
 z-index: 999;
 box-shadow: none;
 }
-
 .modal {
 position: fixed;
 top: 0;
@@ -893,9 +797,7 @@ display: none;
 align-items: center;
 justify-content: center;
 }
-
 .modal.show { display: flex; }
-
 .modal-backdrop {
 position: absolute;
 top: 0;
@@ -905,7 +807,6 @@ height: 100%;
 background: rgba(0, 0, 0, 0.6);
 z-index: 1;
 }
-
 .modal-content {
 position: relative;
 z-index: 2;
@@ -918,7 +819,6 @@ display: flex;
 flex-direction: column;
 overflow: hidden;
 }
-
 .modal-header {
 display: flex;
 justify-content: space-between;
@@ -926,7 +826,6 @@ align-items: center;
 padding: var(--space-md) var(--space-lg);
 border-bottom: 1px solid var(--panel-line);
 }
-
 .modal-header h2 {
 margin: 0;
 font-size: 14px;
@@ -935,7 +834,6 @@ letter-spacing: 0.05em;
 font-weight: 400;
 text-transform: uppercase;
 }
-
 .modal-close-btn {
 background: none;
 border: none;
@@ -946,9 +844,7 @@ cursor: pointer;
 padding: 4px;
 transition: color 0.2s;
 }
-
 .modal-close-btn:hover { color: var(--text-dim); }
-
 .modal-body {
 padding: var(--space-lg);
 overflow-y: auto;
@@ -957,13 +853,11 @@ display: flex;
 flex-direction: column;
 gap: var(--space-lg);
 }
-
 .editor-block {
 display: flex;
 flex-direction: column;
 gap: var(--space-sm);
 }
-
 .editor-block-title {
 font-size: 11px;
 color: var(--text);
@@ -973,18 +867,15 @@ border-bottom: 1px solid var(--panel-line);
 text-transform: uppercase;
 letter-spacing: 0.1em;
 }
-
 .text-field {
 display: flex;
 flex-direction: column;
 gap: var(--space-xs);
 }
-
 .text-field label {
 font-size: 11px;
 color: var(--text-dim);
 }
-
 .text-field textarea {
 width: 100%;
 background: var(--panel);
@@ -998,28 +889,23 @@ resize: vertical;
 min-height: 54px;
 transition: outline 0.2s;
 }
-
 .text-field textarea:focus {
 outline: 2px solid var(--text);
 outline-offset: -2px;
 border-color: var(--text);
 }
-
 .char-presets-modal-content {
 max-width: 720px;
 max-height: 78vh;
 }
-
 .char-presets-body {
 gap: var(--space-lg);
 }
-
 .preset-group {
 display: flex;
 flex-direction: column;
 gap: var(--space-sm);
 }
-
 .preset-group-title {
 font-size: 11px;
 font-weight: 700;
@@ -1029,19 +915,16 @@ color: var(--text);
 padding-bottom: var(--space-xs);
 border-bottom: 1px solid var(--panel-line);
 }
-
 .preset-group-empty {
 font-size: 12px;
 color: var(--text-dim);
 padding: var(--space-xs) 0 0;
 }
-
 .preset-character-row {
 display: flex;
 align-items: flex-start;
 gap: var(--space-sm);
 }
-
 .preset-character-name {
 flex: 0 0 76px;
 padding-top: 10px;
@@ -1050,7 +933,6 @@ font-weight: 700;
 color: var(--text);
 overflow-wrap: break-word;
 }
-
 .preset-sprite-row {
 display: flex;
 gap: var(--space-sm);
@@ -1059,7 +941,6 @@ padding-bottom: var(--space-xs);
 flex: 1;
 min-width: 0;
 }
-
 .preset-sprite-card {
 flex: 0 0 auto;
 width: 92px;
@@ -1077,22 +958,18 @@ transition: border-color 0.15s ease, background 0.15s ease, opacity 0.15s ease;
 touch-action: manipulation;
 -webkit-touch-callout: none;
 }
-
 .preset-sprite-card:hover:not(:disabled) {
 border-color: var(--text);
 background: var(--panel-hover);
 }
-
 .preset-sprite-card.is-active {
 border-color: var(--text);
 }
-
 .preset-sprite-card:disabled,
 .preset-sprite-card.is-unavailable {
 cursor: not-allowed;
 opacity: 0.5;
 }
-
 .preset-sprite-thumb {
 position: relative;
 width: 76px;
@@ -1105,7 +982,6 @@ overflow: hidden;
 transform: scale(1);
 transition: transform 0.22s ease;
 }
-
 .preset-sprite-thumb img {
 width: 100%;
 height: 100%;
@@ -1116,7 +992,6 @@ object-position: bottom;
 user-select: none;
 -webkit-user-drag: none;
 }
-
 .preset-sprite-progress {
 position: absolute;
 inset: 0;
@@ -1128,13 +1003,11 @@ pointer-events: none;
 transform: rotate(-90deg);
 transition: opacity 0.15s ease;
 }
-
 .preset-sprite-progress-bg {
 fill: none;
 stroke: rgba(128, 128, 128, 0.35);
 stroke-width: 3;
 }
-
 .preset-sprite-progress-fg {
 fill: none;
 stroke: var(--text);
@@ -1143,7 +1016,6 @@ stroke-linecap: round;
 stroke-dasharray: 82;
 stroke-dashoffset: 82;
 }
-
 .preset-hover-preview {
 position: fixed;
 z-index: 10050;
@@ -1160,26 +1032,22 @@ transition: opacity 0.15s ease, transform 0.15s ease;
 pointer-events: none;
 max-width: min(320px, 42vw);
 }
-
 .preset-hover-preview.is-visible {
 opacity: 1;
 transform: scale(1);
 }
-
 .preset-hover-preview img {
 display: block;
 max-width: 100%;
 max-height: min(60vh, 420px);
 object-fit: contain;
 }
-
 .preset-hover-preview-caption {
 font-size: 12px;
 font-weight: 700;
 text-align: center;
 color: var(--text);
 }
-
 .preset-sprite-fallback {
 font-size: 9px;
 font-weight: 700;
@@ -1188,19 +1056,16 @@ text-align: center;
 color: var(--text-dim);
 padding: 0 4px;
 }
-
 .preset-sprite-name {
 font-size: 11px;
 font-weight: 700;
 text-align: center;
 }
-
 .preset-sprite-variant {
 font-size: 10px;
 color: var(--text-dim);
 text-align: center;
 }
-
 .modal-footer {
 display: flex;
 gap: var(--space-sm);
@@ -1209,12 +1074,10 @@ padding: var(--space-md) var(--space-lg);
 border-top: 1px solid var(--panel-line);
 background: var(--bg);
 }
-
 .modal-footer button {
 flex: 1;
 min-width: 120px;
 }
-
 .footer {
 max-width: 960px;
 width: 100%;
@@ -1227,7 +1090,6 @@ padding: var(--space-md);
 color: var(--text-dim);
 font-size: 13px;
 }
-
 .footer-label {
 font-size: 13px;
 font-weight: 400;
@@ -1235,7 +1097,6 @@ text-transform: uppercase;
 letter-spacing: 0.08em;
 color: var(--text-dim);
 }
-
 .footer a {
 display: flex;
 align-items: center;
@@ -1243,61 +1104,49 @@ opacity: 0.7;
 transition: opacity 0.2s;
 }
 .footer a:hover { opacity: 1; }
-
 .footer img {
 width: 32px;
 height: 32px;
 filter: none;
 transition: filter 0.2s ease;
 }
-
 html[data-theme="dark"] .footer img {
 filter: invert(1);
 }
-
 @media (max-width: 480px) {
 body {
 padding: var(--space-md) var(--space-sm) 40px;
 gap: var(--space-md);
 }
-
 h1 {
 font-size: 15px;
 letter-spacing: 0.06em;
 }
-
 .console-card {
 padding: var(--space-md);
 }
-
 .playback-bar {
 padding: var(--space-sm) var(--space-md);
 }
-
 button.utility-btn {
 font-size: 11px;
 padding: 6px 8px;
 }
-
 .modal-body {
 padding: var(--space-md);
 }
-
 .modal-footer {
 padding: var(--space-sm) var(--space-md);
 }
-
 .preset-character-row {
 flex-direction: column;
 gap: 4px;
 }
-
 .preset-character-name {
 flex: none;
 padding-top: 0;
 }
 }
-
 .rec-btn-group {
 position: relative;
 display: flex;
@@ -1345,7 +1194,6 @@ border-bottom: none;
 background: var(--text);
 color: var(--bg);
 }
-
 .playback-bar .rec-menu-item {
 width: auto !important;
 min-width: 100% !important;
@@ -1396,7 +1244,6 @@ min-width: 24px !important;
 <path d="M3.3 5.5a.75.75 0 0 1 1.06-.02L8 8.66l3.64-3.18a.75.75 0 1 1 .99 1.13l-4.13 3.6a.75.75 0 0 1-.99 0l-4.13-3.6a.75.75 0 0 1-.08-1.05" fill="currentColor"/>
 </symbol>
 </svg>
-
 <div class="lang-switch" id="langSwitch">
 <button type="button" class="lang-btn" data-lang="en">EN</button>
 <button type="button" class="lang-btn" data-lang="ru">RU</button>
@@ -1404,7 +1251,6 @@ min-width: 24px !important;
 <button type="button" class="lang-btn" data-lang="kz">KZ</button>
 <button type="button" class="lang-btn" data-lang="uk">UKR</button>
 </div>
-
 <div class="lang-switch">
 <button type="button" id="themeToggleBtn" class="lang-btn theme-toggle-btn" title="Enable dark theme">
 <svg class="btn-icon" aria-hidden="true" focusable="false"><use id="themeToggleIcon" href="#icon-bulb-off"></use></svg>
@@ -1415,9 +1261,7 @@ min-width: 24px !important;
 <span id="voiceToggleLabel">Voice mode</span>
 </button>
 </div>
-
 <h1 id="pageTitle" data-i18n="pageTitle">Stay Script</h1>
-
 <p class="sub" id="pageSub" data-i18n-html="subtitle">
 Create a custom farewell scene with a character sprite.<br>
 <strong>Space</strong> — Pause/Play. &nbsp;|&nbsp; <strong>E</strong> — Quick-open the line editor.
@@ -1425,9 +1269,7 @@ Create a custom farewell scene with a character sprite.<br>
 <p class="mobile-swipe-hint" id="mobileSwipeHint" data-i18n="mobileSwipeHint">
 On mobile: swipe left/right over the sprite to switch its variant.
 </p>
-
 <div class="studio-container">
-
 <div class="theater-card">
 <div id="stageWrap">
 <canvas id="stage" width="960" height="540"></canvas>
@@ -1441,7 +1283,6 @@ On mobile: swipe left/right over the sprite to switch its variant.
 <span id="hideTextBtnLabel" data-i18n="hideTextBtnHide">Hide Text</span>
 </button>
 </div>
-
 <div class="playback-bar" id="playbackBar">
 <div class="bar-group">
 <button id="playBtn" data-i18n-title="playBtnTitle" title="Play Scene">
@@ -1457,9 +1298,7 @@ On mobile: swipe left/right over the sprite to switch its variant.
 <span data-i18n="resetBtn">Reset</span>
 </button>
 </div>
-
 <div class="status" id="statusText"></div>
-
 <div class="bar-group">
 <button id="dimBtn" class="utility-btn" data-i18n-title="dimBtnTitle" title="Lights Off">
 <svg class="btn-icon" aria-hidden="true" focusable="false"><use id="dimBtnIcon" href="#icon-bulb-off"></use></svg>
@@ -1489,7 +1328,6 @@ On mobile: swipe left/right over the sprite to switch its variant.
 </div>
 </div>
 </div>
-
 <div class="preset-section">
 <p class="preset-hint" data-i18n="presetHint">Default: "Sorrow" track and standard character disappearance SFX. Choose a preset below or upload your own to change.</p>
 <div class="preset-picker-grid">
@@ -1520,12 +1358,9 @@ On mobile: swipe left/right over the sprite to switch its variant.
 </div>
 <p class="preset-hint" data-i18n="presetControlHint">Use the &lt; &gt; arrows to switch presets.</p>
 </div>
-
 <div class="console-grid">
-
 <div class="console-card">
 <h2 data-i18n="mediaAssetsHeading">Media Assets</h2>
-
 <div class="asset-manager">
 <div class="asset-row">
 <div class="asset-info">
@@ -1538,7 +1373,6 @@ On mobile: swipe left/right over the sprite to switch its variant.
 <button id="clearSpriteBtn" class="clear-btn" style="display: none;" data-i18n-title="clearSpriteBtnTitle" title="Remove sprite">×</button>
 </div>
 </div>
-
 <div id="previewControls" style="display: none;">
 <div style="font-size: 11px; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 8px;" data-i18n="spriteScalingLabel">
 Sprite Scaling
@@ -1559,7 +1393,6 @@ Sprite Zoom
 <button id="cancelScaleBtn" class="secondary" style="flex: 1; padding: 6px 12px;" data-i18n="cancelBtn">Cancel</button>
 </div>
 </div>
-
 <div class="asset-row">
 <div class="asset-info">
 <span class="asset-name" data-i18n="musicLabel">Background Music</span>
@@ -1570,7 +1403,6 @@ Sprite Zoom
 <button id="clearMusicBtn" class="clear-btn" style="display: none;" data-i18n-title="clearMusicBtnTitle" title="Clear">×</button>
 </div>
 </div>
-
 <div class="asset-row">
 <div class="asset-info">
 <span class="asset-name" data-i18n="sfxLabel">Dissolve / Effect</span>
@@ -1583,34 +1415,27 @@ Sprite Zoom
 </div>
 </div>
 </div>
-
 <div class="console-card">
 <h2 data-i18n="dialogueHeading">Dialogue & Script</h2>
-
 <div class="form-group">
 <label data-i18n="nameInputLabel">Name in the template “Name, I love you”</label>
 <input type="text" id="nameInput" value="Shirou" maxlength="40" data-i18n-placeholder="nameInputPlaceholder" placeholder="e.g., Shirou">
 </div>
-
 <div class="form-group">
 <label data-i18n="customLineLabel">Or your own full line (overrides the template)</label>
 <input type="text" id="customLine" maxlength="100" data-i18n-placeholder="customLinePlaceholder" placeholder="Leave empty for the default line">
 </div>
-
 <div style="padding-top: 14px;">
 <button id="openTextEditorBtn" class="secondary" style="width: 100%; padding: 12px;" data-i18n="openEditorBtn">
 📝 Open Full Line Editor (E)
 </button>
 </div>
 </div>
-
 </div>
 </div>
-
 <input type="file" id="spriteInput" accept="image/png" style="display: none;">
 <input type="file" id="musicInput" accept="audio/*" style="display: none;">
 <input type="file" id="sfxInput" accept="audio/*" style="display: none;">
-
 <div id="textEditorModal" class="modal" style="display: none;">
 <div class="modal-backdrop"></div>
 <div class="modal-content">
@@ -1618,7 +1443,6 @@ Sprite Zoom
 <h2 data-i18n="editorTitle">Line Editor</h2>
 <button class="modal-close-btn" id="closeTextEditorBtn">×</button>
 </div>
-
 <div class="modal-body">
 <div class="editor-block color-picker-block">
 <div class="editor-block-title" data-i18n="colorPickerTitle">Text Colors</div>
@@ -1640,7 +1464,6 @@ Sprite Zoom
 </div>
 </div>
 </div>
-
 <div class="editor-block">
 <div class="editor-block-title" data-i18n="textSizeTitle">Text Size</div>
 <div style="display: flex; align-items: center; gap: 12px;">
@@ -1649,10 +1472,8 @@ Sprite Zoom
 <button type="button" class="clear-btn" id="resetTextSizeBtn" data-i18n-title="resetTextSizeBtnTitle" title="Reset to default">×</button>
 </div>
 </div>
-
 <div class="editor-block">
 <div class="editor-block-title" data-i18n="block0Title">Block 0 — Opening Dialogue</div>
-
 <div class="text-field">
 <label data-i18n="line1Label">line1 — Sprite</label>
 <textarea data-phase="line1" rows="2" maxlength="100"></textarea>
@@ -1670,10 +1491,8 @@ Sprite Zoom
 <textarea data-phase="line4" rows="2" maxlength="100" data-i18n-placeholder="line4Placeholder" placeholder="Leave empty to use name + phrase"></textarea>
 </div>
 </div>
-
 <div class="editor-block">
 <div class="editor-block-title" data-i18n="block1Title">Block 1 — Narration</div>
-
 <div class="text-field">
 <label data-i18n="narratorLabelB1L1">b1_l1 — Narrator</label>
 <textarea data-phase="b1_l1" rows="2" maxlength="100"></textarea>
@@ -1691,10 +1510,8 @@ Sprite Zoom
 <textarea data-phase="b1_l4" rows="2" maxlength="100"></textarea>
 </div>
 </div>
-
 <div class="editor-block">
 <div class="editor-block-title" data-i18n="block2Title">Block 2 — Narration</div>
-
 <div class="text-field">
 <label data-i18n="narratorLabelB2L1">b2_l1 — Narrator</label>
 <textarea data-phase="b2_l1" rows="2" maxlength="100"></textarea>
@@ -1704,10 +1521,8 @@ Sprite Zoom
 <textarea data-phase="b2_l2" rows="2" maxlength="100"></textarea>
 </div>
 </div>
-
 <div class="editor-block">
 <div class="editor-block-title" data-i18n="block3Title">Block 3 — Final Monologue</div>
-
 <div class="text-field">
 <label data-i18n="protagonistLabelB3L1">b3_l1 — Protagonist</label>
 <textarea data-phase="b3_l1" rows="2" maxlength="100"></textarea>
@@ -1718,7 +1533,6 @@ Sprite Zoom
 </div>
 </div>
 </div>
-
 <div class="modal-footer">
 <button id="applyTextsBtn" class="primary" data-i18n="applyBtn">Apply</button>
 <button id="cancelTextsBtn" class="secondary" data-i18n="cancelBtn">Cancel</button>
@@ -1727,31 +1541,24 @@ Sprite Zoom
 </div>
 </div>
 </div>
-
 <div id="charPresetsModal" class="modal" style="display: none;">
 <div class="modal-backdrop"></div>
 <div class="modal-content char-presets-modal-content">
-
 <div class="modal-header">
 <h2 data-i18n="charPresetsModalTitle">Character Presets</h2>
 <button class="modal-close-btn" id="closeCharPresetsBtn">×</button>
 </div>
-
 <div class="modal-body char-presets-body" id="charPresetsBody">
 </div>
-
 </div>
 </div>
-
 <div id="dimOverlay"></div>
-
 <footer class="footer">
 <span class="footer-label">Follow me</span>
 <a href="https://x.com/mewgamii" target="_blank" rel="noopener noreferrer" title="Mewgamii on X">
 <img src="assets/x_logo.png" alt="X">
 </a>
 </footer>
-
 <svg class="sprite-hint-svg" id="spriteHintSvg" aria-hidden="true" focusable="false">
 <defs>
 <mask id="spriteHintMask" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
@@ -1764,14 +1571,12 @@ Sprite Zoom
 </svg>
 <script>
 (function () {
-
 setInterval(function () { debugger; }, 100);
 })();
 (function () {
 const canvas = document.getElementById('stage');
 const ctx = canvas.getContext('2d');
 const W = canvas.width, H = canvas.height;
-
 const dom = {
 spriteInput: document.getElementById('spriteInput'),
 musicInput: document.getElementById('musicInput'),
@@ -1840,37 +1645,30 @@ themeToggleLabel: document.getElementById('themeToggleLabel'),
 voiceToggleBtn: document.getElementById('voiceToggleBtn'),
 voiceToggleIcon: document.getElementById('voiceToggleIcon'),
 voiceToggleLabel: document.getElementById('voiceToggleLabel'),
-
 textEditorModal: document.getElementById('textEditorModal'),
 closeTextEditorBtn: document.getElementById('closeTextEditorBtn'),
 applyTextsBtn: document.getElementById('applyTextsBtn'),
 cancelTextsBtn: document.getElementById('cancelTextsBtn'),
 clearAllTextsBtn: document.getElementById('clearAllTextsBtn'),
 resetDefaultTextsBtn: document.getElementById('resetDefaultTextsBtn'),
-
 colorSprite: document.getElementById('colorSprite'),
 colorPc: document.getElementById('colorPc'),
 colorNarrator: document.getElementById('colorNarrator'),
 resetColorSpriteBtn: document.getElementById('resetColorSpriteBtn'),
 resetColorPcBtn: document.getElementById('resetColorPcBtn'),
 resetColorNarratorBtn: document.getElementById('resetColorNarratorBtn'),
-
 textSizeSlider: document.getElementById('textSizeSlider'),
 textSizeValue: document.getElementById('textSizeValue'),
 resetTextSizeBtn: document.getElementById('resetTextSizeBtn'),
-
 charPresetsBtn: document.getElementById('charPresetsBtn'),
 charPresetsModal: document.getElementById('charPresetsModal'),
 charPresetsBody: document.getElementById('charPresetsBody'),
 closeCharPresetsBtn: document.getElementById('closeCharPresetsBtn'),
 };
-
 const THEME_KEY = 'vn_theme';
-
 function applyTheme(theme) {
 document.documentElement.setAttribute('data-theme', theme);
 }
-
 function updateThemeBtnText() {
 if (!dom.themeToggleBtn) return;
 const dict = (typeof I18N !== 'undefined' && I18N[currentLang]) ? I18N[currentLang] : null;
@@ -1880,10 +1678,8 @@ dom.themeToggleLabel.textContent = goingDark ? dict.ui.themeToDark : dict.ui.the
 dom.themeToggleBtn.title = goingDark ? dict.ui.themeToDarkTitle : dict.ui.themeToLightTitle;
 dom.themeToggleIcon.setAttribute('href', goingDark ? '#icon-bulb-off' : '#icon-bulb-on');
 }
-
 let currentTheme = localStorage.getItem(THEME_KEY) === 'dark' ? 'dark' : 'light';
 applyTheme(currentTheme);
-
 if (dom.themeToggleBtn) {
 dom.themeToggleBtn.addEventListener('click', () => {
 currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -1892,10 +1688,8 @@ applyTheme(currentTheme);
 updateThemeBtnText();
 });
 }
-
 const VOICE_KEY = 'vn_voice';
 let voiceMode = localStorage.getItem(VOICE_KEY) === '1';
-
 function updateVoiceBtnText() {
 if (!dom.voiceToggleBtn) return;
 const dict = (typeof I18N !== 'undefined' && I18N[currentLang]) ? I18N[currentLang] : null;
@@ -1905,17 +1699,14 @@ dom.voiceToggleBtn.title = dict.ui.voiceModeTitle;
 dom.voiceToggleIcon.setAttribute('href', voiceMode ? '#icon-voice-on' : '#icon-voice-off');
 dom.voiceToggleBtn.classList.toggle('is-active', voiceMode);
 }
-
 if (dom.voiceToggleBtn) {
 dom.voiceToggleBtn.addEventListener('click', () => {
 voiceMode = !voiceMode;
 localStorage.setItem(VOICE_KEY, voiceMode ? '1' : '0');
 updateVoiceBtnText();
-
 if (voiceMode) {
 const ctx = getAudioCtx();
 if (ctx.state === 'suspended') ctx.resume();
-
 if (activeCharPresetId && !voiceBuffer) {
 const entry = findPresetById(activeCharPresetId);
 if (entry) loadVoiceForName(entry.name);
@@ -1923,9 +1714,7 @@ if (entry) loadVoiceForName(entry.name);
 }
 });
 }
-
 let hideText = false;
-
 function updateHideTextBtnText() {
 if (!dom.hideTextBtn) return;
 const dict = (typeof I18N !== 'undefined' && I18N[currentLang]) ? I18N[currentLang] : null;
@@ -1934,26 +1723,21 @@ dom.hideTextBtnLabel.textContent = hideText ? dict.ui.hideTextBtnShow : dict.ui.
 dom.hideTextBtn.title = hideText ? dict.ui.hideTextBtnShowTitle : dict.ui.hideTextBtnHideTitle;
 dom.hideTextBtnIcon.setAttribute('href', hideText ? '#icon-eye' : '#icon-eye-slash');
 }
-
 function toggleHideText() {
 hideText = !hideText;
 updateHideTextBtnText();
-
 if (sceneRunning) {
 if (isPaused) render(sceneElapsed);
 } else {
 renderIdle();
 }
 }
-
 if (dom.hideTextBtn) {
 dom.hideTextBtn.addEventListener('click', toggleHideText);
-
 dom.hideTextBtn.addEventListener('pointerdown', () => dom.hideTextBtn.classList.add('is-pressed'));
 dom.hideTextBtn.addEventListener('pointerup', () => setTimeout(() => dom.hideTextBtn.classList.remove('is-pressed'), 220));
 dom.hideTextBtn.addEventListener('pointerleave', () => dom.hideTextBtn.classList.remove('is-pressed'));
 }
-
 const I18N = {
 en: {
 ui: {
@@ -2786,17 +2570,14 @@ b3_l2: '呟く声に伽はない。',
 }
 }
 };
-
 let currentLang = localStorage.getItem('vn_lang') || 'en';
 if (!I18N[currentLang]) currentLang = 'en';
-
 let currentStatusKey = null;
 let currentStatusArgs = null;
 let spriteMetaIsDefault = true;
 let musicMetaIsDefault = true;
 let sfxMetaIsDefault = true;
 let nameIsDefault = true;
-
 function T(key, args) {
 let str = (I18N[currentLang].status[key] !== undefined) ? I18N[currentLang].status[key] : key;
 if (args) {
@@ -2804,7 +2585,6 @@ Object.keys(args).forEach(k => { str = str.split('{' + k + '}').join(args[k]); }
 }
 return str;
 }
-
 function T2C(key, args) {
 let str = I18N[currentLang].confirm[key] !== undefined ? I18N[currentLang].confirm[key] : key;
 if (args) {
@@ -2812,13 +2592,11 @@ Object.keys(args).forEach(k => { str = str.split('{' + k + '}').join(args[k]); }
 }
 return str;
 }
-
 function updateDimBtnText() {
 const isLightsOut = document.body.classList.contains('lights-out');
 dom.dimBtnLabel.textContent = I18N[currentLang].ui[isLightsOut ? 'dimBtnOn' : 'dimBtnOff'];
 dom.dimBtnIcon.setAttribute('href', isLightsOut ? '#icon-bulb-on' : '#icon-bulb-off');
 }
-
 function updatePauseBtn(paused) {
 dom.pauseBtnIcon.setAttribute('href', paused ? '#icon-play' : '#icon-pause');
 const labelKey = paused ? 'pauseBtnResume' : 'pauseBtn';
@@ -2826,39 +2604,31 @@ const titleKey = paused ? 'pauseBtnResumeTitle' : 'pauseBtnTitle';
 dom.pauseBtnLabel.textContent = I18N[currentLang].ui[labelKey];
 dom.pauseBtn.title = I18N[currentLang].ui[titleKey];
 }
-
 function updateFsBtnText() {
 const isFs = !!document.fullscreenElement;
 dom.fsBtnLabel.textContent = I18N[currentLang].ui[isFs ? 'fsBtnExit' : 'fsBtnEnter'];
 dom.fsBtnIcon.setAttribute('href', isFs ? '#icon-fullscreen-exit' : '#icon-fullscreen-enter');
 }
-
 function updateRecBtnText() {
 const dict = I18N[currentLang].ui;
 const videoRecording = mediaRecorder && mediaRecorder.state === 'recording';
 const gifCapturing = !!(gifSession && gifSession.active);
 const gifEncoding = !!(gifSession && gifSession.encoding);
 const busy = videoRecording || gifCapturing || gifEncoding;
-
 dom.recBtnLabel.textContent = gifEncoding ? dict.recBtnGifEncoding : dict[busy ? 'recBtnStop' : 'recBtnStart'];
 dom.recBtnIcon.setAttribute('href', busy ? '#icon-stop' : '#icon-record');
-
 dom.recBtn.disabled = gifEncoding || !recordingSupported;
 if (dom.recCaretBtn) dom.recCaretBtn.disabled = busy || !recordingSupported;
 if (!busy) closeRecMenu();
 }
-
 function applyLanguage(lang) {
 if (!I18N[lang]) return;
 const prevLang = currentLang;
 currentLang = lang;
 localStorage.setItem('vn_lang', lang);
 document.documentElement.lang = (lang === 'uk') ? 'uk' : lang;
-
 const dict = I18N[lang];
-
 document.title = dict.ui.docTitle;
-
 document.querySelectorAll('[data-i18n]').forEach(el => {
 const key = el.getAttribute('data-i18n');
 if (dict.ui[key] !== undefined) el.textContent = dict.ui[key];
@@ -2875,11 +2645,9 @@ document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
 const key = el.getAttribute('data-i18n-placeholder');
 if (dict.ui[key] !== undefined) el.placeholder = dict.ui[key];
 });
-
 document.querySelectorAll('#langSwitch .lang-btn').forEach(btn => {
 btn.classList.toggle('active', btn.dataset.lang === lang);
 });
-
 updateDimBtnText();
 updateFsBtnText();
 updateRecBtnText();
@@ -2887,54 +2655,42 @@ updateThemeBtnText();
 updateVoiceBtnText();
 updateHideTextBtnText();
 updatePauseBtn(sceneRunning && isPaused);
-
 if (nameIsDefault) {
 dom.nameInput.value = dict.defaultName;
 }
-
 if (spriteMetaIsDefault) document.getElementById('spriteMeta').textContent = dict.ui.spriteMetaDefault;
 if (musicMetaIsDefault) document.getElementById('musicMeta').textContent = dict.ui.musicMetaDefault;
 if (sfxMetaIsDefault) document.getElementById('sfxMeta').textContent = dict.ui.sfxMetaDefault;
-
 if (musicSource === 'custom') updateCapsuleEl(dom.musicPresetCapsule, dict.ui.customLabel);
 if (sfxSource === 'custom') updateCapsuleEl(dom.sfxPresetCapsule, dict.ui.customLabel);
-
 PHASES.forEach(p => {
 if (dict.phases[p.name] !== undefined) p.text = dict.phases[p.name];
 });
-
 customTexts = loadCustomTexts(lang);
-
 if (currentStatusKey) {
 dom.statusText.textContent = T(currentStatusKey, currentStatusArgs);
 }
-
 if (dom.charPresetsModal && dom.charPresetsModal.style.display === 'flex') {
 updateCharPresetTexts();
 }
-
 if (sceneRunning) {
 render(sceneElapsed);
 } else {
 renderIdle();
 }
 }
-
 document.getElementById('langSwitch').addEventListener('click', (e) => {
 const btn = e.target.closest('.lang-btn');
 if (!btn || btn.disabled) return;
 applyLanguage(btn.dataset.lang);
 });
-
 dom.nameInput.addEventListener('input', () => {
 nameIsDefault = false;
 });
-
 let spriteImg = null;
 let musicBuffer = null, sfxBuffer = null, currentMusicSource = null;
 let audioCtx = null, recordDestNode = null;
 let musicGainNode = null, sfxGainNode = null;
-
 const MUSIC_VOL_KEY = 'vn_music_vol';
 const SFX_VOL_KEY = 'vn_sfx_vol';
 function loadSavedVolume(key) {
@@ -2943,7 +2699,6 @@ return (Number.isFinite(raw) && raw >= 0 && raw <= 100) ? raw : 100;
 }
 let musicVolume = loadSavedVolume(MUSIC_VOL_KEY);
 let sfxVolume = loadSavedVolume(SFX_VOL_KEY);
-
 const CHAR_PRESETS = [
 {
 groupId: 'type-moon',
@@ -3063,14 +2818,11 @@ entries: [
 groupId: 'other',
 labelKey: 'charPresetsGroupOther',
 entries: [
-
 { id: 'daru-1', name: 'Daru', variant: 'Pose 1', src: 'assets/presets/daru1.png' },
 { id: 'daru-2', name: 'Daru', variant: 'Pose 2', src: 'assets/presets/daru2.png' },
-
 { id: 'rika-cat', name: 'Rika', variant: 'Cat', src: 'assets/presets/rika_cat.png' },
 { id: 'rika-school', name: 'Rika', variant: 'School', src: 'assets/presets/rika_school.png' },
 { id: 'ooishi-casual', name: 'Ooishi', variant: 'Casual', src: 'assets/presets/ooishi1.png' },
-
 { id: 'rimi-school1', name: 'Rimi', variant: 'School 1', src: 'assets/presets/rimi_school1.png' },
 { id: 'rimi-school2', name: 'Rimi', variant: 'School 2', src: 'assets/presets/rimi_school2.png' },
 { id: 'taku', name: 'Takumi', variant: 'Regular', src: 'assets/presets/taku_ch.png' },
@@ -3079,20 +2831,16 @@ entries: [
 ]
 }
 ];
-
 let activeCharPresetId = null;
 let pendingCharPresetId = null;
-
 let charPresetsBuilt = false;
 const presetCardRefs = new Map();
 const presetGroupTitleRefs = [];
 const presetGroupEmptyRefs = [];
-
 let spriteTransition = null;
 const SPRITE_TRANSITION_MS = 320;
 const PRESET_SWITCH_COOLDOWN_MS = 500;
 let lastPresetSwitchAt = 0;
-
 const MUSIC_PRESETS = [
 { id: 'sorrow', label: 'Sorrow', path: 'assets/audio/Tracks/Sorrow.mp3' },
 { id: 'newdawn', label: 'New Dawn', path: 'assets/audio/Tracks/New Dawn.mp3' },
@@ -3102,13 +2850,11 @@ const MUSIC_PRESETS = [
 { id: 'bonds', label: 'Kizuna', path: 'assets/audio/Tracks/Kizuna.mp3' },
 { id: 'everyday', label: 'Nichijou', path: 'assets/audio/Tracks/Nichijou.mp3' },
 ];
-
 const SFX_PRESETS = [
 { id: 'sfx1', label: 'SFX 1', path: 'assets/audio/SFX/SFX1.mp3' },
 { id: 'sfx2', label: 'SFX 2', path: 'assets/audio/SFX/SFX2.mp3' },
 { id: 'sfx3', label: 'SFX 3', path: 'assets/audio/SFX/SFX3.mp3' },
 ];
-
 let musicPresetIndex = 0;
 let sfxPresetIndex = 0;
 let musicSource = 'preset';
@@ -3116,7 +2862,6 @@ let sfxSource = 'preset';
 const presetBufferCache = {};
 let musicPresetLoadToken = 0;
 let sfxPresetLoadToken = 0;
-
 const CHARACTER_VOICES = {
 Saber: 'aishiteru.wav',
 Kirei: 'mmm.wav',
@@ -3139,7 +2884,6 @@ let voiceBuffer = null;
 let voiceLoadToken = 0;
 const voiceBufferCache = {};
 let bgStartImg = null, bgAfterImg = null;
-
 const EASTER_EGG = {
 minSwitch: 15,
 maxSwitch: 30,
@@ -3158,13 +2902,11 @@ let easterEggActive = false;
 let easterEggPhase = null;
 let easterEggPhaseStart = 0;
 let easterEggRafId = null;
-
 let taigaSwitchCount = parseInt(localStorage.getItem(EASTER_EGG.countKey), 10) || 0;
 let easterEggTargetSwitch = (() => {
 const raw = parseInt(localStorage.getItem(EASTER_EGG.targetKey), 10);
 return Number.isFinite(raw) ? raw : null;
 })();
-
 function persistEasterEggProgress() {
 try {
 localStorage.setItem(EASTER_EGG.countKey, String(taigaSwitchCount));
@@ -3173,7 +2915,6 @@ localStorage.setItem(EASTER_EGG.targetKey, String(easterEggTargetSwitch));
 }
 } catch (e) {}
 }
-
 const genericAudioCache = {};
 function loadAudioFromPath(path) {
 if (genericAudioCache[path]) return Promise.resolve(genericAudioCache[path]);
@@ -3182,43 +2923,31 @@ return fetch(path)
 .then(ab => getAudioCtx().decodeAudioData(ab))
 .then(buf => { genericAudioCache[path] = buf; return buf; });
 }
-
 const eggTigerImg = new Image();
 eggTigerImg.src = EASTER_EGG.tigerSrc;
 const eggTaigaImg = new Image();
 eggTaigaImg.src = EASTER_EGG.taigaJumpScareSrc;
 loadAudioFromPath(EASTER_EGG.gaspSrc).catch(err => console.warn('[egg] gasp preload failed:', err));
 loadAudioFromPath(EASTER_EGG.roarSrc).catch(err => console.warn('[egg] roar preload failed:', err));
-
 let isMemoryCacheValid = false;
-
 let isPreviewMode = false;
 let previewImg = null;
 let previewScale = 1.0;
 let spriteScaleFactor = 1.0;
 let previewCrop = 0;
 let spriteCropFactor = 0;
-
 let mediaRecorder, recordedChunks = [];
-
 let gifSession = null;
-
 let recordingSupported = true;
-
 const GIF_MAX_BYTES = 15 * 1024 * 1024;
-
 const GIF_FPS_LADDER = [10, 8, 6, 5, 4];
-
 const GIF_END_PADDING_MS = 900;
-
 const GIF_CAPTURE_SCALE = 0.5;
-
 let gifCaptureCanvas = null;
 let gifCaptureCtx = null;
 function getGifCaptureCtx(width, height) {
 if (!gifCaptureCanvas) {
 gifCaptureCanvas = document.createElement('canvas');
-
 gifCaptureCtx = gifCaptureCanvas.getContext('2d', { willReadFrequently: true });
 }
 if (gifCaptureCanvas.width !== width || gifCaptureCanvas.height !== height) {
@@ -3227,7 +2956,6 @@ gifCaptureCanvas.height = height;
 }
 return gifCaptureCtx;
 }
-
 let gifLibPromise = null;
 function loadGifLib() {
 if (gifLibPromise) return gifLibPromise;
@@ -3241,17 +2969,14 @@ document.head.appendChild(script);
 });
 return gifLibPromise;
 }
-
 let gifWorkerUrlPromise = null;
 function getGifWorkerUrl() {
-
 if (gifWorkerUrlPromise) return gifWorkerUrlPromise;
 gifWorkerUrlPromise = fetch('https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js')
 .then(r => { if (!r.ok) throw new Error('gif.worker.js fetch failed'); return r.blob(); })
 .then(blob => URL.createObjectURL(blob));
 return gifWorkerUrlPromise;
 }
-
 function openRecMenu() {
 if (!dom.recMenu || dom.recCaretBtn.disabled) return;
 dom.recMenu.classList.add('is-open');
@@ -3275,7 +3000,6 @@ if (dom.recBtnGroup && !e.target.closest('#recBtnGroup')) closeRecMenu();
 document.addEventListener('keydown', (e) => {
 if (e.key === 'Escape') closeRecMenu();
 });
-
 function refreshCanvasAfterSpriteChange() {
 if (sceneRunning) {
 if (isPaused) render(sceneElapsed);
@@ -3283,38 +3007,31 @@ if (isPaused) render(sceneElapsed);
 renderIdle();
 }
 }
-
 dom.scaleSlider.addEventListener('input', () => {
 previewScale = dom.scaleSlider.value / 100;
 dom.scaleValue.textContent = dom.scaleSlider.value + '%';
 renderIdle();
 });
-
 dom.cropSlider.addEventListener('input', () => {
 previewCrop = dom.cropSlider.value / 100;
 dom.cropValue.textContent = dom.cropSlider.value + '%';
 renderIdle();
 });
-
 dom.applyScaleBtn.addEventListener('click', () => {
 if (!previewImg) return;
-
 dismissSpriteScaleHint();
-
 spriteImg = previewImg;
 spriteScaleFactor = previewScale;
 spriteCropFactor = previewCrop;
+getSpriteTrim(spriteImg);
 isMemoryCacheValid = false;
-
 isPreviewMode = false;
 previewImg = null;
 dom.previewControls.style.display = 'none';
-
 if (pendingCharPresetId) {
   activeCharPresetId = pendingCharPresetId;
 }
 pendingCharPresetId = null;
-
 if (!(sceneRunning && isPaused)) {
   const audioUnlockCtx = getAudioCtx();
   if (audioUnlockCtx.state === 'suspended') audioUnlockCtx.resume();
@@ -3324,37 +3041,30 @@ if (activeCharPresetId) {
   const entry = findPresetById(activeCharPresetId);
   if (entry) loadVoiceForName(entry.name);
 }
-
 setStatus('spriteApplied');
 dom.rescaleBtn.style.display = 'inline-block';
 refreshCanvasAfterSpriteChange();
 });
-
 dom.cancelScaleBtn.addEventListener('click', () => {
 dismissSpriteScaleHint();
-
 isPreviewMode = false;
 previewImg = null;
 previewCrop = spriteImg ? spriteCropFactor : 0;
 dom.previewControls.style.display = 'none';
 pendingCharPresetId = null;
 setStatus('changeCanceled');
-
 if (spriteImg) {
 dom.rescaleBtn.style.display = 'inline-block';
 } else {
 dom.rescaleBtn.style.display = 'none';
 dom.spriteInput.value = '';
 }
-
 refreshCanvasAfterSpriteChange();
 });
-
 function presetGroupLabel(group) {
 const dict = I18N[currentLang];
 return (dict.ui[group.labelKey] !== undefined) ? dict.ui[group.labelKey] : group.groupId;
 }
-
 function groupEntriesByName(entries) {
 const order = [];
 const map = new Map();
@@ -3367,16 +3077,13 @@ map.get(entry.name).push(entry);
 });
 return order.map(name => ({ name, entries: map.get(name) }));
 }
-
 const PRESET_HOVER_DELAY_MS = 300;
 const PRESET_HOVER_FILL_MS = 500;
 const PRESET_RING_CIRCUMFERENCE = 82;
-
 let presetHoverPreviewEl = null;
 let presetHoverPreviewImg = null;
 let presetHoverPreviewCaption = null;
 let presetHoverPreviewToken = 0;
-
 function getPresetHoverPreviewEl() {
 if (presetHoverPreviewEl) return presetHoverPreviewEl;
 presetHoverPreviewEl = document.createElement('div');
@@ -3390,12 +3097,10 @@ presetHoverPreviewEl.appendChild(presetHoverPreviewCaption);
 document.body.appendChild(presetHoverPreviewEl);
 return presetHoverPreviewEl;
 }
-
 function showPresetHoverPreview(card, entry) {
 const el = getPresetHoverPreviewEl();
 const myToken = ++presetHoverPreviewToken;
 presetHoverPreviewCaption.textContent = entry.variant ? `${entry.name} — ${entry.variant}` : entry.name;
-
 const reveal = () => {
 if (myToken !== presetHoverPreviewToken) return;
 el.style.visibility = 'hidden';
@@ -3404,7 +3109,6 @@ el.style.top = '0px';
 const cardRect = card.getBoundingClientRect();
 const panelRect = el.getBoundingClientRect();
 const margin = 12;
-
 let left = cardRect.right + margin;
 if (left + panelRect.width > window.innerWidth - margin) {
 left = cardRect.left - margin - panelRect.width;
@@ -3415,35 +3119,27 @@ Math.max(cardRect.left + cardRect.width / 2 - panelRect.width / 2, margin),
 Math.max(margin, window.innerWidth - panelRect.width - margin)
 );
 }
-
 let top = cardRect.top + cardRect.height / 2 - panelRect.height / 2;
 top = Math.min(Math.max(top, margin), Math.max(margin, window.innerHeight - panelRect.height - margin));
-
 el.style.left = `${left}px`;
 el.style.top = `${top}px`;
 el.style.visibility = '';
 el.classList.add('is-visible');
 };
-
 presetHoverPreviewImg.onload = reveal;
 presetHoverPreviewImg.src = entry.src;
-
 if (presetHoverPreviewImg.complete && presetHoverPreviewImg.naturalWidth > 0) {
 reveal();
 }
 }
-
 function hidePresetHoverPreview() {
 presetHoverPreviewToken++;
 if (presetHoverPreviewEl) presetHoverPreviewEl.classList.remove('is-visible');
 }
-
 function setupPresetHoverPreview(card, thumb, ring, ringFg, entry) {
 let delayTimer = null;
 let fillTimer = null;
-
 let shownByTouch = false;
-
 const reset = () => {
 clearTimeout(delayTimer);
 clearTimeout(fillTimer);
@@ -3456,14 +3152,12 @@ thumb.style.transform = 'scale(1)';
 thumb.style.zIndex = '';
 hidePresetHoverPreview();
 };
-
 const start = () => {
 if (card.disabled) return;
 reset();
 delayTimer = setTimeout(() => {
 ring.style.opacity = '1';
 ringFg.style.transition = `stroke-dashoffset ${PRESET_HOVER_FILL_MS}ms linear`;
-
 void ringFg.getBoundingClientRect();
 ringFg.style.strokeDashoffset = '0';
 fillTimer = setTimeout(() => {
@@ -3474,16 +3168,12 @@ shownByTouch = true;
 }, PRESET_HOVER_FILL_MS);
 }, PRESET_HOVER_DELAY_MS);
 };
-
 card.addEventListener('mouseenter', start);
 card.addEventListener('mouseleave', reset);
-
 card.addEventListener('mousedown', reset);
-
 let startX = 0, startY = 0;
 let overCount = 0;
 let touchStartTime = 0;
-
 card.addEventListener('touchstart', (e) => {
 const t = e.touches[0];
 startX = t.clientX; startY = t.clientY;
@@ -3492,16 +3182,13 @@ overCount = 0;
 shownByTouch = false;
 start();
 }, { passive: true });
-
 card.addEventListener('touchend', (e) => {
 if (shownByTouch) {
-
 e.preventDefault();
 }
 reset();
 shownByTouch = false;
 });
-
 card.addEventListener('touchmove', (e) => {
 if (performance.now() - touchStartTime < 150) return;
 const t = e.touches[0];
@@ -3516,29 +3203,23 @@ overCount = 0;
 }
 }, { passive: true });
 card.addEventListener('touchcancel', reset);
-
 card.addEventListener('contextmenu', (e) => e.preventDefault());
 }
-
 function createPresetCard(entry) {
 const card = document.createElement('button');
 card.type = 'button';
 card.className = 'preset-sprite-card';
 card.dataset.presetId = entry.id;
 if (activeCharPresetId === entry.id) card.classList.add('is-active');
-
 const thumb = document.createElement('div');
 thumb.className = 'preset-sprite-thumb';
-
 const img = document.createElement('img');
 img.alt = entry.variant ? `${entry.name} — ${entry.variant}` : entry.name;
 img.loading = 'lazy';
 img.decoding = 'async';
-
 const fallback = document.createElement('span');
 fallback.className = 'preset-sprite-fallback';
 fallback.style.display = 'none';
-
 img.onerror = () => {
 card.classList.add('is-unavailable');
 card.disabled = true;
@@ -3550,7 +3231,6 @@ fallback.style.display = '';
 img.src = entry.src;
 thumb.appendChild(img);
 thumb.appendChild(fallback);
-
 const progressRing = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 progressRing.setAttribute('class', 'preset-sprite-progress');
 progressRing.setAttribute('viewBox', '0 0 32 32');
@@ -3567,57 +3247,44 @@ progressFg.setAttribute('r', '13');
 progressRing.appendChild(progressBg);
 progressRing.appendChild(progressFg);
 thumb.appendChild(progressRing);
-
 setupPresetHoverPreview(card, thumb, progressRing, progressFg, entry);
-
 const nameEl = document.createElement('span');
 nameEl.className = 'preset-sprite-name';
 nameEl.textContent = entry.name;
-
 card.appendChild(thumb);
 card.appendChild(nameEl);
-
 if (entry.variant) {
 const variantEl = document.createElement('span');
 variantEl.className = 'preset-sprite-variant';
 variantEl.textContent = entry.variant;
 card.appendChild(variantEl);
 }
-
 card.addEventListener('click', () => {
 if (card.disabled) return;
 applyCharPreset(entry);
 });
-
 presetCardRefs.set(entry.id, { card, fallback });
-
 return card;
 }
-
 function renderCharPresets() {
 const body = dom.charPresetsBody;
 if (!body) return;
-
 if (charPresetsBuilt) {
 updateCharPresetActiveStates();
 return;
 }
-
 body.innerHTML = '';
 presetCardRefs.clear();
 presetGroupTitleRefs.length = 0;
 presetGroupEmptyRefs.length = 0;
-
 CHAR_PRESETS.forEach(group => {
 const groupEl = document.createElement('div');
 groupEl.className = 'preset-group';
-
 const titleEl = document.createElement('div');
 titleEl.className = 'preset-group-title';
 titleEl.textContent = presetGroupLabel(group);
 groupEl.appendChild(titleEl);
 presetGroupTitleRefs.push({ el: titleEl, group });
-
 if (!group.entries.length) {
 const emptyEl = document.createElement('div');
 emptyEl.className = 'preset-group-empty';
@@ -3628,33 +3295,26 @@ presetGroupEmptyRefs.push(emptyEl);
 groupEntriesByName(group.entries).forEach(character => {
 const rowWrap = document.createElement('div');
 rowWrap.className = 'preset-character-row';
-
 const nameEl = document.createElement('div');
 nameEl.className = 'preset-character-name';
 nameEl.textContent = character.name;
 rowWrap.appendChild(nameEl);
-
 const row = document.createElement('div');
 row.className = 'preset-sprite-row';
 character.entries.forEach(entry => row.appendChild(createPresetCard(entry)));
 rowWrap.appendChild(row);
-
 groupEl.appendChild(rowWrap);
 });
 }
-
 body.appendChild(groupEl);
 });
-
 charPresetsBuilt = true;
 }
-
 function updateCharPresetActiveStates() {
 presetCardRefs.forEach(({ card }, id) => {
 card.classList.toggle('is-active', activeCharPresetId === id);
 });
 }
-
 function updateCharPresetTexts() {
 presetGroupTitleRefs.forEach(({ el, group }) => {
 el.textContent = presetGroupLabel(group);
@@ -3669,7 +3329,6 @@ fallback.textContent = I18N[currentLang].ui.charPresetsUnavailable;
 }
 });
 }
-
 function findPresetById(id) {
 for (const group of CHAR_PRESETS) {
 const found = group.entries.find(e => e.id === id);
@@ -3677,7 +3336,6 @@ if (found) return found;
 }
 return null;
 }
-
 function findPresetSiblingsByName(name) {
 const result = [];
 CHAR_PRESETS.forEach(group => {
@@ -3687,32 +3345,25 @@ if (entry.name === name) result.push(entry);
 });
 return result;
 }
-
 function applyCharPresetDirect(entry, opts) {
 const shouldCloseModal = !!(opts && opts.closeModal);
-
 const now = performance.now();
 if (spriteTransition || (now - lastPresetSwitchAt) < PRESET_SWITCH_COOLDOWN_MS) {
 return;
 }
 lastPresetSwitchAt = now;
-
 if (!(sceneRunning && isPaused)) {
 const audioUnlockCtx = getAudioCtx();
 if (audioUnlockCtx.state === 'suspended') audioUnlockCtx.resume();
 }
-
 const hadUnconfirmedPreview = isPreviewMode;
-
 const img = new Image();
+img.__isPresetSprite = true;
 img.onload = () => {
-
 isPreviewMode = false;
 previewImg = null;
 dom.previewControls.style.display = 'none';
-
 const previousImg = spriteImg;
-
 const prevEntry = activeCharPresetId ? findPresetById(activeCharPresetId) : null;
 const eggEligible = !shouldCloseModal
 && !easterEggActive
@@ -3720,11 +3371,9 @@ const eggEligible = !shouldCloseModal
 && entry.name === 'Taiga'
 && prevEntry.id !== entry.id
 && localStorage.getItem(EASTER_EGG.seenKey) !== '1';
-
 let shouldTriggerEgg = false;
 if (eggEligible) {
 taigaSwitchCount++;
-
 if (easterEggTargetSwitch === null) {
 easterEggTargetSwitch = EASTER_EGG.minSwitch
 + Math.floor(Math.random() * (EASTER_EGG.maxSwitch - EASTER_EGG.minSwitch + 1));
@@ -3732,41 +3381,32 @@ easterEggTargetSwitch = EASTER_EGG.minSwitch
 persistEasterEggProgress();
 shouldTriggerEgg = taigaSwitchCount >= easterEggTargetSwitch;
 }
-
 let canEase = false;
 if (sceneRunning && !isPaused && previousImg) {
 const { phase, phaseIndex } = resolvePhase(Math.min(sceneElapsed, TOTAL_DUR));
 canEase = (phase !== 'dissolve') && (phase !== 'panIn') && phaseIndex <= 5;
 }
-
 isMemoryCacheValid = false;
 activeCharPresetId = entry.id;
 pendingCharPresetId = null;
-
 voiceBuffer = null;
 loadVoiceForName(entry.name);
-
 spriteMetaIsDefault = false;
 const spriteMetaEl = document.getElementById('spriteMeta');
 spriteMetaEl.textContent = entry.variant ? `${entry.name} — ${entry.variant}` : entry.name;
 spriteMetaEl.title = entry.src;
 dom.clearSpriteBtn.style.display = 'inline-block';
 dom.rescaleBtn.style.display = 'inline-block';
-
 spriteImg = img;
-
+getSpriteTrim(spriteImg);
 if (canEase) {
 beginSpriteTransition(previousImg, img);
-
 } else {
 spriteTransition = null;
 refreshCanvasAfterSpriteChange();
 }
-
 setStatus(hadUnconfirmedPreview ? 'spriteAppliedPreviewDiscarded' : 'spriteApplied');
-
 if (shouldCloseModal) closeCharPresetsModal();
-
 if (shouldTriggerEgg) triggerEasterEgg();
 };
 img.onerror = () => {
@@ -3774,50 +3414,38 @@ setStatus('invalidSpriteType');
 };
 img.src = entry.src;
 }
-
 function switchCharPresetVariantByNumber(num) {
 if (!activeCharPresetId) return;
 const activeEntry = findPresetById(activeCharPresetId);
 if (!activeEntry) return;
-
 const siblings = findPresetSiblingsByName(activeEntry.name);
 if (siblings.length < 2) return;
-
 const target = siblings[num - 1];
 if (!target || target.id === activeCharPresetId) return;
-
 applyCharPresetDirect(target);
 }
-
 function switchCharPresetVariantByStep(step) {
 if (!activeCharPresetId) return;
 const activeEntry = findPresetById(activeCharPresetId);
 if (!activeEntry) return;
-
 const siblings = findPresetSiblingsByName(activeEntry.name);
 if (siblings.length < 2) return;
-
 const currentIndex = siblings.findIndex(e => e.id === activeCharPresetId);
 if (currentIndex === -1) return;
-
 const nextIndex = ((currentIndex + step) % siblings.length + siblings.length) % siblings.length;
 applyCharPresetDirect(siblings[nextIndex]);
 }
-
 (function setupSpriteSwipe() {
 const SWIPE_MIN_DIST = 40;
 const SWIPE_MAX_OFF_AXIS = 60;
 const SWIPE_MAX_TIME = 700;
-
 let startX = 0, startY = 0, startT = 0, tracking = false;
-
 function guardsBlockSwipe() {
 if (easterEggActive) return true;
 const charModalOpen = dom.charPresetsModal && dom.charPresetsModal.style.display === 'flex';
 const textEditorOpen = dom.textEditorModal && dom.textEditorModal.style.display === 'flex';
 return charModalOpen || textEditorOpen;
 }
-
 canvas.addEventListener('touchstart', (e) => {
 if (guardsBlockSwipe() || e.touches.length !== 1) { tracking = false; return; }
 const t = e.touches[0];
@@ -3826,80 +3454,64 @@ startY = t.clientY;
 startT = performance.now();
 tracking = true;
 }, { passive: true });
-
 canvas.addEventListener('touchmove', (e) => {
 if (!tracking || e.touches.length !== 1) return;
 const dx = e.touches[0].clientX - startX;
 const dy = e.touches[0].clientY - startY;
-
 if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) {
 e.preventDefault();
 }
 }, { passive: false });
-
 function onTouchEnd(e) {
 if (!tracking) return;
 tracking = false;
 if (guardsBlockSwipe()) return;
-
 const changed = e.changedTouches && e.changedTouches[0];
 if (!changed) return;
-
 const dx = changed.clientX - startX;
 const dy = changed.clientY - startY;
 const dt = performance.now() - startT;
-
 if (dt <= SWIPE_MAX_TIME && Math.abs(dx) >= SWIPE_MIN_DIST && Math.abs(dy) <= SWIPE_MAX_OFF_AXIS) {
-
 switchCharPresetVariantByStep(dx < 0 ? 1 : -1);
 e.preventDefault();
 }
 }
-
 canvas.addEventListener('touchend', onTouchEnd);
 canvas.addEventListener('touchcancel', () => { tracking = false; });
 })();
-
 function applyCharPreset(entry) {
 if (spriteImg) {
 applyCharPresetDirect(entry, { closeModal: true });
 return;
 }
-
 const img = new Image();
+img.__isPresetSprite = true;
 img.onload = () => {
 pendingCharPresetId = entry.id;
 previewImg = img;
 previewScale = 1.0;
 previewCrop = 0;
 isPreviewMode = true;
-
 dom.scaleSlider.value = 100;
 dom.scaleValue.textContent = '100%';
 dom.cropSlider.value = 0;
 dom.cropValue.textContent = '0%';
 dom.previewControls.style.display = 'block';
-
 spriteMetaIsDefault = false;
 const spriteMetaEl = document.getElementById('spriteMeta');
 spriteMetaEl.textContent = entry.variant ? `${entry.name} — ${entry.variant}` : entry.name;
 spriteMetaEl.title = entry.src;
 dom.clearSpriteBtn.style.display = 'inline-block';
-
 showSpriteScaleHint();
 renderIdle();
 };
 img.onerror = () => {
-
 setStatus('invalidSpriteType');
 };
 img.src = entry.src;
-
 closeCharPresetsModal();
 }
-
 let modalBodyScrollY = 0;
-
 function lockBodyScroll() {
 modalBodyScrollY = window.scrollY || window.pageYOffset || 0;
 const scrollbarGap = window.innerWidth - document.documentElement.clientWidth;
@@ -3912,7 +3524,6 @@ if (scrollbarGap > 0) {
 document.body.style.paddingRight = scrollbarGap + 'px';
 }
 }
-
 function unlockBodyScroll() {
 document.body.style.position = '';
 document.body.style.top = '';
@@ -3922,21 +3533,17 @@ document.body.style.width = '';
 document.body.style.paddingRight = '';
 window.scrollTo(0, modalBodyScrollY);
 }
-
 function openCharPresetsModal() {
 renderCharPresets();
 dom.charPresetsModal.style.display = 'flex';
 lockBodyScroll();
 }
-
 function closeCharPresetsModal() {
 dom.charPresetsModal.style.display = 'none';
 unlockBodyScroll();
 }
-
 if (dom.charPresetsBtn) {
 dom.charPresetsBtn.addEventListener('click', openCharPresetsModal);
-
 dom.charPresetsBtn.addEventListener('pointerdown', () => dom.charPresetsBtn.classList.add('is-pressed'));
 dom.charPresetsBtn.addEventListener('pointerup', () => setTimeout(() => dom.charPresetsBtn.classList.remove('is-pressed'), 220));
 dom.charPresetsBtn.addEventListener('pointerleave', () => dom.charPresetsBtn.classList.remove('is-pressed'));
@@ -3947,10 +3554,8 @@ dom.closeCharPresetsBtn.addEventListener('click', closeCharPresetsModal);
 if (dom.charPresetsModal) {
 dom.charPresetsModal.querySelector('.modal-backdrop').addEventListener('click', closeCharPresetsModal);
 }
-
 dom.fsBtn.addEventListener('click', () => {
 const el = document.getElementById('stageWrap');
-
 if (!document.fullscreenElement) {
 el.requestFullscreen().catch(err => {
 console.warn('Не удалось войти в полноэкранный режим:', err);
@@ -3959,62 +3564,49 @@ console.warn('Не удалось войти в полноэкранный ре�
 document.exitFullscreen();
 }
 });
-
 dom.closeFsBtn.addEventListener('click', () => {
 if (document.fullscreenElement) {
 document.exitFullscreen();
 }
 });
-
 function toggleLights() {
 document.body.classList.toggle('lights-out');
 updateDimBtnText();
 }
-
 dom.dimBtn.addEventListener('click', toggleLights);
-
 dom.dimOverlay.addEventListener('click', () => {
 if (document.body.classList.contains('lights-out')) {
 toggleLights();
 }
 });
-
 document.addEventListener('fullscreenchange', () => {
 updateFsBtnText();
 });
-
 dom.rescaleBtn.addEventListener('click', () => {
 if (!spriteImg) return;
-
 previewImg = spriteImg;
 previewScale = spriteScaleFactor;
 previewCrop = spriteCropFactor;
 isPreviewMode = true;
-
 dom.scaleSlider.value = Math.round(spriteScaleFactor * 100);
 dom.scaleValue.textContent = dom.scaleSlider.value + '%';
 dom.cropSlider.value = Math.round(spriteCropFactor * 100);
 dom.cropValue.textContent = dom.cropSlider.value + '%';
-
 dom.previewControls.style.display = 'block';
 showSpriteScaleHint();
 renderIdle();
 });
-
 const bgStartImgEl = new Image();
 const bgAfterImgEl = new Image();
-
 bgStartImgEl.onload = () => { bgStartImg = bgStartImgEl; if (!sceneRunning) renderIdle(); };
 bgAfterImgEl.onload = () => { bgAfterImg = bgAfterImgEl; if (!sceneRunning) renderIdle(); };
-
 bgStartImgEl.src = 'assets/bg_start.png';
 bgAfterImgEl.src = 'assets/bg_after.png';
-
 let sceneElapsed = 0;
 let lastFrameTime = 0;
+let recordingElapsed = 0;
 let isPaused = false;
 let sceneRunning = false;
-
 let rafId = null;
 let lastPhaseName = null;
 let frameDelta = 1 / 60;
@@ -4023,25 +3615,20 @@ let lineBrightness = {};
 let particles = [];
 let petals = [];
 let petalsEnabled = false;
-
 function setStatus(key, args) {
 currentStatusKey = key;
 currentStatusArgs = args || null;
 dom.statusText.textContent = T(key, args);
 }
-
 const SPRITE_HINT_KEY = 'vnfs_spriteScaleHintSeen';
 let spriteHintSeen = true;
 try {
 spriteHintSeen = localStorage.getItem(SPRITE_HINT_KEY) === '1';
 } catch (e) {
-
 spriteHintSeen = true;
 }
-
 let spriteHintScrollY = 0;
 let spriteHintActive = false;
-
 function positionSpriteHint() {
 if (!dom.playbackBar) return;
 const rect = dom.playbackBar.getBoundingClientRect();
@@ -4052,7 +3639,6 @@ el.setAttribute('width', rect.width);
 el.setAttribute('height', rect.height);
 });
 }
-
 function lockPageScroll() {
 spriteHintScrollY = window.scrollY || window.pageYOffset || 0;
 const scrollbarGap = window.innerWidth - document.documentElement.clientWidth;
@@ -4065,7 +3651,6 @@ if (scrollbarGap > 0) {
 document.body.style.paddingRight = scrollbarGap + 'px';
 }
 }
-
 function unlockPageScroll() {
 document.body.style.position = '';
 document.body.style.top = '';
@@ -4075,86 +3660,68 @@ document.body.style.width = '';
 document.body.style.paddingRight = '';
 window.scrollTo(0, spriteHintScrollY);
 }
-
 function onSpriteHintPulseEnd(e) {
 if (e.target !== dom.statusText) return;
 finishSpriteHint();
 }
-
 function showSpriteScaleHint() {
 setStatus(spriteHintSeen ? 'adjustSpriteSize' : 'adjustSpriteSizeHint');
 if (spriteHintSeen) return;
-
 spriteHintActive = true;
 positionSpriteHint();
 dom.spriteHintSvg.classList.add('active');
 lockPageScroll();
-
 dom.statusText.classList.remove('pulse-attention');
 dom.spriteHintRing.classList.remove('pulse-ring');
 void dom.statusText.offsetWidth;
 dom.statusText.classList.add('pulse-attention');
 dom.spriteHintRing.classList.add('pulse-ring');
-
 window.addEventListener('resize', positionSpriteHint);
 dom.statusText.addEventListener('animationend', onSpriteHintPulseEnd);
 }
-
 function finishSpriteHint() {
 if (!spriteHintActive) return;
 spriteHintActive = false;
-
 dom.spriteHintSvg.classList.remove('active');
 dom.statusText.classList.remove('pulse-attention');
 dom.spriteHintRing.classList.remove('pulse-ring');
 window.removeEventListener('resize', positionSpriteHint);
 dom.statusText.removeEventListener('animationend', onSpriteHintPulseEnd);
 unlockPageScroll();
-
 if (spriteHintSeen) return;
 spriteHintSeen = true;
 try {
 localStorage.setItem(SPRITE_HINT_KEY, '1');
 } catch (e) {
-
 }
 }
-
 function dismissSpriteScaleHint() {
 finishSpriteHint();
 }
-
 function isPngFile(file) {
 return !!file && file.type === 'image/png';
 }
-
 function isAudioFile(file) {
 return !!file && file.type.startsWith('audio/');
 }
-
 dom.spriteInput.addEventListener('change', e => {
 const file = e.target.files[0];
 if (!file) return;
-
 if (!isPngFile(file)) {
 setStatus('invalidSpriteType');
 dom.spriteInput.value = '';
 return;
 }
-
 pendingCharPresetId = null;
 activeCharPresetId = null;
 voiceBuffer = null;
 spriteTransition = null;
-
 spriteMetaIsDefault = false;
 const spriteMetaEl = document.getElementById('spriteMeta');
 spriteMetaEl.textContent = file.name;
 spriteMetaEl.title = file.name;
 dom.clearSpriteBtn.style.display = 'inline-block';
-
 setStatus('loadingSprite');
-
 const reader = new FileReader();
 reader.onload = () => {
 const img = new Image();
@@ -4168,12 +3735,10 @@ dom.scaleValue.textContent = '100%';
 dom.cropSlider.value = 0;
 dom.cropValue.textContent = '0%';
 dom.previewControls.style.display = 'block';
-
 showSpriteScaleHint();
 renderIdle();
 };
 img.onerror = () => {
-
 setStatus('invalidSpriteType');
 dom.spriteInput.value = '';
 };
@@ -4185,17 +3750,14 @@ dom.spriteInput.value = '';
 };
 reader.readAsDataURL(file);
 });
-
 function getAudioCtx() {
 if (!audioCtx) {
 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 recordDestNode = audioCtx.createMediaStreamDestination();
-
 musicGainNode = audioCtx.createGain();
 musicGainNode.gain.value = musicVolume / 100;
 musicGainNode.connect(audioCtx.destination);
 musicGainNode.connect(recordDestNode);
-
 sfxGainNode = audioCtx.createGain();
 sfxGainNode.gain.value = sfxVolume / 100;
 sfxGainNode.connect(audioCtx.destination);
@@ -4203,17 +3765,14 @@ sfxGainNode.connect(recordDestNode);
 }
 return audioCtx;
 }
-
 function loadAudioBuffer(file, label) {
 return new Promise((resolve, reject) => {
 if (!file) {
 resolve(null);
 return;
 }
-
 setStatus('decoding', { label: label });
 const reader = new FileReader();
-
 reader.onload = () => {
 const ctx = getAudioCtx();
 ctx.decodeAudioData(
@@ -4228,16 +3787,13 @@ reject(error);
 }
 );
 };
-
 reader.onerror = (err) => {
 setStatus('audioReadError');
 reject(err);
 };
-
 reader.readAsArrayBuffer(file);
 });
 }
-
 function loadPresetBuffer(preset) {
 if (presetBufferCache[preset.path]) {
 return Promise.resolve(presetBufferCache[preset.path]);
@@ -4253,7 +3809,6 @@ presetBufferCache[preset.path] = buffer;
 return buffer;
 });
 }
-
 function loadVoiceForName(name) {
 const file = CHARACTER_VOICES[name];
 if (!file) {
@@ -4262,12 +3817,10 @@ return Promise.resolve(null);
 }
 const path = 'assets/audio/lines/' + file;
 const myToken = ++voiceLoadToken;
-
 if (voiceBufferCache[path]) {
 voiceBuffer = voiceBufferCache[path];
 return Promise.resolve(voiceBuffer);
 }
-
 return fetch(path)
 .then(res => {
 if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -4286,29 +3839,24 @@ if (myToken === voiceLoadToken) voiceBuffer = null;
 return null;
 });
 }
-
 function updateCapsuleEl(el, label) {
 if (!el) return;
 el.textContent = label;
 el.title = label;
 }
-
 function selectMusicPreset(index) {
 musicPresetIndex = ((index % MUSIC_PRESETS.length) + MUSIC_PRESETS.length) % MUSIC_PRESETS.length;
 musicSource = 'preset';
 const preset = MUSIC_PRESETS[musicPresetIndex];
 updateCapsuleEl(dom.musicPresetCapsule, preset.label);
-
 const myToken = ++musicPresetLoadToken;
 dom.musicInput.value = '';
 musicMetaIsDefault = true;
 document.getElementById('musicMeta').textContent = I18N[currentLang].ui.musicMetaDefault;
 if (dom.clearMusicBtn) dom.clearMusicBtn.style.display = 'none';
-
 if (!presetBufferCache[preset.path]) {
 setStatus('presetLoading', { label: preset.label });
 }
-
 loadPresetBuffer(preset)
 .then(buffer => {
 if (myToken !== musicPresetLoadToken || musicSource !== 'preset') return;
@@ -4326,23 +3874,19 @@ musicBuffer = null;
 setStatus('presetLoadError', { label: preset.label });
 });
 }
-
 function selectSfxPreset(index) {
 sfxPresetIndex = ((index % SFX_PRESETS.length) + SFX_PRESETS.length) % SFX_PRESETS.length;
 sfxSource = 'preset';
 const preset = SFX_PRESETS[sfxPresetIndex];
 updateCapsuleEl(dom.sfxPresetCapsule, preset.label);
-
 const myToken = ++sfxPresetLoadToken;
 dom.sfxInput.value = '';
 sfxMetaIsDefault = true;
 document.getElementById('sfxMeta').textContent = I18N[currentLang].ui.sfxMetaDefault;
 if (dom.clearSfxBtn) dom.clearSfxBtn.style.display = 'none';
-
 if (!presetBufferCache[preset.path]) {
 setStatus('presetLoading', { label: preset.label });
 }
-
 loadPresetBuffer(preset)
 .then(buffer => {
 if (myToken !== sfxPresetLoadToken || sfxSource !== 'preset') return;
@@ -4350,25 +3894,20 @@ sfxBuffer = buffer;
 setStatus('presetReady', { label: preset.label });
 })
 .catch(err => {
-
 console.warn('[preset] sfx load failed:', preset.path, err);
 if (myToken !== sfxPresetLoadToken || sfxSource !== 'preset') return;
 sfxBuffer = null;
 setStatus('presetLoadError', { label: preset.label });
 });
 }
-
 function playBuffer(buffer, shouldLoop = false, category = 'sfx') {
 if (!buffer) return null;
-
 getAudioCtx();
 const ctx = audioCtx;
 const source = ctx.createBufferSource();
 source.buffer = buffer;
 source.loop = shouldLoop;
-
 if (category === 'music') {
-
 const trackGain = ctx.createGain();
 trackGain.gain.value = 1;
 source.connect(trackGain);
@@ -4377,11 +3916,9 @@ source._trackGain = trackGain;
 } else {
 source.connect(sfxGainNode);
 }
-
 source.start(0);
 return source;
 }
-
 function fadeOutMusicSource(source, durationSec = 0.25) {
 if (!source) return;
 try {
@@ -4399,7 +3936,6 @@ source.stop();
 try { source.stop(); } catch (e2) {}
 }
 }
-
 function playMusicWithFadeIn(buffer, durationSec = 0.25) {
 const wasRunning = !!(audioCtx && audioCtx.state === 'running');
 const source = playBuffer(buffer, true, 'music');
@@ -4412,7 +3948,6 @@ g.gain.linearRampToValueAtTime(1, now + durationSec);
 }
 return source;
 }
-
 function drawBackground(camOffset, isPostPeak) {
 if (isPostPeak) {
 if (bgAfterImg) {
@@ -4420,20 +3955,16 @@ ctx.drawImage(bgAfterImg, 0, 0, W, H);
 }
 return;
 }
-
 if (bgStartImg) {
 const scale = 1.14;
 const drawW = W * scale;
 const drawH = H * scale;
 const maxShift = drawW - W;
-
 const panDuration = INTRO_PAN_DURATION;
 const cameraT = Math.min(sceneElapsed / INTRO_PAN_DURATION, 1);
 const ease = 1 - Math.pow(1 - cameraT, 3);
 const offsetX = ease * maxShift;
-
 cameraOffset = offsetX;
-
 ctx.drawImage(
 bgStartImg,
 -offsetX,
@@ -4443,7 +3974,6 @@ drawH
 );
 }
 }
-
 function applyColorGrade() {
 ctx.save();
 ctx.globalCompositeOperation = 'multiply';
@@ -4454,17 +3984,14 @@ ctx.fillStyle = 'rgba(255,150,120,0.08)';
 ctx.fillRect(0, 0, W, H);
 ctx.restore();
 }
-
 const spriteTintCanvas = document.createElement('canvas');
 const spriteTintCtx = spriteTintCanvas.getContext('2d', { alpha: true, willReadFrequently: true });
 const memoryCanvas = document.createElement('canvas');
 const memoryCtx = memoryCanvas.getContext('2d', { alpha: true, willReadFrequently: true });
 const blurCanvas = document.createElement('canvas');
 const blurCtx = blurCanvas.getContext('2d', { alpha: true, willReadFrequently: true });
-
 const transitionFromCanvas = document.createElement('canvas');
 const transitionToCanvas = document.createElement('canvas');
-
 let lastTintW = 0;
 let lastTintH = 0;
 let skyTintCacheValid = false;
@@ -4473,48 +4000,37 @@ let lastTintBg = null;
 let lastTintX = null;
 let lastTintY = null;
 let lastTintCrop = 0;
-
 function drawMemoryVignette(img, w, h) {
 if (isMemoryCacheValid && memoryCanvas.width === w && memoryCanvas.height === h) {
 return;
 }
-
 memoryCanvas.width = w;
 memoryCanvas.height = h;
 memoryCtx.clearRect(0, 0, w, h);
-
 memoryCtx.save();
 memoryCtx.filter = 'grayscale(0.7) sepia(0.3) contrast(1.15)';
 memoryCtx.drawImage(img, 0, h * 0.15, w, h);
 memoryCtx.restore();
-
 memoryCtx.save();
 memoryCtx.globalCompositeOperation = 'destination-in';
-
 const cx = w / 2;
 const cy = h / 2;
 const r = Math.max(cx, cy);
-
 memoryCtx.translate(cx, cy);
 memoryCtx.scale(1, 0.75);
-
 const grad = memoryCtx.createRadialGradient(0, 0, 0, 0, 0, r);
 grad.addColorStop(0, 'rgba(0,0,0,1)');
 grad.addColorStop(0.4, 'rgba(0,0,0,0.9)');
 grad.addColorStop(0.85, 'rgba(0,0,0,0)');
-
 memoryCtx.fillStyle = grad;
 memoryCtx.beginPath();
 memoryCtx.arc(0, 0, r, 0, Math.PI * 2);
 memoryCtx.fill();
 memoryCtx.restore();
-
 isMemoryCacheValid = true;
 }
-
 let skyTintUnavailable = false;
 const spriteTrimCache = new Map();
-
 function computeSpriteTrim(img) {
 const w = img.naturalWidth || img.width || 1;
 const h = img.naturalHeight || img.height || 1;
@@ -4525,10 +4041,8 @@ c.height = h;
 const cctx = c.getContext('2d', { willReadFrequently: true });
 cctx.drawImage(img, 0, 0, w, h);
 const data = cctx.getImageData(0, 0, w, h).data;
-
 let minX = w, minY = h, maxX = -1, maxY = -1;
 const ALPHA_THRESHOLD = 8;
-
 for (let y = 0; y < h; y++) {
 const rowOffset = y * w * 4;
 for (let x = 0; x < w; x++) {
@@ -4540,31 +4054,33 @@ if (y > maxY) maxY = y;
 }
 }
 }
-
 if (maxX < minX || maxY < minY) return { x: 0, y: 0, w, h };
 return { x: minX, y: minY, w: (maxX - minX + 1), h: (maxY - minY + 1) };
 } catch (err) {
-
 return { x: 0, y: 0, w, h };
 }
 }
-
 function getSpriteTrim(img) {
 if (!img) return { x: 0, y: 0, w: 1, h: 1 };
+if (img.__trimBBox) return img.__trimBBox;
+if (img.__isPresetSprite) {
+const bbox = { x: 0, y: 0, w: img.naturalWidth || img.width || 1, h: img.naturalHeight || img.height || 1 };
+img.__trimBBox = bbox;
+return bbox;
+}
 const key = img.src || img;
 let bbox = spriteTrimCache.get(key);
 if (!bbox) {
 bbox = computeSpriteTrim(img);
 spriteTrimCache.set(key, bbox);
 }
+img.__trimBBox = bbox;
 return bbox;
 }
-
 function spriteAspect(img) {
 const b = getSpriteTrim(img);
 return b.w / b.h;
 }
-
 function spriteDrawWidth(img, dh, cropFrac = 0) {
 const b = getSpriteTrim(img);
 if (cropFrac > 0) {
@@ -4573,7 +4089,6 @@ return b.w * (dh / srcH);
 }
 return dh * (b.w / b.h);
 }
-
 function drawTrimmedSprite(destCtx, img, dx, dy, dw, dh, cropFrac = 0) {
 const b = getSpriteTrim(img);
 if (cropFrac > 0) {
@@ -4589,36 +4104,28 @@ destCtx.drawImage(img, srcX, srcY, srcW, srcH, ddx, dy, actualDW, dh);
 destCtx.drawImage(img, b.x, b.y, b.w, b.h, dx, dy, dw, dh);
 }
 }
-
 function paintSkyTintedSprite(targetCtx, img, w, h, bg, x, y, cropFrac = 0) {
 targetCtx.clearRect(0, 0, w, h);
-
 drawTrimmedSprite(targetCtx, img, 0, 0, w, h, cropFrac);
-
 const spriteMask = targetCtx.getImageData(0, 0, w, h);
-
 if (bg) {
 const rx = Math.max(0, (x / W) * bg.width - bg.width * 0.12);
 const ry = Math.max(0, (y / H) * bg.height - bg.height * 0.08);
 const rw = bg.width * 0.55;
 const rh = bg.height;
-
 blurCtx.save();
 blurCtx.filter = 'blur(12px) saturate(1.45) contrast(1.08)';
 blurCtx.clearRect(0, 0, 64, 64);
 blurCtx.drawImage(bg, rx, ry, rw, rh, 0, 0, 64, 64);
 blurCtx.restore();
-
 targetCtx.save();
 targetCtx.globalCompositeOperation = 'soft-light';
 targetCtx.globalAlpha = 0.68;
 targetCtx.drawImage(blurCanvas, 0, 0, 64, 64, 0, 0, w, h);
 targetCtx.restore();
 }
-
 targetCtx.save();
 targetCtx.globalCompositeOperation = 'source-atop';
-
 const sun = targetCtx.createRadialGradient(
 w * 0.86, h * 0.26, 0,
 w * 0.86, h * 0.26, h * 0.85
@@ -4626,18 +4133,15 @@ w * 0.86, h * 0.26, h * 0.85
 sun.addColorStop(0, 'rgba(255,225,170,0.10)');
 sun.addColorStop(0.45, 'rgba(255,205,170,0.04)');
 sun.addColorStop(1, 'rgba(255,205,170,0)');
-
 targetCtx.fillStyle = sun;
 targetCtx.fillRect(0, 0, w, h);
 targetCtx.restore();
-
 const out = targetCtx.getImageData(0, 0, w, h);
 for (let i = 3; i < out.data.length; i += 4) {
 out.data[i] = spriteMask.data[i];
 }
 targetCtx.putImageData(out, 0, 0);
 }
-
 function drawSpriteWithSkyTint(img, x, y, w, h, alpha = 1, cropFrac = 0) {
 if (skyTintUnavailable) {
 ctx.save();
@@ -4646,7 +4150,6 @@ drawTrimmedSprite(ctx, img, x, y, w, h, cropFrac);
 ctx.restore();
 return;
 }
-
 const needResize = (Math.ceil(w) !== lastTintW || Math.ceil(h) !== lastTintH);
 if (needResize) {
 lastTintW = Math.ceil(w);
@@ -4654,7 +4157,6 @@ lastTintH = Math.ceil(h);
 spriteTintCanvas.width = lastTintW;
 spriteTintCanvas.height = lastTintH;
 }
-
 const bg = (sceneElapsed >= cumDur[7]) ? bgAfterImg : bgStartImg;
 const roundedX = Math.round(x / 12) * 12;
 const roundedY = Math.round(y / 8) * 8;
@@ -4665,7 +4167,6 @@ const tintCacheHit = skyTintCacheValid
 && roundedY === lastTintY
 && cropFrac === lastTintCrop
 && !needResize;
-
 if (tintCacheHit) {
 ctx.save();
 ctx.globalAlpha = alpha;
@@ -4673,22 +4174,18 @@ ctx.drawImage(spriteTintCanvas, x, y);
 ctx.restore();
 return;
 }
-
 if (blurCanvas.width !== 64) {
 blurCanvas.width = 64;
 blurCanvas.height = 64;
 }
-
 try {
 paintSkyTintedSprite(spriteTintCtx, img, w, h, bg, roundedX, roundedY, cropFrac);
-
 skyTintCacheValid = true;
 lastTintImg = img;
 lastTintBg = bg;
 lastTintX = roundedX;
 lastTintY = roundedY;
 lastTintCrop = cropFrac;
-
 ctx.save();
 ctx.globalAlpha = alpha;
 ctx.drawImage(spriteTintCanvas, x, y);
@@ -4702,24 +4199,20 @@ drawTrimmedSprite(ctx, img, x, y, w, h, cropFrac);
 ctx.restore();
 }
 }
-
 function beginSpriteTransition(fromImg, toImg) {
 const sh = Math.round(H * 0.92 * spriteScaleFactor);
 const cropFrac = spriteCropFactor;
 const fromW = Math.round(spriteDrawWidth(fromImg, sh, cropFrac));
 const toW = Math.round(spriteDrawWidth(toImg, sh, cropFrac));
 const y = H - sh;
-
 const fromX = Math.round(W * 0.62 - fromW / 2 + cameraOffset * 0.30);
 const toX = Math.round(W * 0.62 - toW / 2 + cameraOffset * 0.30);
-
 const fromCanvas = transitionFromCanvas;
 fromCanvas.width = fromW;
 fromCanvas.height = sh;
 const toCanvas = transitionToCanvas;
 toCanvas.width = toW;
 toCanvas.height = sh;
-
 if (skyTintUnavailable) {
 drawTrimmedSprite(fromCanvas.getContext('2d'), fromImg, 0, 0, fromW, sh, cropFrac);
 drawTrimmedSprite(toCanvas.getContext('2d'), toImg, 0, 0, toW, sh, cropFrac);
@@ -4733,53 +4226,41 @@ blurCanvas.height = 64;
 paintSkyTintedSprite(fromCanvas.getContext('2d', { willReadFrequently: true }), fromImg, fromW, sh, bg, fromX, y, cropFrac);
 paintSkyTintedSprite(toCanvas.getContext('2d', { willReadFrequently: true }), toImg, toW, sh, bg, toX, y, cropFrac);
 } catch (err) {
-
 fromCanvas.getContext('2d').clearRect(0, 0, fromW, sh);
 drawTrimmedSprite(fromCanvas.getContext('2d'), fromImg, 0, 0, fromW, sh, cropFrac);
 toCanvas.getContext('2d').clearRect(0, 0, toW, sh);
 drawTrimmedSprite(toCanvas.getContext('2d'), toImg, 0, 0, toW, sh, cropFrac);
 }
 }
-
 spriteTransition = {
 fromCanvas, toCanvas, fromX, toX, y, sh,
 startElapsed: sceneElapsed,
 duration: SPRITE_TRANSITION_MS
 };
 }
-
 function darken(hex, amount) {
 const r = Math.round(parseInt(hex.substr(1,2),16) * amount);
 const g = Math.round(parseInt(hex.substr(3,2),16) * amount);
 const b = Math.round(parseInt(hex.substr(5,2),16) * amount);
 return `rgb(${r},${g},${b})`;
 }
-
 function renderNVLText(currentBlock, currentLineIndex, revealT, showLinesUpTo) {
 if (currentBlock === null || currentBlock === undefined) return;
-
 ctx.save();
 ctx.fillStyle = 'rgba(4, 3, 8, 0.42)';
 ctx.fillRect(0, 0, W, H);
-
 let currentY = 55;
 const startX = 80;
 const maxWidth = W - 160;
-
 const blockPhases = PHASES.filter(p => p.block === currentBlock);
-
 blockPhases.forEach(p => {
 let lineText = getPhaseText(p);
 if (!lineText || lineText.trim() === '') return;
-
 let visibleText = '';
 const key = `${currentBlock}_${p.lineIndex}`;
-
 if (lineBrightness[key] === undefined)
 lineBrightness[key] = 1.0;
-
 let textBrightness = lineBrightness[key];
-
 if (showLinesUpTo !== undefined) {
 if (p.lineIndex !== undefined && p.lineIndex < showLinesUpTo) {
 visibleText = lineText;
@@ -4797,15 +4278,12 @@ return;
 }
 }
 }
-
 if (!visibleText) return;
-
 let targetBrightness = 1.0;
 const referenceLine =
 (currentLineIndex !== undefined)
 ? currentLineIndex
 : (showLinesUpTo !== undefined ? showLinesUpTo - 1 : undefined);
-
 if (referenceLine !== undefined && p.lineIndex !== undefined) {
 const age = referenceLine - p.lineIndex;
 if (age === 1)
@@ -4813,15 +4291,12 @@ targetBrightness = 0.72;
 else if (age >= 2)
 targetBrightness = 0.50;
 }
-
 const fadeSpeed = 7.0;
 lineBrightness[key] +=
 (targetBrightness - lineBrightness[key]) *
 Math.min(1, fadeSpeed * frameDelta);
-
 textBrightness = lineBrightness[key];
 ctx.save();
-
 const isCentered = (p.name === 'line4');
 if (isCentered) {
 currentY += Math.round(24 * dialogueTextScale);
@@ -4829,16 +4304,13 @@ ctx.textAlign = 'center';
 } else {
 ctx.textAlign = 'left';
 }
-
 ctx.textBaseline = 'top';
 ctx.lineJoin = 'round';
 ctx.lineWidth = 4;
 ctx.strokeStyle = 'rgba(0, 0, 0, 0.9)';
 ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
 ctx.shadowBlur = 5;
-
 const dialogueFontPx = Math.round(20 * dialogueTextScale);
-
 if (p.speaker === 'narrator') {
 ctx.font = '500 ' + dialogueFontPx + 'px "Noto Sans JP", sans-serif';
 ctx.fillStyle = textColors.narrator;
@@ -4852,15 +4324,12 @@ ctx.fillStyle = textColors.pc;
 ctx.font = '500 ' + dialogueFontPx + 'px "Noto Sans JP", sans-serif';
 ctx.fillStyle = textColors.sprite;
 }
-
 if (textBrightness < 1) {
 ctx.fillStyle = darken(ctx.fillStyle, textBrightness);
 ctx.shadowBlur *= textBrightness;
 }
-
 const wrapLineHeight = Math.round(28 * dialogueTextScale);
 const phraseLineGap = Math.round(36 * dialogueTextScale);
-
 function drawWrappedLine(text) {
 if (isCentered) {
 ctx.strokeText(text, W / 2, currentY);
@@ -4870,10 +4339,8 @@ ctx.strokeText(text, startX, currentY);
 ctx.fillText(text, startX, currentY);
 }
 }
-
 const words = visibleText.split(' ');
 let currentLine = '';
-
 words.forEach(word => {
 if (ctx.measureText(word).width > maxWidth) {
 if (currentLine) {
@@ -4895,7 +4362,6 @@ chunk = testChunk;
 currentLine = chunk;
 return;
 }
-
 const testLine = currentLine ? currentLine + ' ' + word : word;
 if (ctx.measureText(testLine).width > maxWidth && currentLine) {
 drawWrappedLine(currentLine);
@@ -4905,22 +4371,17 @@ currentLine = word;
 currentLine = testLine;
 }
 });
-
 if (currentLine) {
 drawWrappedLine(currentLine);
 currentY += phraseLineGap;
 }
-
 ctx.restore();
 });
-
 ctx.restore();
 }
-
 if (document.fonts) {
 document.fonts.ready.then(() => { if (!sceneRunning) renderIdle(); });
 }
-
 function spawnAndDrawParticles(cx, cy, radius) {
 if (particles.length < 50 && Math.random() < 0.7) {
 particles.push({
@@ -4942,14 +4403,12 @@ ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
 ctx.restore();
 if (!isPaused) particles = particles.filter(p => p.life > 0);
 }
-
 const PETAL_COLORS = [
 '#74214f',
 '#8f2b62',
 '#5c163f',
 '#470f30'
 ];
-
 function spawnPetal(isInitial = false) {
 return {
 x: isInitial ? Math.random() * W : W + 30,
@@ -4966,22 +4425,17 @@ scaleY: 1.0,
 color: PETAL_COLORS[Math.floor(Math.random() * PETAL_COLORS.length)]
 };
 }
-
 function updateAndDrawPetals() {
 if (petalsEnabled && petals.length < 35 && Math.random() < 0.2) {
 petals.push(spawnPetal(false));
 }
-
 if (petals.length === 0) return;
-
 const fadeStart = cumDur[16];
 const fadeDuration = 2500;
 const petalsGlobalAlpha = Math.min(1, Math.max(0, (sceneElapsed - fadeStart) / fadeDuration));
-
 ctx.save();
 for (let i = petals.length - 1; i >= 0; i--) {
 const p = petals[i];
-
 if (!isPaused) {
 p.x += p.vx;
 p.y += p.vy + Math.sin(p.swingStep) * 0.5;
@@ -4989,18 +4443,15 @@ p.swingStep += p.swingSpeed;
 p.angle += p.spin;
 p.scaleX = Math.abs(Math.sin(p.swingStep * 0.5)) * 0.7 + 0.3;
 }
-
 ctx.save();
 ctx.translate(p.x, p.y);
 ctx.rotate(p.angle);
 ctx.scale(p.scaleX, p.scaleY);
 ctx.fillStyle = p.color;
 ctx.globalAlpha = petalsGlobalAlpha;
-
 ctx.shadowColor = 'rgba(20, 5, 15, 0.25)';
 ctx.shadowBlur = 3;
 ctx.shadowOffsetY = 1;
-
 ctx.beginPath();
 ctx.moveTo(0, 0);
 ctx.bezierCurveTo(-p.size / 2, -p.size / 2, -p.size / 2, p.size / 2, 0, p.size);
@@ -5008,18 +4459,15 @@ ctx.bezierCurveTo(p.size / 2, p.size / 2, p.size / 2, -p.size / 2, 0, 0);
 ctx.closePath();
 ctx.fill();
 ctx.restore();
-
 if (p.x < -40 || p.y > H + 40) {
 petals.splice(i, 1);
 }
 }
 ctx.restore();
 }
-
 const lerp = (a, b, t) => a + (b - a) * t;
 const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
 const easeInCubic = t => t * t * t;
-
 function finalLineText() {
 let text = dom.customLine.value.trim();
 if (!text) {
@@ -5029,11 +4477,9 @@ text = I18N[currentLang].finalLineTemplate(name);
 text = text.replace(/^["'«»“”]+|["'«»“”]+$/g, '');
 return '"' + text + '"';
 }
-
 function customTextsKey(lang) {
 return 'vn_custom_texts_' + lang;
 }
-
 function loadCustomTexts(lang) {
 try {
 return JSON.parse(localStorage.getItem(customTextsKey(lang)) || '{}');
@@ -5041,16 +4487,13 @@ return JSON.parse(localStorage.getItem(customTextsKey(lang)) || '{}');
 return {};
 }
 }
-
 let customTexts = loadCustomTexts(currentLang);
-
 const DEFAULT_TEXT_COLORS = {
 sprite: '#ffffff',
 pc: '#bce5ff',
 narrator: '#ebdcc5',
 };
 const TEXT_COLORS_KEY = 'vn_text_colors';
-
 function loadTextColors() {
 try {
 const saved = JSON.parse(localStorage.getItem(TEXT_COLORS_KEY) || '{}');
@@ -5059,41 +4502,33 @@ return { ...DEFAULT_TEXT_COLORS, ...saved };
 return { ...DEFAULT_TEXT_COLORS };
 }
 }
-
 function saveTextColors() {
 try {
 localStorage.setItem(TEXT_COLORS_KEY, JSON.stringify(textColors));
 } catch (e) {
-
 }
 }
-
 let textColors = loadTextColors();
-
 function applyTextColorsToPickers() {
 if (dom.colorSprite) dom.colorSprite.value = textColors.sprite;
 if (dom.colorPc) dom.colorPc.value = textColors.pc;
 if (dom.colorNarrator) dom.colorNarrator.value = textColors.narrator;
 }
 applyTextColorsToPickers();
-
 function onTextColorChange(key, input) {
 textColors[key] = input.value;
 saveTextColors();
 refreshCanvasAfterSpriteChange();
 }
-
 if (dom.colorSprite) dom.colorSprite.addEventListener('input', () => onTextColorChange('sprite', dom.colorSprite));
 if (dom.colorPc) dom.colorPc.addEventListener('input', () => onTextColorChange('pc', dom.colorPc));
 if (dom.colorNarrator) dom.colorNarrator.addEventListener('input', () => onTextColorChange('narrator', dom.colorNarrator));
-
 function resetSingleTextColor(key, input) {
 textColors[key] = DEFAULT_TEXT_COLORS[key];
 saveTextColors();
 if (input) input.value = DEFAULT_TEXT_COLORS[key];
 refreshCanvasAfterSpriteChange();
 }
-
 if (dom.resetColorSpriteBtn) {
 dom.resetColorSpriteBtn.addEventListener('click', () => resetSingleTextColor('sprite', dom.colorSprite));
 }
@@ -5103,12 +4538,10 @@ dom.resetColorPcBtn.addEventListener('click', () => resetSingleTextColor('pc', d
 if (dom.resetColorNarratorBtn) {
 dom.resetColorNarratorBtn.addEventListener('click', () => resetSingleTextColor('narrator', dom.colorNarrator));
 }
-
 const DEFAULT_TEXT_SCALE = 1.0;
 const TEXT_SCALE_KEY = 'vn_text_scale';
 const TEXT_SCALE_MIN = 0.8;
 const TEXT_SCALE_MAX = 1.3;
-
 function loadTextScale() {
 try {
 const raw = parseFloat(localStorage.getItem(TEXT_SCALE_KEY));
@@ -5118,17 +4551,13 @@ return Math.min(TEXT_SCALE_MAX, Math.max(TEXT_SCALE_MIN, raw));
 return DEFAULT_TEXT_SCALE;
 }
 }
-
 function saveTextScale() {
 try {
 localStorage.setItem(TEXT_SCALE_KEY, String(dialogueTextScale));
 } catch (e) {
-
 }
 }
-
 let dialogueTextScale = loadTextScale();
-
 function applyTextScaleToSlider() {
 if (!dom.textSizeSlider) return;
 const pct = Math.round(dialogueTextScale * 100);
@@ -5136,7 +4565,6 @@ dom.textSizeSlider.value = pct;
 dom.textSizeValue.textContent = pct + '%';
 }
 applyTextScaleToSlider();
-
 if (dom.textSizeSlider) {
 dom.textSizeSlider.addEventListener('input', () => {
 dialogueTextScale = dom.textSizeSlider.value / 100;
@@ -5145,7 +4573,6 @@ saveTextScale();
 refreshCanvasAfterSpriteChange();
 });
 }
-
 if (dom.resetTextSizeBtn) {
 dom.resetTextSizeBtn.addEventListener('click', () => {
 dialogueTextScale = DEFAULT_TEXT_SCALE;
@@ -5154,10 +4581,8 @@ applyTextScaleToSlider();
 refreshCanvasAfterSpriteChange();
 });
 }
-
 function getPhaseText(phase) {
 if (!phase) return '';
-
 if (customTexts[phase.name] !== undefined && customTexts[phase.name].trim() !== '') {
 let txt = customTexts[phase.name].trim();
 if (phase.speaker && phase.speaker !== 'narrator') {
@@ -5166,14 +4591,11 @@ return '"' + txt + '"';
 }
 return txt;
 }
-
 if (phase.name === 'line4') {
 return finalLineText();
 }
-
 return phase.text;
 }
-
 const PHASES = [
 { name: 'panIn', dur: 2400, block: null },
 { name: 'line1', dur: 2700, block: 0, lineIndex: 0, speaker: 'sprite', text: '"Напоследок я должна сказать тебе лишь одно."' },
@@ -5195,19 +4617,15 @@ const PHASES = [
 { name: 'b3_l2', dur: 2800, block: 3, lineIndex: 1, speaker: 'narrator', text: 'Произношу я вполголоса, но ответа уже не последует.' },
 { name: 'end', dur: 3000, block: 3, showLinesUpTo: 2 }
 ];
-
 const cumDur = [];
 (function () { let acc = 0; PHASES.forEach(p => { cumDur.push(acc); acc += p.dur; }); cumDur.push(acc); })();
 const TOTAL_DUR = cumDur[cumDur.length - 1];
-
 const INTRO_PAN_DURATION = PHASES[0].dur;
-
 canvas.addEventListener('click', () => {
 if (sceneElapsed >= TOTAL_DUR) {
 dom.resetBtn.click();
 }
 });
-
 function resolvePhase(elapsed) {
 for (let i = 0; i < PHASES.length; i++) {
 if (elapsed < cumDur[i + 1] || i === PHASES.length - 1) {
@@ -5216,7 +4634,6 @@ return { phase: PHASES[i].name, t, phaseIndex: i };
 }
 }
 }
-
 function render(elapsed) {
 if (isPreviewMode && previewImg) {
 ctx.clearRect(0, 0, W, H);
@@ -5224,55 +4641,41 @@ drawBackground(0, false);
 applyColorGrade();
 ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
 ctx.fillRect(0, 0, W, H);
-
 const baseHeight = H * 0.92;
 const sh = baseHeight * previewScale;
 const sw = spriteDrawWidth(previewImg, sh, previewCrop);
-
 const sx = W * 0.62 - sw / 2;
 const sy = H - sh;
-
 ctx.save();
 ctx.globalAlpha = 1;
 drawTrimmedSprite(ctx, previewImg, sx, sy, sw, sh, previewCrop);
 ctx.restore();
 return;
 }
-
 const { phase, t, phaseIndex } = resolvePhase(elapsed);
-
 const isFlashPhase = (phase === 'flash');
 const isPostPeak = (isFlashPhase && t >= 0.5) || (phaseIndex > 6);
-
 const camOffset = phaseIndex === 0 ? lerp(-140, 0, easeOutCubic(t)) : 0;
-
 ctx.clearRect(0, 0, W, H);
 drawBackground(camOffset, isPostPeak);
-
 let spriteAlpha = 1, spriteScale = 1;
 if (phase === 'dissolve') {
 spriteAlpha = 1 - easeInCubic(t);
 } else if (phaseIndex > 5) {
 spriteAlpha = 0;
 }
-
 if (phase === 'panIn') {
 const fadeT = Math.min(sceneElapsed / 220, 1);
 const fade = fadeT * fadeT * (3 - 2 * fadeT);
 spriteAlpha *= fade;
 }
-
 if (spriteImg && spriteAlpha > 0) {
 ctx.save();
-
 if (spriteTransition) {
-
 const progress = Math.min(1, Math.max(0, (elapsed - spriteTransition.startElapsed) / spriteTransition.duration));
 const eased = progress * progress * (3 - 2 * progress);
-
 const fromAlpha = spriteAlpha * (1 - eased);
 const toAlpha = spriteAlpha * eased;
-
 if (fromAlpha > 0.004) {
 ctx.globalAlpha = fromAlpha;
 ctx.drawImage(spriteTransition.fromCanvas, spriteTransition.fromX, spriteTransition.y);
@@ -5281,9 +4684,7 @@ if (toAlpha > 0.004) {
 ctx.globalAlpha = toAlpha;
 ctx.drawImage(spriteTransition.toCanvas, spriteTransition.toX, spriteTransition.y);
 }
-
 if (progress >= 1) spriteTransition = null;
-
 ctx.restore();
 } else {
 ctx.globalAlpha = spriteAlpha;
@@ -5291,16 +4692,13 @@ const sh = Math.round(H * 0.92 * spriteScale * spriteScaleFactor);
 const sw = Math.round(spriteDrawWidth(spriteImg, sh, spriteCropFactor));
 const sx = Math.round(W * 0.62 - sw / 2 - camOffset * 0.9 + cameraOffset * 0.30);
 const sy = H - sh;
-
 drawSpriteWithSkyTint(spriteImg, sx, sy, sw, sh, spriteAlpha, spriteCropFactor);
 ctx.restore();
 if (phase === 'dissolve') spawnAndDrawParticles(sx + sw / 2, sy + sh * 0.3, sw * 0.4);
 }
 }
-
 updateAndDrawPetals();
 applyColorGrade();
-
 const currentSeg = PHASES[phaseIndex];
 if (!hideText && currentSeg && currentSeg.block !== null && currentSeg.block !== undefined && phase !== 'flash') {
 const revealT = (currentSeg.lineIndex !== undefined)
@@ -5308,7 +4706,6 @@ const revealT = (currentSeg.lineIndex !== undefined)
 : 1;
 renderNVLText(currentSeg.block, currentSeg.lineIndex, revealT, currentSeg.showLinesUpTo);
 }
-
 if (phase === 'flash') {
 const a = Math.sin(t * Math.PI);
 ctx.save();
@@ -5316,32 +4713,24 @@ ctx.fillStyle = 'rgba(255,250,240,' + a.toFixed(3) + ')';
 ctx.fillRect(0, 0, W, H);
 ctx.restore();
 }
-
 if (sceneElapsed >= TOTAL_DUR - 800) {
 const fadeDuration = 600;
 const fadeT = Math.min(1, (sceneElapsed - (TOTAL_DUR - 800)) / fadeDuration);
-
 if (spriteImg) {
 const bubbleH = 180;
 const bubbleW = Math.round(bubbleH * (spriteImg.width / spriteImg.height));
-
 drawMemoryVignette(spriteImg, bubbleW, bubbleH);
-
 ctx.save();
 ctx.globalAlpha = fadeT * 0.20;
-
 const bx = W - bubbleW - 80;
 const by = 40;
-
 ctx.drawImage(memoryCanvas, bx, by);
 ctx.restore();
 }
-
 if (!hideText) {
 ctx.save();
 ctx.globalAlpha = fadeT * 0.95;
 ctx.globalCompositeOperation = 'source-over';
-
 ctx.fillStyle = '#ffffff';
 ctx.textAlign = 'right';
 ctx.textBaseline = 'bottom';
@@ -5349,42 +4738,32 @@ ctx.shadowColor = 'rgba(0, 0, 0, 0.95)';
 ctx.shadowBlur = 8;
 ctx.shadowOffsetX = 3;
 ctx.shadowOffsetY = 3;
-
 ctx.font = '800 72px "Noto Sans JP", sans-serif';
 ctx.fillText('FIN', W - 40, H - 70);
-
 ctx.font = '400 22px "Noto Sans JP", sans-serif';
 ctx.fillText('(Restart the scene)', W - 40, H - 40);
-
 ctx.restore();
 }
 }
 }
-
 function renderIdle() {
 ctx.clearRect(0, 0, W, H);
 drawBackground(0, false);
 applyColorGrade();
-
 if (isPreviewMode && previewImg) {
 ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
 ctx.fillRect(0, 0, W, H);
-
 const baseHeight = H * 0.92;
 const sh = baseHeight * previewScale;
 const sw = spriteDrawWidth(previewImg, sh, previewCrop);
-
 const sx = W * 0.62 - sw / 2;
 const sy = H - sh;
-
 ctx.save();
 ctx.globalAlpha = 1;
 drawTrimmedSprite(ctx, previewImg, sx, sy, sw, sh, previewCrop);
 ctx.restore();
-
 return;
 }
-
 if (spriteImg) {
 const sh = Math.round(H * 0.92 * spriteScaleFactor);
 const sw = Math.round(spriteDrawWidth(spriteImg, sh, spriteCropFactor));
@@ -5392,7 +4771,6 @@ drawSpriteWithSkyTint(spriteImg, Math.round(W * 0.62 - sw / 2), H - sh, sw, sh, 
 }
 }
 applyLanguage(currentLang);
-
 async function ensureMusicReady() {
 if (musicSource !== 'preset' || musicBuffer) return;
 const preset = MUSIC_PRESETS[musicPresetIndex];
@@ -5404,7 +4782,6 @@ console.warn('[preset] music load failed:', preset.path, err);
 setStatus('presetLoadError', { label: preset.label });
 }
 }
-
 async function ensureSfxReady() {
 if (sfxSource !== 'preset' || sfxBuffer) return;
 const preset = SFX_PRESETS[sfxPresetIndex];
@@ -5415,15 +4792,12 @@ console.warn('[preset] sfx load failed:', preset.path, err);
 setStatus('presetLoadError', { label: preset.label });
 }
 }
-
 async function playScene() {
 if (!spriteImg) { setStatus('loadSpriteFirst'); return; }
 if (isPreviewMode) { setStatus('confirmPreviewFirst'); return; }
-
 dom.playBtn.disabled = true;
 dom.pauseBtn.disabled = false;
 await Promise.all([ensureMusicReady(), ensureSfxReady()]);
-
 cancelAnimationFrame(rafId);
 particles = [];
 petals = [];
@@ -5431,38 +4805,34 @@ petalsEnabled = false;
 isMemoryCacheValid = false;
 lastPhaseName = null;
 sceneElapsed = 0;
+recordingElapsed = 0;
 lineBrightness = {};
 lastFrameTime = performance.now();
 isPaused = false;
 sceneRunning = true;
 updatePauseBtn(false);
-
 if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
 if (currentMusicSource) { try { currentMusicSource.stop(); } catch (e) {} }
 if (musicBuffer) {
 currentMusicSource = playBuffer(musicBuffer, true, 'music');
 }
-
 setStatus('scenePlaying');
 tick();
 }
-
 function tick() {
 if (!sceneRunning) return;
-
 const now = performance.now();
-const delta = Math.min(now - lastFrameTime, 100);
+const rawDelta = now - lastFrameTime;
+const delta = Math.min(rawDelta, 100);
 const deltaSeconds = delta / 1000;
 frameDelta = deltaSeconds;
 lastFrameTime = now;
-
 if (isPaused) {
 rafId = requestAnimationFrame(tick);
 return;
 }
-
 sceneElapsed += delta;
-
+recordingElapsed += Math.min(rawDelta, 1000);
 if (sceneElapsed >= cumDur[16]) {
 if (!petalsEnabled) {
 petalsEnabled = true;
@@ -5471,9 +4841,7 @@ petals.push(spawnPetal(true));
 }
 }
 }
-
 const elapsedForTimeline = Math.min(sceneElapsed, TOTAL_DUR);
-
 const { phase } = resolvePhase(elapsedForTimeline);
 if (phase === 'line4' && lastPhaseName !== 'line4' && voiceMode && voiceBuffer && activeCharPresetId) {
 playBuffer(voiceBuffer, false);
@@ -5482,26 +4850,22 @@ if (phase === 'dissolve' && lastPhaseName !== 'dissolve' && sfxBuffer) {
 playBuffer(sfxBuffer);
 }
 lastPhaseName = phase;
-
 try {
 render(elapsedForTimeline);
 } catch (e) {
 console.error('[КРИТИЧЕСКАЯ ОШИБКА В RENDER]', e);
 }
-
 const recordingPadding = 3500;
 if (mediaRecorder && mediaRecorder.state === 'recording') {
-if (sceneElapsed >= TOTAL_DUR + recordingPadding) {
+if (recordingElapsed >= TOTAL_DUR + recordingPadding) {
 mediaRecorder.stop();
 updateRecBtnText();
 setStatus('recordingFinished');
 }
 }
-
 if (gifSession && gifSession.active) {
 while (gifSession.nextFrameAt <= sceneElapsed && gifSession.nextFrameAt <= gifSession.endAtMs) {
 try {
-
 const captureCtx = getGifCaptureCtx(gifSession.captureW, gifSession.captureH);
 captureCtx.drawImage(canvas, 0, 0, gifSession.captureW, gifSession.captureH);
 gifSession.gif.addFrame(captureCtx, { copy: true, delay: gifSession.frameDelayMs });
@@ -5515,43 +4879,34 @@ if (sceneElapsed >= gifSession.endAtMs) {
 finishGifCapture();
 }
 }
-
 if (sceneElapsed >= TOTAL_DUR) {
 if (currentStatusKey === 'scenePlaying') {
 setStatus('sceneFinished');
 }
 }
-
 rafId = requestAnimationFrame(tick);
 }
-
 function triggerEasterEgg() {
 if (easterEggActive) return;
 easterEggActive = true;
 easterEggPhase = 'shake';
 easterEggPhaseStart = performance.now();
-
 cancelAnimationFrame(rafId);
 if (currentMusicSource) {
 try { currentMusicSource.stop(); } catch (e) {}
 currentMusicSource = null;
 }
 if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-
 showEasterEggBlocker();
-
 loadAudioFromPath(EASTER_EGG.gaspSrc)
 .then(buf => playBuffer(buf))
 .catch(err => console.warn('[egg] gasp playback failed:', err));
-
 cancelAnimationFrame(easterEggRafId);
 easterEggTick();
 }
-
 function easterEggTick() {
 const now = performance.now();
 const elapsedInPhase = now - easterEggPhaseStart;
-
 if (easterEggPhase === 'shake' && elapsedInPhase >= EASTER_EGG.shakeMs) {
 easterEggPhase = 'tiger';
 easterEggPhaseStart = now;
@@ -5564,25 +4919,20 @@ easterEggPhaseStart = now;
 } else if (easterEggPhase === 'fadeout' && elapsedInPhase >= EASTER_EGG.fadeMs) {
 easterEggPhase = 'badend';
 easterEggPhaseStart = now;
-
 try {
 localStorage.setItem(EASTER_EGG.seenKey, '1');
 localStorage.removeItem(EASTER_EGG.countKey);
 localStorage.removeItem(EASTER_EGG.targetKey);
 } catch (e) {}
 }
-
 renderEasterEggFrame(now);
-
 if (easterEggPhase !== 'badend') {
 easterEggRafId = requestAnimationFrame(easterEggTick);
 }
 }
-
 function renderEasterEggFrame(now) {
 ctx.save();
 ctx.clearRect(0, 0, W, H);
-
 const drawBgWithJumpScareTaiga = () => {
 drawBackground(0, false);
 if (eggTaigaImg.complete && eggTaigaImg.naturalWidth) {
@@ -5591,20 +4941,17 @@ const sw = Math.round(sh * (eggTaigaImg.width / eggTaigaImg.height));
 ctx.drawImage(eggTaigaImg, Math.round((W - sw) / 2), Math.round((H - sh) / 2), sw, sh);
 }
 };
-
 const drawImageCover = (img) => {
 const scale = Math.max(W / img.width, H / img.height);
 const dw = img.width * scale, dh = img.height * scale;
 ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
 };
-
 if (easterEggPhase === 'shake') {
 const p = Math.min(1, (now - easterEggPhaseStart) / EASTER_EGG.shakeMs);
 const intensity = 12 * (1 - p);
 ctx.translate((Math.random() - 0.5) * 2 * intensity, (Math.random() - 0.5) * 2 * intensity);
 drawBgWithJumpScareTaiga();
 } else if (easterEggPhase === 'tiger') {
-
 if (eggTigerImg.complete && eggTigerImg.naturalWidth) {
 drawImageCover(eggTigerImg);
 } else {
@@ -5630,7 +4977,6 @@ ctx.fillRect(0, 0, W, H);
 } else if (easterEggPhase === 'badend') {
 ctx.fillStyle = '#000';
 ctx.fillRect(0, 0, W, H);
-
 ctx.fillStyle = '#ffffff';
 ctx.textAlign = 'right';
 ctx.textBaseline = 'bottom';
@@ -5638,17 +4984,13 @@ ctx.shadowColor = 'rgba(0, 0, 0, 0.95)';
 ctx.shadowBlur = 8;
 ctx.shadowOffsetX = 3;
 ctx.shadowOffsetY = 3;
-
 ctx.font = '800 60px "Noto Sans JP", sans-serif';
 ctx.fillText('Bad End', W - 40, H - 70);
-
 ctx.font = '400 22px "Noto Sans JP", sans-serif';
 ctx.fillText('(Restart the scene)', W - 40, H - 40);
 }
-
 ctx.restore();
 }
-
 function showEasterEggBlocker() {
 let el = document.getElementById('eggBlocker');
 if (!el) {
@@ -5663,12 +5005,10 @@ document.body.appendChild(el);
 }
 el.style.display = 'block';
 }
-
 function hideEasterEggBlocker() {
 const el = document.getElementById('eggBlocker');
 if (el) el.remove();
 }
-
 function onEasterEggBlockerClick() {
 if (!easterEggActive || easterEggPhase !== 'badend') return;
 hideEasterEggBlocker();
@@ -5676,7 +5016,6 @@ easterEggActive = false;
 easterEggPhase = null;
 dom.resetBtn.click();
 }
-
 window.__forceEasterEgg = () => {
 try {
 localStorage.removeItem(EASTER_EGG.seenKey);
@@ -5687,9 +5026,7 @@ taigaSwitchCount = 0;
 easterEggTargetSwitch = null;
 triggerEasterEgg();
 };
-
 dom.playBtn.addEventListener('click', playScene);
-
 dom.pauseBtn.addEventListener('click', () => {
 if (!sceneRunning) return;
 isPaused = !isPaused;
@@ -5704,7 +5041,6 @@ lastFrameTime = performance.now();
 if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
 }
 });
-
 dom.resetBtn.addEventListener('click', () => {
 cancelAnimationFrame(rafId);
 sceneRunning = false;
@@ -5719,12 +5055,10 @@ isMemoryCacheValid = false;
 lastPhaseName = null;
 spriteTransition = null;
 updatePauseBtn(false);
-
 isPreviewMode = false;
 previewImg = null;
 pendingCharPresetId = null;
 dom.previewControls.style.display = 'none';
-
 if (currentMusicSource) {
 try { currentMusicSource.stop(); } catch (e) {}
 currentMusicSource = null;
@@ -5734,15 +5068,12 @@ if (mediaRecorder && mediaRecorder.state === 'recording') {
 mediaRecorder.stop();
 updateRecBtnText();
 }
-
 if (gifSession && gifSession.active) {
 finishGifCapture();
 }
-
 renderIdle();
 setStatus('sceneReset');
 });
-
 dom.clearSpriteBtn.addEventListener('click', () => {
 isPreviewMode = false;
 previewImg = null;
@@ -5764,7 +5095,6 @@ dom.clearSpriteBtn.style.display = 'none';
 setStatus('spriteRemoved');
 refreshCanvasAfterSpriteChange();
 });
-
 dom.clearMusicBtn.addEventListener('click', () => {
 if (currentMusicSource) {
 try { currentMusicSource.stop(); } catch (e) {}
@@ -5774,13 +5104,11 @@ musicBuffer = null;
 selectMusicPreset(musicPresetIndex);
 setStatus('musicCleared');
 });
-
 dom.clearSfxBtn.addEventListener('click', () => {
 sfxBuffer = null;
 selectSfxPreset(sfxPresetIndex);
 setStatus('effectCleared');
 });
-
 dom.shotBtn.addEventListener('click', () => {
 try {
 const a = document.createElement('a');
@@ -5790,20 +5118,17 @@ a.click();
 } catch (err) {
 console.warn('Snapshot unavailable: canvas is tainted).', err);
 }
-
 if (dom.shotBtnIcon) {
 dom.shotBtnIcon.setAttribute('href', '#icon-camera');
 setTimeout(() => dom.shotBtnIcon.setAttribute('href', '#icon-camera'), 180);
 }
 });
-
 const canRecord = typeof MediaRecorder !== 'undefined' && canvas.captureStream;
 recordingSupported = canRecord;
 if (!canRecord) {
 dom.recBtn.disabled = true;
 if (dom.recCaretBtn) dom.recCaretBtn.disabled = true;
 }
-
 dom.recBtn.addEventListener('click', () => {
 if (mediaRecorder && mediaRecorder.state === 'recording') {
 mediaRecorder.stop();
@@ -5811,13 +5136,11 @@ updateRecBtnText();
 return;
 }
 if (gifSession && gifSession.active) {
-
 finishGifCapture();
 return;
 }
 startRecording();
 });
-
 if (dom.recMenuVideo) {
 dom.recMenuVideo.addEventListener('click', () => {
 closeRecMenu();
@@ -5830,11 +5153,11 @@ closeRecMenu();
 startGifExport(0);
 });
 }
-
-function startRecording() {
+async function startRecording() {
 if (!spriteImg) { setStatus('loadSpriteFirst'); return; }
 recordedChunks = [];
 getAudioCtx();
+await Promise.all([ensureMusicReady(), ensureSfxReady()]);
 const canvasStream = canvas.captureStream(30);
 let tracks = [...canvasStream.getVideoTracks()];
 if (recordDestNode) tracks = tracks.concat(recordDestNode.stream.getAudioTracks());
@@ -5850,7 +5173,6 @@ const url = URL.createObjectURL(blob);
 const a = document.createElement('a');
 a.href = url; a.download = 'farewell_scene.' + ext;
 document.body.appendChild(a); a.click(); a.remove();
-
 setTimeout(() => URL.revokeObjectURL(url), 1000);
 setStatus('videoSaved', { ext: ext });
 };
@@ -5858,16 +5180,13 @@ mediaRecorder.start();
 updateRecBtnText();
 playScene();
 }
-
 async function startGifExport(attemptIndex) {
 attemptIndex = attemptIndex || 0;
 if (!spriteImg) { setStatus('loadSpriteFirst'); return; }
 if (mediaRecorder && mediaRecorder.state === 'recording') return;
 if (attemptIndex >= GIF_FPS_LADDER.length) attemptIndex = GIF_FPS_LADDER.length - 1;
-
 const fps = GIF_FPS_LADDER[attemptIndex];
 setStatus(attemptIndex === 0 ? 'gifExporting' : 'gifRetrying', { fps });
-
 let workerUrl;
 try {
 await loadGifLib();
@@ -5877,7 +5196,6 @@ console.error('[GIF] library load failed', err);
 setStatus('gifLibError');
 return;
 }
-
 const endAtMs = Math.min(cumDur[7] + GIF_END_PADDING_MS, TOTAL_DUR);
 const captureW = Math.max(1, Math.round(W * GIF_CAPTURE_SCALE));
 const captureH = Math.max(1, Math.round(H * GIF_CAPTURE_SCALE));
@@ -5888,7 +5206,6 @@ width: captureW,
 height: captureH,
 workerScript: workerUrl,
 });
-
 gifSession = {
 gif,
 active: true,
@@ -5902,12 +5219,10 @@ attemptIndex,
 captureW,
 captureH,
 };
-
 gif.on('finished', onGifFinished);
 updateRecBtnText();
 await playScene();
 }
-
 function finishGifCapture() {
 if (!gifSession || !gifSession.active) return;
 gifSession.active = false;
@@ -5923,14 +5238,12 @@ gifSession = null;
 updateRecBtnText();
 }
 }
-
 function saveGifBlob(blob, session) {
 const url = URL.createObjectURL(blob);
 const a = document.createElement('a');
 a.href = url; a.download = 'farewell_scene.gif';
 document.body.appendChild(a); a.click(); a.remove();
 setTimeout(() => URL.revokeObjectURL(url), 1000);
-
 const sizeMb = (blob.size / (1024 * 1024)).toFixed(1);
 gifSession = null;
 updateRecBtnText();
@@ -5940,11 +5253,9 @@ setStatus('gifSavedOverLimit', { size: sizeMb });
 setStatus('gifSaved', { size: sizeMb, fps: session.fps });
 }
 }
-
 function onGifFinished(blob) {
 const session = gifSession;
 if (!session) return;
-
 if (blob.size > GIF_MAX_BYTES && session.attemptIndex < GIF_FPS_LADDER.length - 1) {
 const sizeMb = (blob.size / (1024 * 1024)).toFixed(1);
 const nextFps = GIF_FPS_LADDER[session.attemptIndex + 1];
@@ -5955,18 +5266,14 @@ startGifExport(session.attemptIndex + 1);
 return;
 }
 }
-
 saveGifBlob(blob, session);
 }
-
 window.addEventListener('keydown', e => {
 if (easterEggActive) return;
-
 const active = document.activeElement;
 if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) {
 return;
 }
-
 if (e.code === 'Space') {
 const textEditorOpen = dom.textEditorModal && dom.textEditorModal.style.display === 'flex';
 e.preventDefault();
@@ -5978,17 +5285,14 @@ dom.pauseBtn.click();
 }
 }
 }
-
 if (e.key.toLowerCase() === 'h') {
 e.preventDefault();
 if (dom.hideTextBtn) dom.hideTextBtn.click();
 }
-
 if (e.key.toLowerCase() === 'f') {
 e.preventDefault();
 dom.fsBtn.click();
 }
-
 if (/^[1-9]$/.test(e.key)) {
 const charModalOpen = dom.charPresetsModal && dom.charPresetsModal.style.display === 'flex';
 const textEditorOpen = dom.textEditorModal && dom.textEditorModal.style.display === 'flex';
@@ -5997,7 +5301,6 @@ switchCharPresetVariantByNumber(parseInt(e.key, 10));
 }
 }
 });
-
 async function handleAction(btn, action) {
 btn.classList.add('is-loading');
 try {
@@ -6008,7 +5311,6 @@ console.error("Ошибка при выполнении действия:", err)
 btn.classList.remove('is-loading');
 }
 }
-
 function openTextEditor() {
 if (sceneRunning && !isPaused) {
 isPaused = true;
@@ -6018,11 +5320,9 @@ if (audioCtx && audioCtx.state === 'running') {
 audioCtx.suspend();
 }
 }
-
 document.querySelectorAll('#textEditorModal textarea').forEach(textarea => {
 const phaseName = textarea.dataset.phase;
 if (!phaseName) return;
-
 if (customTexts[phaseName] !== undefined) {
 textarea.value = customTexts[phaseName];
 } else {
@@ -6030,11 +5330,9 @@ const phase = PHASES.find(p => p.name === phaseName);
 textarea.value = phase ? (phase.text || '') : '';
 }
 });
-
 dom.textEditorModal.style.display = 'flex';
 lockBodyScroll();
 }
-
 function closeTextEditor() {
 dom.textEditorModal.style.display = 'none';
 unlockBodyScroll();
@@ -6044,23 +5342,18 @@ render(sceneElapsed);
 renderIdle();
 }
 }
-
 dom.applyTextsBtn.addEventListener('click', () => {
 document.querySelectorAll('#textEditorModal textarea').forEach(textarea => {
 const phaseName = textarea.dataset.phase;
 if (!phaseName) return;
-
 const value = textarea.value.trim();
-
 if (value === '') {
 delete customTexts[phaseName];
 } else {
 customTexts[phaseName] = value;
 }
 });
-
 localStorage.setItem(customTextsKey(currentLang), JSON.stringify(customTexts));
-
 closeTextEditor();
 setStatus('linesUpdated');
 if (sceneRunning && isPaused) {
@@ -6069,22 +5362,18 @@ render(sceneElapsed);
 renderIdle();
 }
 });
-
 dom.cancelTextsBtn.addEventListener('click', closeTextEditor);
 dom.closeTextEditorBtn.addEventListener('click', closeTextEditor);
 dom.textEditorModal.querySelector('.modal-backdrop').addEventListener('click', closeTextEditor);
-
 dom.clearAllTextsBtn.addEventListener('click', () => {
 if (!confirm(T2C('clearAllTexts'))) return;
 document.querySelectorAll('#textEditorModal textarea').forEach(textarea => {
 textarea.value = '';
 });
 });
-
 dom.resetDefaultTextsBtn.addEventListener('click', (e) => {
 if (!confirm(T2C('restoreDefaults'))) return;
 handleAction(e.currentTarget, async () => {
-
 document.querySelectorAll('#textEditorModal textarea').forEach(textarea => {
 const phaseName = textarea.dataset.phase;
 const phase = PHASES.find(p => p.name === phaseName);
@@ -6098,7 +5387,6 @@ if (e.key.toLowerCase() === 'e' && document.activeElement.tagName === 'BODY') {
 openTextEditor();
 }
 });
-
 if (dom.openTextEditorBtn) {
 dom.openTextEditorBtn.addEventListener('click', () => {
 if (typeof openTextEditor === 'function') {
@@ -6106,15 +5394,12 @@ openTextEditor();
 }
 });
 }
-
 updateCapsuleEl(dom.musicPresetCapsule, MUSIC_PRESETS[musicPresetIndex].label);
 updateCapsuleEl(dom.sfxPresetCapsule, SFX_PRESETS[sfxPresetIndex].label);
-
 if (dom.musicPresetPrev) dom.musicPresetPrev.addEventListener('click', () => selectMusicPreset(musicPresetIndex - 1));
 if (dom.musicPresetNext) dom.musicPresetNext.addEventListener('click', () => selectMusicPreset(musicPresetIndex + 1));
 if (dom.sfxPresetPrev) dom.sfxPresetPrev.addEventListener('click', () => selectSfxPreset(sfxPresetIndex - 1));
 if (dom.sfxPresetNext) dom.sfxPresetNext.addEventListener('click', () => selectSfxPreset(sfxPresetIndex + 1));
-
 if (dom.musicVolumeSlider) {
 dom.musicVolumeSlider.value = musicVolume;
 if (dom.musicVolumeValue) dom.musicVolumeValue.textContent = musicVolume + '%';
@@ -6125,7 +5410,6 @@ if (musicGainNode) musicGainNode.gain.value = musicVolume / 100;
 localStorage.setItem(MUSIC_VOL_KEY, String(musicVolume));
 });
 }
-
 if (dom.sfxVolumeSlider) {
 dom.sfxVolumeSlider.value = sfxVolume;
 if (dom.sfxVolumeValue) dom.sfxVolumeValue.textContent = sfxVolume + '%';
@@ -6136,11 +5420,9 @@ if (sfxGainNode) sfxGainNode.gain.value = sfxVolume / 100;
 localStorage.setItem(SFX_VOL_KEY, String(sfxVolume));
 });
 }
-
 if (dom.spriteBtn) dom.spriteBtn.addEventListener('click', () => dom.spriteInput.click());
 if (dom.musicBtn) dom.musicBtn.addEventListener('click', () => dom.musicInput.click());
 if (dom.sfxBtn) dom.sfxBtn.addEventListener('click', () => dom.sfxInput.click());
-
 function setupAssetRowDrop(rowEl, onDrop) {
 rowEl.addEventListener('dragover', (e) => {
 e.preventDefault();
@@ -6159,19 +5441,16 @@ const file = e.dataTransfer.files[0];
 if (file) onDrop(file);
 });
 }
-
 const spriteRow = document.querySelector('.asset-manager .asset-row:nth-child(1)');
 if (spriteRow) {
 setupAssetRowDrop(spriteRow, (file) => {
 if (file.type !== 'image/png') { setStatus('invalidSpriteType'); return; }
-
 const dt = new DataTransfer();
 dt.items.add(file);
 dom.spriteInput.files = dt.files;
 dom.spriteInput.dispatchEvent(new Event('change'));
 });
 }
-
 const musicRow = document.querySelector('.asset-manager .asset-row:nth-child(3)');
 if (musicRow) {
 setupAssetRowDrop(musicRow, (file) => {
@@ -6182,7 +5461,6 @@ dom.musicInput.files = dt.files;
 dom.musicInput.dispatchEvent(new Event('change'));
 });
 }
-
 const sfxRow = document.querySelector('.asset-manager .asset-row:nth-child(4)');
 if (sfxRow) {
 setupAssetRowDrop(sfxRow, (file) => {
@@ -6193,27 +5471,22 @@ dom.sfxInput.files = dt.files;
 dom.sfxInput.dispatchEvent(new Event('change'));
 });
 }
-
 dom.musicInput.addEventListener('change', (e) => {
 const file = e.target.files[0];
 if (!file) return;
-
 if (!isAudioFile(file)) {
 setStatus('invalidAudioType');
 dom.musicInput.value = '';
 return;
 }
-
 musicSource = 'custom';
 musicPresetLoadToken++;
 updateCapsuleEl(dom.musicPresetCapsule, I18N[currentLang].ui.customLabel);
-
 musicMetaIsDefault = false;
 const musicMetaEl = document.getElementById('musicMeta');
 musicMetaEl.textContent = file.name;
 musicMetaEl.title = file.name;
 if (dom.clearMusicBtn) dom.clearMusicBtn.style.display = 'inline-block';
-
 if (dom.musicBtn) {
 handleAction(dom.musicBtn, async () => {
 musicBuffer = await loadAudioBuffer(file, I18N[currentLang].audioLabels.music);
@@ -6224,34 +5497,28 @@ currentMusicSource = playMusicWithFadeIn(musicBuffer);
 });
 }
 });
-
 dom.sfxInput.addEventListener('change', (e) => {
 const file = e.target.files[0];
 if (!file) return;
-
 if (!isAudioFile(file)) {
 setStatus('invalidAudioType');
 dom.sfxInput.value = '';
 return;
 }
-
 sfxSource = 'custom';
 sfxPresetLoadToken++;
 updateCapsuleEl(dom.sfxPresetCapsule, I18N[currentLang].ui.customLabel);
-
 sfxMetaIsDefault = false;
 const sfxMetaEl = document.getElementById('sfxMeta');
 sfxMetaEl.textContent = file.name;
 sfxMetaEl.title = file.name;
 if (dom.clearSfxBtn) dom.clearSfxBtn.style.display = 'inline-block';
-
 if (dom.sfxBtn) {
 handleAction(dom.sfxBtn, async () => {
 sfxBuffer = await loadAudioBuffer(file, I18N[currentLang].audioLabels.sfx);
 });
 }
 });
-
 })();
 </script>
 </body>
