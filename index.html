@@ -2614,7 +2614,7 @@ const dict = I18N[currentLang].ui;
 const videoRecording = mediaRecorder && mediaRecorder.state === 'recording';
 const gifCapturing = !!(gifSession && gifSession.active);
 const gifEncoding = !!(gifSession && gifSession.encoding);
-const busy = videoRecording || gifCapturing || gifEncoding;
+const busy = videoRecording || gifCapturing || gifEncoding || recordingStarting;
 dom.recBtnLabel.textContent = gifEncoding ? dict.recBtnGifEncoding : dict[busy ? 'recBtnStop' : 'recBtnStart'];
 dom.recBtnIcon.setAttribute('href', busy ? '#icon-stop' : '#icon-record');
 dom.recBtn.disabled = gifEncoding || !recordingSupported;
@@ -2937,6 +2937,7 @@ let spriteScaleFactor = 1.0;
 let previewCrop = 0;
 let spriteCropFactor = 0;
 let mediaRecorder, recordedChunks = [];
+let recordingStarting = false;
 let gifSession = null;
 let recordingSupported = true;
 const GIF_MAX_BYTES = 15 * 1024 * 1024;
@@ -4077,10 +4078,6 @@ spriteTrimCache.set(key, bbox);
 img.__trimBBox = bbox;
 return bbox;
 }
-function spriteAspect(img) {
-const b = getSpriteTrim(img);
-return b.w / b.h;
-}
 function spriteDrawWidth(img, dh, cropFrac = 0) {
 const b = getSpriteTrim(img);
 if (cropFrac > 0) {
@@ -5155,6 +5152,10 @@ startGifExport(0);
 }
 async function startRecording() {
 if (!spriteImg) { setStatus('loadSpriteFirst'); return; }
+if (recordingStarting || (mediaRecorder && mediaRecorder.state === 'recording')) return;
+recordingStarting = true;
+updateRecBtnText();
+try {
 recordedChunks = [];
 getAudioCtx();
 await Promise.all([ensureMusicReady(), ensureSfxReady()]);
@@ -5177,8 +5178,11 @@ setTimeout(() => URL.revokeObjectURL(url), 1000);
 setStatus('videoSaved', { ext: ext });
 };
 mediaRecorder.start();
-updateRecBtnText();
 playScene();
+} finally {
+recordingStarting = false;
+updateRecBtnText();
+}
 }
 async function startGifExport(attemptIndex) {
 attemptIndex = attemptIndex || 0;
